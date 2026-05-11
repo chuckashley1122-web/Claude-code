@@ -4,12 +4,18 @@
 Usage:
     python scripts/send_cold_emails.py data/leads/example_leads.csv --dry-run
     python scripts/send_cold_emails.py data/leads/austin_hvac.csv --limit 5
-    python scripts/send_cold_emails.py data/leads/austin_hvac.csv --send
+    python scripts/send_cold_emails.py data/leads/austin_hvac.csv --variant ab --send
+
+Variants:
+    a  = "8 seconds" cost-framing hook (default)
+    b  = "free mockup" offer hook
+    ab = deterministic 50/50 split by hash(email)
 """
 from __future__ import annotations
 
 import argparse
 import csv
+import hashlib
 import os
 import pathlib
 import sys
@@ -68,14 +74,31 @@ def load_leads(csv_path: pathlib.Path, limit: int | None) -> list[dict[str, str]
     return rows
 
 
+def variant_for(email: str, variant_flag: str) -> str:
+    if variant_flag in ("a", "b"):
+        return variant_flag
+    # ab: deterministic split so re-runs on the same lead pick the same variant
+    digest = hashlib.sha256(email.lower().encode()).digest()
+    return "a" if digest[0] % 2 == 0 else "b"
+
+
+def load_templates() -> dict[str, tuple[str, str]]:
+    out: dict[str, tuple[str, str]] = {}
+    for v in ("a", "b"):
+        subj = (TEMPLATE_DIR / f"cold_email_{v}.subject.txt").read_text().strip()
+        html = (TEMPLATE_DIR / f"cold_email_{v}.html").read_text()
+        out[v] = (subj, html)
+    return out
+
+
 def main() -> int:
     p = argparse.ArgumentParser()
     p.add_argument("csv", type=pathlib.Path, help="Path to leads CSV (Leads Gorilla export)")
     p.add_argument("--send", action="store_true", help="Actually send via SendIIO (default: dry-run)")
     p.add_argument("--dry-run", action="store_true", help="Render only, no API calls (default)")
     p.add_argument("--limit", type=int, default=None, help="Process only first N leads")
-    p.add_argument("--subject-template", default=str(TEMPLATE_DIR / "cold_email.subject.txt"))
-    p.add_argument("--html-template", default=str(TEMPLATE_DIR / "cold_email.html"))
+    p.add_argument("--variant", choices=["a", "b", "ab"], default="a",
+                   help="Template variant: a, b, or ab (50/50 split)")
     args = p.parse_args()
 
     if not args.csv.exists():
@@ -83,8 +106,7 @@ def main() -> int:
         return 2
 
     env = load_env()
-    subject_tpl = pathlib.Path(args.subject_template).read_text().strip()
-    html_tpl = pathlib.Path(args.html_template).read_text()
+    templates = load_templates()
     leads = load_leads(args.csv, args.limit)
 
     if not leads:
@@ -110,18 +132,22 @@ def main() -> int:
             print(f"SendIIO auth failed: {e}", file=sys.stderr)
             return 1
 
-    sent = 0
+    counts = {"a": 0, "b": 0, "skipped": 0}
     for i, lead in enumerate(leads, 1):
         email = (lead.get("email") or "").strip()
         if not email:
             print(f"[{i}] SKIP (no email): {lead.get('business_name', '?')}")
+            counts["skipped"] += 1
             continue
+        v = variant_for(email, args.variant)
+        subject_tpl, html_tpl = templates[v]
         subject = render(subject_tpl, lead, env)
         html = render(html_tpl, lead, env)
-        print(f"\n=== [{i}/{len(leads)}] {email} ===")
+        print(f"\n=== [{i}/{len(leads)}] [{v.upper()}] {email} ===")
         print(f"Subject: {subject}")
         if not do_send:
             print(html)
+            counts[v] += 1
             continue
         assert client is not None
         list_id = env.get("SENDIIO_LIST_ID", "")
@@ -144,11 +170,12 @@ def main() -> int:
                 reply_to=env.get("REPLY_TO_EMAIL") or None,
             )
             print(f"sent: {resp}")
-            sent += 1
+            counts[v] += 1
         except SendiioError as e:
             print(f"send failed: {e}", file=sys.stderr)
 
-    print(f"\nDone. {'Sent' if do_send else 'Previewed'} {sent if do_send else len(leads)} leads.")
+    verb = "Sent" if do_send else "Previewed"
+    print(f"\nDone. {verb}: A={counts['a']}  B={counts['b']}  skipped={counts['skipped']}")
     return 0
 
 
