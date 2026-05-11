@@ -48,6 +48,7 @@ def render(template: str, lead: dict[str, str], env: dict[str, str]) -> str:
         "service": lead.get("service") or lead.get("category") or "home services",
         "email": lead.get("email", ""),
         "booking_url": env.get("BOOKING_URL", ""),
+        "phone": env.get("BUSINESS_PHONE", ""),
         "company_name": env.get("COMPANY_NAME", "CA&J Enterprises"),
         "company_address": env.get("COMPANY_ADDRESS", "[ADDRESS NOT SET]"),
         "unsubscribe_url": env.get("UNSUBSCRIBE_URL", ""),
