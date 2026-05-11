@@ -1,0 +1,4 @@
+business_name,first_name,last_name,email,city,state,service,phone,website
+Lone Star HVAC,Mark,Reyes,mark@lonestarhvac.example,Austin,TX,HVAC,512-555-0142,lonestarhvac.example
+Capital Electric Co,Dana,Nguyen,dana@capelec.example,Austin,TX,Electrician,512-555-0188,capelec.example
+Hill Country Plumbing,Sam,Patel,sam@hillcountryplumb.example,Austin,TX,Plumbing,512-555-0173,hillcountryplumb.example

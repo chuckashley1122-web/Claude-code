@@ -1,0 +1,11 @@
+.env
+.env.local
+*.pyc
+__pycache__/
+.venv/
+venv/
+data/leads/*.csv
+!data/leads/example_leads.csv
+data/sent/
+*.log
+.DS_Store
