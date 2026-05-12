@@ -30,7 +30,7 @@ if ($env:CLAUDE_ONEDRIVE_PATH) {
         Write-Error "OneDrive not detected. Set CLAUDE_ONEDRIVE_PATH to your backup folder."
         exit 1
     }
-    $OneDriveClaude = Join-Path $OneDriveRoot 'ClaudeBackup\.claude'
+    $OneDriveClaude = Join-Path (Join-Path $OneDriveRoot 'ClaudeBackup') '.claude'
 }
 
 # Files/dirs that must never sync: credentials, machine-local caches, transient state.
@@ -65,7 +65,20 @@ if ($DryRun)         { $rcArgs += '/L' }
 if ($ExcludeFiles)   { $rcArgs += '/XF'; $rcArgs += $ExcludeFiles }
 if ($ExcludeDirs)    { $rcArgs += '/XD'; $rcArgs += $ExcludeDirs }
 
-& robocopy @rcArgs
+# Resolve robocopy explicitly under System32 so a stripped/customized PATH
+# (or PATH inheritance issues in restricted shells) doesn't break the sync.
+$SystemRoot = $env:SystemRoot
+if (-not $SystemRoot) { $SystemRoot = $env:WINDIR }
+$Robocopy = if ($SystemRoot) { Join-Path (Join-Path $SystemRoot 'System32') 'robocopy.exe' } else { $null }
+if (-not ($Robocopy -and (Test-Path $Robocopy))) {
+    $Robocopy = (Get-Command robocopy -ErrorAction SilentlyContinue).Source
+}
+if (-not $Robocopy) {
+    Write-Error "robocopy.exe not found. Ensure %SystemRoot%\System32 is on PATH."
+    exit 1
+}
+
+& $Robocopy @rcArgs
 $rc = $LASTEXITCODE
 
 # robocopy exit codes 0–7 are success (8+ are real errors).
