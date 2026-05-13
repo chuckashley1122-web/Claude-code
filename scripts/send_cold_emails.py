@@ -185,6 +185,9 @@ def main() -> int:
                    help="Default service category when not in CSV (e.g. HVAC, Electrician)")
     p.add_argument("--skip-sent", action="store_true",
                    help="Skip emails already in data/sent/sent_emails.txt")
+    p.add_argument("--export-csv", type=pathlib.Path, default=None,
+                   help="Write rendered emails to CSV (To, Subject, BodyHTML, Variant, "
+                        "BusinessName, City) for mail-merge tools like YAMM. No API calls.")
     args = p.parse_args()
 
     if not args.csv.exists():
@@ -208,6 +211,28 @@ def main() -> int:
         return 1
 
     do_send = args.send and not args.dry_run
+
+    if args.export_csv is not None:
+        args.export_csv.parent.mkdir(parents=True, exist_ok=True)
+        with args.export_csv.open("w", newline="", encoding="utf-8") as f:
+            writer = csv.writer(f)
+            writer.writerow(["To", "Subject", "BodyHTML", "Variant", "BusinessName", "City"])
+            counts = {"a": 0, "b": 0}
+            for lead in leads:
+                v = variant_for(lead["email"], args.variant)
+                subject_tpl, html_tpl = templates[v]
+                writer.writerow([
+                    lead["email"],
+                    render(subject_tpl, lead, env),
+                    render(html_tpl, lead, env),
+                    v.upper(),
+                    lead.get("business_name", ""),
+                    lead.get("city", ""),
+                ])
+                counts[v] += 1
+        print(f"Wrote {sum(counts.values())} rows to {args.export_csv}  "
+              f"(A={counts['a']}, B={counts['b']})")
+        return 0
 
     client: SendiioClient | None = None
     if do_send:

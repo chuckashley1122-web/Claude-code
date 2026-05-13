@@ -7,5 +7,6 @@ venv/
 data/leads/*.csv
 !data/leads/example_leads.csv
 data/sent/
+data/exports/
 *.log
 .DS_Store
