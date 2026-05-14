@@ -14,13 +14,17 @@ buttons, read pages, navigate Gmail/Outlook/etc.
 
 ## Daily use
 
-1. Launch Chrome with debugging enabled:
-   ```powershell
-   .\start-chrome-debug.ps1
-   ```
+1. Launch Chrome with debugging enabled by **double-clicking
+   `start-chrome-debug.bat`**. To make it a desktop icon: right-click
+   the file → **Send to** → **Desktop (create shortcut)**, then rename
+   the shortcut to something like "Chrome (Claude)".
+
    This opens a dedicated debug Chrome window. Sign in to whatever
    accounts you want Claude to use (Gmail, GitHub, etc.) — the profile
    persists between runs at `%LocalAppData%\ChromeDebugProfile`.
+
+   (Power users: `start-chrome-debug.ps1` is the same thing in
+   PowerShell, with flags like `-UseDefaultProfile` and `-Port`.)
 
 2. In Claude Code, ask it to do browser things, e.g.:
    - "Open Gmail and summarize my unread inbox"
