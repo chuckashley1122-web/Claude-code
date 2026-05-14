@@ -1,0 +1,26 @@
+{
+  "name": "ghl-integration",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "GoHighLevel API v2 client and example scripts",
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "smoke": "tsx src/scripts/smoke.ts",
+    "contacts:demo": "tsx src/scripts/contacts-demo.ts",
+    "opportunities:demo": "tsx src/scripts/opportunities-demo.ts",
+    "conversations:demo": "tsx src/scripts/conversations-demo.ts"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.7",
+    "tsx": "^4.19.2",
+    "typescript": "^5.6.3"
+  }
+}
