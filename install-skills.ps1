@@ -39,7 +39,8 @@ $Plugins = @(
     @{ Repo='JuliusBrussee/caveman';                Spec='caveman@caveman';                             Desc='caveman: token-cutting prompt compressor' },
     @{ Repo='yamadashy/repomix';                    Spec='repomix-mcp@repomix';                         Desc='repomix: pack a repo into one LLM-friendly file (MCP)' },
     @{ Repo='yamadashy/repomix';                    Spec='repomix-commands@repomix';                    Desc='repomix: slash commands' },
-    @{ Repo='-';                                    Spec='frontend-design@claude-plugins-official';     Desc='frontend-design: Anthropic official anti-generic-UI skill' }
+    @{ Repo='-';                                    Spec='frontend-design@claude-plugins-official';     Desc='frontend-design: Anthropic official anti-generic-UI skill' },
+    @{ Repo='ellyseum/claude-vision';               Spec='claude-vision@ellyseum-claude-vision';        Desc='claude-vision: visual context (clipboard/screenshot/video) - in place of "I Spy"' }
 )
 
 Write-Host "== Installing marketplace plugins (user scope) ==" -ForegroundColor Cyan
@@ -66,6 +67,7 @@ function Clone-Skill($name, $url) {
 Write-Host "== Installing file-based skills into $SkillsDir ==" -ForegroundColor Cyan
 Clone-Skill 'humanizer'       'https://github.com/blader/humanizer'
 Clone-Skill 'ai-second-brain' 'https://github.com/charlie947/ai-second-brain'
+Clone-Skill 'stop-slop'       'https://github.com/hardikpandya/stop-slop'
 Write-Host ""
 
 # 3) gstack — ships its own setup. Review the repo before trusting ./setup.
@@ -82,17 +84,25 @@ if (Test-Path (Join-Path $GstackDir 'setup')) {
 }
 Write-Host ""
 
-# 4) Optional extras
+# 4) Large catalog: alirezarezvani/claude-skills (~80 plugins, marketplace
+#    'claude-code-skills'). Register only; cherry-pick to avoid context bloat:
+#      claude plugin install finance-skills@claude-code-skills
+Write-Host "== Registering claude-skills catalog (alirezarezvani/claude-skills) ==" -ForegroundColor Cyan
+try { claude plugin marketplace add alirezarezvani/claude-skills } catch { Write-Host "   (marketplace add issue; continuing)" -ForegroundColor Yellow }
+Write-Host "   Registered as 'claude-code-skills'. Install individual plugins as needed."
+Write-Host ""
+
+# 5) Optional extras
 if ($Extras) {
     Write-Host "== Extras ==" -ForegroundColor Cyan
     Clone-Skill 'competitive-ads-extractor' 'https://github.com/ComposioHQ/awesome-claude-skills'
     Write-Host ""
 }
 
-# PENDING — sources not yet confirmed (NOT installed). Confirm a repo, then add above:
-#   - "I Spy"          -> no public Claude Code skill by this name (closest: ellyseum/claude-vision)
-#   - "Stop Slop"      -> mohamedgame/stop-slop | hardikpandya/stop-slop | wpgaurav/claude-code-skills
-#   - "claude-skills"  -> which bundle? alirezarezvani/claude-skills | daymade/claude-code-skills
-#   - "claude-for-legal" / "financial-services" -> official Anthropic ENTERPRISE marketplaces (may need org access)
+# Resolved per user decisions:
+#   - "I Spy"      -> using ellyseum/claude-vision instead (no skill named "I Spy").
+#   - "Stop Slop"  -> hardikpandya/stop-slop (cloned above).
+#   - "claude-skills" -> alirezarezvani/claude-skills registered as a catalog; cherry-pick plugins.
+#   - "claude-for-legal" / "financial-services" -> SKIPPED (official enterprise marketplaces).
 
 Write-Host "Done. Run 'claude plugin list' to verify, then restart Claude Code." -ForegroundColor Green

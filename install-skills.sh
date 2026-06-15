@@ -44,6 +44,7 @@ PLUGINS=(
     "yamadashy/repomix|repomix-mcp@repomix|repomix: pack a repo into one LLM-friendly file (MCP)"
     "yamadashy/repomix|repomix-commands@repomix|repomix: slash commands for repomix"
     "-|frontend-design@claude-plugins-official|frontend-design: Anthropic official anti-generic-UI design skill"
+    "ellyseum/claude-vision|claude-vision@ellyseum-claude-vision|claude-vision: visual context (clipboard/screenshot/video) — chosen in place of \"I Spy\""
 )
 
 echo "== Installing marketplace plugins (user scope) =="
@@ -73,6 +74,7 @@ clone_skill() {  # name  git_url
 echo "== Installing file-based skills into $SKILLS_DIR =="
 clone_skill "humanizer"       "https://github.com/blader/humanizer"
 clone_skill "ai-second-brain" "https://github.com/charlie947/ai-second-brain"
+clone_skill "stop-slop"       "https://github.com/hardikpandya/stop-slop"
 echo
 
 # ---------------------------------------------------------------------------
@@ -93,7 +95,20 @@ fi
 echo
 
 # ---------------------------------------------------------------------------
-# 4) Optional extras
+# 4) Large catalog: alirezarezvani/claude-skills (~80 plugins, marketplace name
+#    "claude-code-skills"). We REGISTER the marketplace only — installing all 80
+#    would bloat Claude's context. Cherry-pick what you want, e.g.:
+#      claude plugin install finance-skills@claude-code-skills
+#      claude plugin install product-skills@claude-code-skills
+#    List options: cat ~/.claude/plugins/marketplaces/claude-code-skills/.claude-plugin/marketplace.json
+# ---------------------------------------------------------------------------
+echo "== Registering claude-skills catalog (alirezarezvani/claude-skills) =="
+claude plugin marketplace add alirezarezvani/claude-skills || echo "   (marketplace add issue; continuing)"
+echo "   Registered as 'claude-code-skills'. Install individual plugins as needed."
+echo
+
+# ---------------------------------------------------------------------------
+# 5) Optional extras
 # ---------------------------------------------------------------------------
 if [[ "${1:-}" == "--extras" ]]; then
     echo "== Extras =="
@@ -104,17 +119,13 @@ if [[ "${1:-}" == "--extras" ]]; then
 fi
 
 # ---------------------------------------------------------------------------
-# PENDING — sources not yet confirmed (NOT installed). Confirm a repo, then add
-# above. See README/notes:
-#   - "I Spy"            -> no public Claude Code skill by this name found
-#                           (closest: ellyseum/claude-vision). Provide a URL.
-#   - "Stop Slop"        -> multiple repos: mohamedgame/stop-slop,
-#                           hardikpandya/stop-slop, wpgaurav/claude-code-skills
-#   - "claude-skills"    -> which 263+/337-skill bundle? e.g.
-#                           alirezarezvani/claude-skills, daymade/claude-code-skills
-#   - "claude-for-legal" / "financial-services" -> official Anthropic ENTERPRISE
-#                           marketplaces (reserved names); install via the
-#                           official directory / may require org access.
+# Resolved per user decisions:
+#   - "I Spy"      -> no skill by that name; using ellyseum/claude-vision instead.
+#   - "Stop Slop"  -> hardikpandya/stop-slop (cloned above).
+#   - "claude-skills" -> alirezarezvani/claude-skills registered as a catalog;
+#                        cherry-pick individual plugins (see section 4).
+#   - "claude-for-legal" / "financial-services" -> SKIPPED (official enterprise
+#                        marketplaces; install later via /plugin Discover if needed).
 # ---------------------------------------------------------------------------
 
 echo "Done. Run 'claude plugin list' to verify, then restart Claude Code."
