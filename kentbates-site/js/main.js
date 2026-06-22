@@ -91,6 +91,22 @@
     });
   }
 
+  /* ---- Checkout buttons (Stripe Payment Links) ----
+     Each .buy-btn links to a Stripe Payment Link. Until a real link is pasted
+     in (placeholders contain "REPLACE_"), clicking falls back to the inquiry
+     form so the shop is never a dead end. Replace the href and it "just works". */
+  document.querySelectorAll(".buy-btn").forEach(function (btn) {
+    btn.addEventListener("click", function (ev) {
+      var href = btn.getAttribute("href") || "";
+      if (href.indexOf("REPLACE_") !== -1 || href === "#") {
+        ev.preventDefault();
+        var item = btn.dataset.item || "a piece";
+        window.location.href = "contact.html?item=" + encodeURIComponent(item);
+      }
+      // Otherwise: let the browser follow the real Stripe link normally.
+    });
+  });
+
   /* ---- Footer year ---- */
   var yr = document.querySelector("[data-year]");
   if (yr) yr.textContent = new Date().getFullYear();

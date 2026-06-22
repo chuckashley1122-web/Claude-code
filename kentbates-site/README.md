@@ -33,9 +33,17 @@ kentbates-site/
 
 ## Replacing the placeholder artwork
 
-The gallery and product tiles currently use **CSS gradient placeholders** (the
-`.art-fill` element with classes like `.c-space`, `.c-fame`). When you have real
-artwork, swap each placeholder for an image:
+The gallery and product tiles currently use **handcrafted SVG collage placeholders**
+in `assets/art/` (`space.svg`, `fame.svg`, `money.svg`, `icon.svg`, `retro.svg`,
+`studio.svg`), wired up through the `.c-*` classes in `css/style.css`. They're
+vector, so they stay crisp at any size.
+
+Two ways to use real artwork when it's ready:
+
+1. **Quick swap (keep the markup):** drop a real image over a theme by editing one
+   line in `css/style.css`, e.g. `.c-space { --collage: url("../assets/art/space.jpg"); }`
+2. **Best for SEO/accessibility (add an `<img>`):** the CSS already detects an
+   `<img>` inside `.art-fill` and hides the placeholder layer automatically —
 
 ```html
 <!-- before (placeholder) -->
@@ -60,14 +68,29 @@ python3 -m http.server 8000
 # open http://localhost:8000
 ```
 
+## Checkout (Stripe Payment Links)
+
+The Shop's prints and merch have **Buy now** buttons wired for
+[Stripe Payment Links](https://stripe.com/payments/payment-links) — no backend,
+no code, works on any static host. Originals stay inquiry-only (they're 1-of-1).
+
+Until you add real links, the buttons safely fall back to the inquiry form, so the
+shop is never a dead end. To go live:
+
+1. In your Stripe Dashboard, create a **Payment Link** for each product.
+2. In `shop.html`, replace each placeholder `href="https://buy.stripe.com/REPLACE_…"`
+   with the real link Stripe gives you (search the file for `REPLACE_`).
+3. That's it — the JS in `js/main.js` automatically lets configured links through
+   and only falls back for ones still containing `REPLACE_`.
+
+Prefer something else? The same buttons work with **Gumroad** (overlay embed) or
+**Shopify Buy Buttons** — just swap the `href`/embed on each card.
+
 ## Notes & next steps
 
 - **Contact form** uses a `mailto:` fallback so it works on any static host
   (GitHub Pages, Netlify, etc.). To capture submissions without opening an email
   client, point the `<form>` at a service like Formspree/Netlify Forms.
-- **Real e-commerce checkout** isn't included (static site). The shop uses an
-  "inquire to buy" flow that prefills the contact form. To take payments, embed
-  Shopify Buy Buttons, Stripe Payment Links, or Gumroad on the product cards.
 - All copy is editable directly in the HTML. Prices, titles and edition sizes are
   placeholders — update them to match real inventory.
 - Colors, fonts and spacing live as tokens at the top of `css/style.css`.

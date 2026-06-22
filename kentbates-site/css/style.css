@@ -227,22 +227,24 @@ h2.section-title { font-size: clamp(1.9rem, 1.3rem + 2.6vw, 3.1rem); margin-bott
 .art-fill::after {
   content: "";
   position: absolute; inset: 0;
-  background: var(--collage, linear-gradient(135deg, #ff2d75, #7a00ff));
-  opacity: 0.92;
-  mix-blend-mode: normal;
+  background: var(--collage, linear-gradient(135deg, #ff2d75, #7a00ff)) center / cover no-repeat;
 }
+/* When a real <img> is dropped in, hide the SVG/gradient placeholder layer. */
+.art-fill:has(img)::after { display: none; }
+.art-fill img { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; object-fit: cover; }
 .art-fill .label {
   position: absolute; z-index: 2; left: 0; right: 0; bottom: 0;
   padding: 0.9rem 1rem;
   background: linear-gradient(to top, rgba(0,0,0,0.75), transparent);
   font-size: 0.82rem; letter-spacing: 0.04em;
 }
-.c-space  { --collage: linear-gradient(135deg,#1b2a6b 0%,#00e5ff 55%,#ffe600 110%); }
-.c-fame   { --collage: linear-gradient(135deg,#ff2d75 0%,#ffb300 100%); }
-.c-money  { --collage: linear-gradient(135deg,#0f9b6c 0%,#d4ff00 100%); }
-.c-icon   { --collage: linear-gradient(135deg,#7a00ff 0%,#ff2d75 100%); }
-.c-retro  { --collage: linear-gradient(135deg,#ff6a00 0%,#ff2d75 60%,#7a00ff 100%); }
-.c-studio { --collage: linear-gradient(135deg,#222 0%,#00e5ff 130%); }
+/* Placeholder artwork — handcrafted SVG collage tiles. Swap for real photos anytime. */
+.c-space  { --collage: url("../assets/art/space.svg"); }
+.c-fame   { --collage: url("../assets/art/fame.svg"); }
+.c-money  { --collage: url("../assets/art/money.svg"); }
+.c-icon   { --collage: url("../assets/art/icon.svg"); }
+.c-retro  { --collage: url("../assets/art/retro.svg"); }
+.c-studio { --collage: url("../assets/art/studio.svg"); }
 
 /* ---------- Marquee ---------- */
 .marquee {
