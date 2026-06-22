@@ -17,19 +17,32 @@ Design review → SEO + Final audit.**
 | `about.html` | Artist statement, process, materials, influences, history |
 | `shop.html` | Originals, limited prints and merch with inquire-to-buy flow |
 | `contact.html` | Contact + commission form (mailto-based, works on any static host) |
+| `404.html` | Branded not-found page (set as the host's error page) |
 
 ## Structure
 
 ```
 kentbates-site/
 ├── index.html, gallery.html, about.html, shop.html, contact.html
+├── 404.html             # branded error page
 ├── css/style.css        # full design system (tokens, components, responsive)
 ├── js/main.js           # mobile nav, scroll reveal, gallery filter, form, prefill
-├── assets/art/          # drop real artwork images here (see below)
+├── assets/
+│   ├── art/             # 6 SVG collage placeholders (swap for real photos)
+│   ├── favicon.svg      # brand mark (browser tab / bookmark icon)
+│   └── og-cover.svg     # social share image (1200×630)
 ├── robots.txt
 ├── sitemap.xml
 └── README.md
 ```
+
+> **Theme:** blue / grey / green / white. All colors are tokens at the top of
+> `css/style.css` (`--blue`, `--green`, `--grey`, plus canvas/ink), so reskinning
+> is a few-line change.
+
+> **Social image note:** `og-cover.svg` is a crisp placeholder. A few platforms
+> only render raster share images — export it to a 1200×630 **PNG/JPG** and update
+> the `og:image` URLs if you want maximum compatibility.
 
 ## Replacing the placeholder artwork
 
