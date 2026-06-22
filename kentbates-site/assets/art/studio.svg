@@ -1,21 +1,21 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Studio experiments collage placeholder">
   <defs>
     <linearGradient id="stg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#16161c"/><stop offset="1" stop-color="#0090a8"/>
+      <stop offset="0" stop-color="#334a5f"/><stop offset="1" stop-color="#1f6fe5"/>
     </linearGradient>
   </defs>
   <rect width="800" height="600" fill="url(#stg)"/>
-  <rect x="70" y="90" width="260" height="330" fill="#f4f4f2" opacity="0.96" transform="rotate(-5 200 255)"/>
-  <rect x="100" y="120" width="200" height="200" fill="#ff2d75" transform="rotate(-5 200 220)"/>
-  <rect x="420" y="150" width="300" height="200" fill="#ffe600" opacity="0.95" transform="rotate(6 570 250)"/>
-  <rect x="450" y="180" width="240" height="60" fill="#0b0b0d" transform="rotate(6 570 210)"/>
-  <g fill="#00e5ff" opacity="0.85">
+  <rect x="70" y="90" width="260" height="330" fill="#ffffff" opacity="0.96" transform="rotate(-5 200 255)"/>
+  <rect x="100" y="120" width="200" height="200" fill="#1f6fe5" transform="rotate(-5 200 220)"/>
+  <rect x="420" y="150" width="300" height="200" fill="#2bb38a" opacity="0.95" transform="rotate(6 570 250)"/>
+  <rect x="450" y="180" width="240" height="60" fill="#16222e" transform="rotate(6 570 210)"/>
+  <g fill="#cbd5e1" opacity="0.9">
     <circle cx="250" cy="470" r="40"/><circle cx="320" cy="500" r="22"/><circle cx="190" cy="510" r="16"/>
   </g>
-  <g stroke="#ffe600" stroke-width="10" stroke-linecap="round" opacity="0.9">
+  <g stroke="#ffffff" stroke-width="10" stroke-linecap="round" opacity="0.9">
     <path d="M520 420 q60 -40 130 10 t130 -5"/>
   </g>
-  <g fill="#fff">
+  <g fill="#1aa06a">
     <circle cx="610" cy="470" r="6"/><circle cx="660" cy="500" r="4"/><circle cx="700" cy="450" r="5"/>
   </g>
 </svg>

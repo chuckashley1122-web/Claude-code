@@ -1,21 +1,21 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Surreal money themed collage placeholder">
   <defs>
     <linearGradient id="mg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#0f7a52"/><stop offset="1" stop-color="#d4ff00"/>
+      <stop offset="0" stop-color="#0d6e49"/><stop offset="1" stop-color="#2bb38a"/>
     </linearGradient>
     <pattern id="grid-m" width="40" height="40" patternUnits="userSpaceOnUse">
-      <path d="M40 0 H0 V40" fill="none" stroke="#0b0b0d" stroke-width="1.5" opacity="0.25"/>
+      <path d="M40 0 H0 V40" fill="none" stroke="#16222e" stroke-width="1.5" opacity="0.22"/>
     </pattern>
   </defs>
   <rect width="800" height="600" fill="url(#mg)"/>
   <rect width="800" height="600" fill="url(#grid-m)"/>
   <g transform="translate(400 300)">
-    <circle r="150" fill="#0b0b0d"/>
-    <circle r="150" fill="none" stroke="#d4ff00" stroke-width="8" stroke-dasharray="14 10"/>
-    <circle r="108" fill="#0f9b6c"/>
-    <text x="0" y="58" text-anchor="middle" font-family="Georgia, serif" font-size="170" font-weight="bold" fill="#d4ff00">$</text>
+    <circle r="150" fill="#16222e"/>
+    <circle r="150" fill="none" stroke="#ffffff" stroke-width="8" stroke-dasharray="14 10"/>
+    <circle r="108" fill="#1aa06a"/>
+    <text x="0" y="58" text-anchor="middle" font-family="Georgia, serif" font-size="170" font-weight="bold" fill="#ffffff">$</text>
   </g>
-  <rect x="40" y="60" width="180" height="96" rx="6" fill="#0b0b0d" opacity="0.85" transform="rotate(-8 130 108)"/>
-  <rect x="60" y="80" width="180" height="96" rx="6" fill="#0f9b6c" transform="rotate(-8 150 128)"/>
-  <rect x="560" y="430" width="200" height="110" rx="6" fill="#0b0b0d" opacity="0.85" transform="rotate(7 660 485)"/>
+  <rect x="40" y="60" width="180" height="96" rx="6" fill="#16222e" opacity="0.85" transform="rotate(-8 130 108)"/>
+  <rect x="60" y="80" width="180" height="96" rx="6" fill="#1f6fe5" transform="rotate(-8 150 128)"/>
+  <rect x="560" y="430" width="200" height="110" rx="6" fill="#64748b" opacity="0.9" transform="rotate(7 660 485)"/>
 </svg>

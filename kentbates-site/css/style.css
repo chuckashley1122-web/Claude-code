@@ -1,34 +1,38 @@
 /* =========================================================================
    KENT BATES — Surreal Pop Collage
    Shared stylesheet for all pages
-   Design language: gallery-dark canvas + bold pop-art accents
+   Design language: clean white canvas + blue / grey / green accents
    ========================================================================= */
 
 /* ---------- Design tokens ---------- */
 :root {
-  /* Canvas */
-  --bg:        #0d0d0f;
-  --bg-2:      #15151a;
-  --surface:   #1b1b22;
-  --line:      rgba(255, 255, 255, 0.10);
+  /* Canvas (light) */
+  --bg:        #ffffff;
+  --bg-2:      #f2f6fa;   /* light grey-blue */
+  --surface:   #f6f9fc;   /* card surface */
+  --line:      rgba(22, 45, 70, 0.12);
 
   /* Ink */
-  --ink:       #f4f4f2;
-  --ink-soft:  #b6b6c0;
-  --ink-mute:  #7d7d8a;
+  --ink:       #16222e;   /* charcoal */
+  --ink-soft:  #44586c;   /* slate grey */
+  --ink-mute:  #7d8b9b;   /* muted grey */
 
-  /* Pop accents */
-  --magenta:   #ff2d75;
-  --cyan:      #00e5ff;
-  --yellow:    #ffe600;
-  --accent:    var(--magenta);
+  /* Brand accents — blue / green / grey
+     (legacy names kept so existing rules remap automatically) */
+  --blue:      #1f6fe5;
+  --green:     #1aa06a;
+  --grey:      #64748b;
+  --magenta:   var(--blue);    /* primary accent */
+  --cyan:      var(--green);   /* secondary accent */
+  --yellow:    #2bb38a;        /* soft green-teal highlight */
+  --accent:    var(--blue);
 
   /* System */
   --radius:    14px;
   --radius-sm: 8px;
   --maxw:      1180px;
   --gutter:    clamp(1.1rem, 4vw, 2.5rem);
-  --shadow:    0 18px 50px rgba(0, 0, 0, 0.45);
+  --shadow:    0 16px 44px rgba(22, 45, 80, 0.12);
   --ease:      cubic-bezier(0.22, 1, 0.36, 1);
 
   --font-display: "Archivo Black", "Arial Black", system-ui, sans-serif;
@@ -82,7 +86,7 @@ h2.section-title { font-size: clamp(1.9rem, 1.3rem + 2.6vw, 3.1rem); margin-bott
 /* ---------- Buttons ---------- */
 .btn {
   --btn-bg: var(--accent);
-  --btn-fg: #0b0b0d;
+  --btn-fg: #ffffff;
   display: inline-flex;
   align-items: center;
   gap: 0.55rem;
@@ -97,23 +101,23 @@ h2.section-title { font-size: clamp(1.9rem, 1.3rem + 2.6vw, 3.1rem); margin-bott
   transition: transform 0.25s var(--ease), box-shadow 0.25s var(--ease), background 0.25s;
   will-change: transform;
 }
-.btn:hover { transform: translateY(-3px); box-shadow: 0 12px 28px rgba(255, 45, 117, 0.35); }
+.btn:hover { transform: translateY(-3px); box-shadow: 0 12px 28px rgba(31, 111, 229, 0.30); }
 .btn:active { transform: translateY(-1px); }
 .btn--ghost {
   --btn-bg: transparent;
   --btn-fg: var(--ink);
   border-color: var(--line);
 }
-.btn--ghost:hover { border-color: var(--ink); box-shadow: none; background: rgba(255,255,255,0.04); }
-.btn--cyan { --btn-bg: var(--cyan); }
-.btn--cyan:hover { box-shadow: 0 12px 28px rgba(0, 229, 255, 0.3); }
+.btn--ghost:hover { border-color: var(--ink); box-shadow: none; background: rgba(22,45,70,0.05); }
+.btn--cyan { --btn-bg: var(--green); --btn-fg: #ffffff; }
+.btn--cyan:hover { box-shadow: 0 12px 28px rgba(26, 160, 106, 0.30); }
 
 /* ---------- Header / Nav ---------- */
 .site-header {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: rgba(13, 13, 15, 0.78);
+  background: rgba(255, 255, 255, 0.82);
   backdrop-filter: saturate(160%) blur(14px);
   border-bottom: 1px solid var(--line);
 }
@@ -134,7 +138,7 @@ h2.section-title { font-size: clamp(1.9rem, 1.3rem + 2.6vw, 3.1rem); margin-bott
 .brand .dot {
   width: 12px; height: 12px; border-radius: 50%;
   background: var(--magenta);
-  box-shadow: 0 0 0 4px rgba(255, 45, 117, 0.18);
+  box-shadow: 0 0 0 4px rgba(31, 111, 229, 0.18);
 }
 .nav-links { display: flex; align-items: center; gap: 1.6rem; }
 .nav-links a {
@@ -152,7 +156,7 @@ h2.section-title { font-size: clamp(1.9rem, 1.3rem + 2.6vw, 3.1rem); margin-bott
 }
 .nav-links a:hover, .nav-links a[aria-current="page"] { color: var(--ink); }
 .nav-links a:hover::after, .nav-links a[aria-current="page"]::after { width: 100%; }
-.nav-links .btn { color: #0b0b0d; }
+.nav-links .btn { color: #ffffff; }
 
 .nav-toggle {
   display: none;
@@ -171,8 +175,8 @@ h2.section-title { font-size: clamp(1.9rem, 1.3rem + 2.6vw, 3.1rem); margin-bott
   content: "";
   position: absolute; inset: -20% -10% auto auto;
   width: 60vw; height: 60vw; max-width: 720px; max-height: 720px;
-  background: radial-gradient(circle at 30% 30%, rgba(255,45,117,0.30), transparent 60%),
-              radial-gradient(circle at 70% 70%, rgba(0,229,255,0.22), transparent 60%);
+  background: radial-gradient(circle at 30% 30%, rgba(31,111,229,0.20), transparent 60%),
+              radial-gradient(circle at 70% 70%, rgba(26,160,106,0.18), transparent 60%);
   filter: blur(20px);
   z-index: 0;
   pointer-events: none;
@@ -215,7 +219,7 @@ h2.section-title { font-size: clamp(1.9rem, 1.3rem + 2.6vw, 3.1rem); margin-bott
   position: absolute;
   border-radius: var(--radius);
   box-shadow: var(--shadow);
-  border: 1px solid rgba(255,255,255,0.08);
+  border: 1px solid rgba(22,45,70,0.10);
 }
 .hero-art .t1 { inset: 0 18% 22% 0; transform: rotate(-4deg); }
 .hero-art .t2 { inset: 30% 0 0 38%; transform: rotate(5deg); }
@@ -227,7 +231,7 @@ h2.section-title { font-size: clamp(1.9rem, 1.3rem + 2.6vw, 3.1rem); margin-bott
 .art-fill::after {
   content: "";
   position: absolute; inset: 0;
-  background: var(--collage, linear-gradient(135deg, #ff2d75, #7a00ff)) center / cover no-repeat;
+  background: var(--collage, linear-gradient(135deg, #1f6fe5, #1aa06a)) center / cover no-repeat;
 }
 /* When a real <img> is dropped in, hide the SVG/gradient placeholder layer. */
 .art-fill:has(img)::after { display: none; }
@@ -235,7 +239,8 @@ h2.section-title { font-size: clamp(1.9rem, 1.3rem + 2.6vw, 3.1rem); margin-bott
 .art-fill .label {
   position: absolute; z-index: 2; left: 0; right: 0; bottom: 0;
   padding: 0.9rem 1rem;
-  background: linear-gradient(to top, rgba(0,0,0,0.75), transparent);
+  background: linear-gradient(to top, rgba(0,0,0,0.72), transparent);
+  color: #ffffff;
   font-size: 0.82rem; letter-spacing: 0.04em;
 }
 /* Placeholder artwork — handcrafted SVG collage tiles. Swap for real photos anytime. */
@@ -277,7 +282,7 @@ h2.section-title { font-size: clamp(1.9rem, 1.3rem + 2.6vw, 3.1rem); margin-bott
   overflow: hidden;
   transition: transform 0.3s var(--ease), border-color 0.3s;
 }
-.card:hover { transform: translateY(-6px); border-color: rgba(255,255,255,0.25); }
+.card:hover { transform: translateY(-6px); border-color: rgba(31,111,229,0.45); box-shadow: var(--shadow); }
 .card .art-fill { aspect-ratio: 4 / 3; }
 .card-body { padding: 1.2rem 1.25rem 1.4rem; }
 .card-body h3 { font-size: 1.15rem; margin-bottom: 0.4rem; }
@@ -316,7 +321,7 @@ h2.section-title { font-size: clamp(1.9rem, 1.3rem + 2.6vw, 3.1rem); margin-bott
 }
 .filter-pill:hover { color: var(--ink); border-color: var(--ink-mute); }
 .filter-pill[aria-pressed="true"] {
-  background: var(--ink); color: #0b0b0d; border-color: var(--ink);
+  background: var(--ink); color: #ffffff; border-color: var(--ink);
 }
 .piece.is-hidden { display: none; }
 
@@ -340,7 +345,7 @@ h2.section-title { font-size: clamp(1.9rem, 1.3rem + 2.6vw, 3.1rem); margin-bott
 /* ---------- CTA band ---------- */
 .cta-band {
   position: relative;
-  background: linear-gradient(120deg, var(--magenta), #7a00ff 60%, var(--cyan));
+  background: linear-gradient(120deg, var(--blue), #1488c6 55%, var(--green));
   border-radius: var(--radius);
   padding: clamp(2.2rem, 5vw, 3.6rem);
   text-align: center;
@@ -349,8 +354,8 @@ h2.section-title { font-size: clamp(1.9rem, 1.3rem + 2.6vw, 3.1rem); margin-bott
 }
 .cta-band h2 { font-size: clamp(1.7rem, 1.2rem + 2.5vw, 2.8rem); margin-bottom: 0.7rem; }
 .cta-band p { max-width: 50ch; margin: 0 auto 1.6rem; opacity: 0.92; }
-.cta-band .btn { --btn-bg: #0b0b0d; --btn-fg: #fff; border-color: #0b0b0d; }
-.cta-band .btn:hover { box-shadow: 0 12px 28px rgba(0,0,0,0.3); }
+.cta-band .btn { --btn-bg: #ffffff; --btn-fg: var(--ink); border-color: #ffffff; }
+.cta-band .btn:hover { box-shadow: 0 12px 28px rgba(0,0,0,0.22); }
 
 /* ---------- Forms ---------- */
 .form { display: grid; gap: 1.1rem; }
@@ -364,7 +369,7 @@ h2.section-title { font-size: clamp(1.9rem, 1.3rem + 2.6vw, 3.1rem); margin-bott
 }
 .field input:focus, .field textarea:focus, .field select:focus {
   outline: none; border-color: var(--cyan);
-  box-shadow: 0 0 0 3px rgba(0, 229, 255, 0.15);
+  box-shadow: 0 0 0 3px rgba(26, 160, 106, 0.18);
 }
 .field textarea { resize: vertical; min-height: 140px; }
 .form-note { font-size: 0.85rem; color: var(--ink-mute); }
@@ -399,7 +404,7 @@ h2.section-title { font-size: clamp(1.9rem, 1.3rem + 2.6vw, 3.1rem); margin-bott
 }
 .socials { display: flex; gap: 0.8rem; }
 .socials a { width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; border: 1px solid var(--line); color: var(--ink-soft); }
-.socials a:hover { color: #0b0b0d; background: var(--ink); border-color: var(--ink); }
+.socials a:hover { color: #ffffff; background: var(--ink); border-color: var(--ink); }
 
 /* ---------- Page header (interior pages) ---------- */
 .page-head { padding-block: clamp(3rem, 6vw, 5rem) clamp(1.5rem, 3vw, 2.5rem); }
