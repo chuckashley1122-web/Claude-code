@@ -17,7 +17,13 @@ Design review → SEO + Final audit.**
 | `about.html` | Artist statement, process, materials, influences, history |
 | `shop.html` | Originals, limited prints and merch with inquire-to-buy flow |
 | `contact.html` | Contact + commission form (mailto-based, works on any static host) |
+| `collection-man-vs-nature.html` · `collection-the-studio.html` · `collection-icons-idols.html` | Individual collection pages, each with its own gallery + lightbox |
+| `faq.html` | Buying / shipping / returns / commissions FAQ (accordion + FAQ schema) |
 | `404.html` | Branded not-found page (set as the host's error page) |
+
+**Gallery lightbox:** any page with a `.gallery-grid` automatically gets a
+click-to-enlarge lightbox (keyboard accessible: Enter/Space to open, ← → to move,
+Esc to close) — no per-page markup needed; it's built by `js/main.js`.
 
 ## Structure
 

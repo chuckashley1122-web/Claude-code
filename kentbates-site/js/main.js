@@ -107,6 +107,95 @@
     });
   });
 
+  /* ---- Gallery lightbox ----
+     Works on any page with a .gallery-grid. Builds the overlay once, makes each
+     .piece keyboard-accessible, and supports prev/next + Esc + backdrop close. */
+  var grid = document.querySelector(".gallery-grid");
+  if (grid) {
+    var pieces = Array.prototype.slice.call(grid.querySelectorAll(".piece"));
+
+    // Build overlay
+    var lb = document.createElement("div");
+    lb.className = "lightbox";
+    lb.setAttribute("role", "dialog");
+    lb.setAttribute("aria-modal", "true");
+    lb.setAttribute("aria-label", "Artwork viewer");
+    lb.innerHTML =
+      '<div class="lightbox-stage">' +
+        '<button class="lb-close" aria-label="Close">&times;</button>' +
+        '<button class="lb-btn lb-prev" aria-label="Previous">&#8249;</button>' +
+        '<div class="lightbox-art"></div>' +
+        '<button class="lb-btn lb-next" aria-label="Next">&#8250;</button>' +
+        '<div class="lightbox-cap"></div>' +
+      '</div>';
+    document.body.appendChild(lb);
+
+    var lbArt = lb.querySelector(".lightbox-art");
+    var lbCap = lb.querySelector(".lightbox-cap");
+    var stage = lb.querySelector(".lightbox-stage");
+    var current = -1;
+    var lastFocus = null;
+
+    function visiblePieces() {
+      return pieces.filter(function (p) { return !p.classList.contains("is-hidden"); });
+    }
+
+    function show(piece) {
+      var art = piece.querySelector(".art-fill");
+      if (!art) return;
+      var label = art.querySelector(".label");
+      var title = label ? label.textContent : "Untitled";
+      // Mirror the tile's collage class + aspect ratio
+      lbArt.className = "lightbox-art " + (art.className.replace("art-fill", "").trim());
+      var ar = art.style.getPropertyValue("--ar");
+      stage.style.setProperty("--ar", ar || "3 / 4");
+      lbCap.innerHTML = "<strong>" + title + "</strong>" +
+        '<span>Surreal pop collage · <a href="contact.html?item=' +
+        encodeURIComponent(title) + '">Inquire about this piece</a></span>';
+    }
+
+    function openAt(idx) {
+      var vis = visiblePieces();
+      if (!vis.length) return;
+      current = (idx + vis.length) % vis.length;
+      lastFocus = document.activeElement;
+      show(vis[current]);
+      lb.classList.add("open");
+      document.body.style.overflow = "hidden";
+      lb.querySelector(".lb-close").focus();
+    }
+    function close() {
+      lb.classList.remove("open");
+      document.body.style.overflow = "";
+      if (lastFocus && lastFocus.focus) lastFocus.focus();
+    }
+    function step(dir) { openAt(current + dir); }
+
+    pieces.forEach(function (p) {
+      p.setAttribute("tabindex", "0");
+      p.setAttribute("role", "button");
+      var lbl = p.querySelector(".label");
+      p.setAttribute("aria-label", "View " + (lbl ? lbl.textContent : "artwork"));
+      p.addEventListener("click", function () {
+        openAt(visiblePieces().indexOf(p));
+      });
+      p.addEventListener("keydown", function (e) {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openAt(visiblePieces().indexOf(p)); }
+      });
+    });
+
+    lb.querySelector(".lb-close").addEventListener("click", close);
+    lb.querySelector(".lb-prev").addEventListener("click", function () { step(-1); });
+    lb.querySelector(".lb-next").addEventListener("click", function () { step(1); });
+    lb.addEventListener("click", function (e) { if (e.target === lb) close(); });
+    document.addEventListener("keydown", function (e) {
+      if (!lb.classList.contains("open")) return;
+      if (e.key === "Escape") close();
+      else if (e.key === "ArrowLeft") step(-1);
+      else if (e.key === "ArrowRight") step(1);
+    });
+  }
+
   /* ---- Footer year ---- */
   var yr = document.querySelector("[data-year]");
   if (yr) yr.textContent = new Date().getFullYear();
