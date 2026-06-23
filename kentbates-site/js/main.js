@@ -145,8 +145,8 @@
       if (!art) return;
       var label = art.querySelector(".label");
       var title = label ? label.textContent : "Untitled";
-      // Mirror the tile's collage class + aspect ratio
-      lbArt.className = "lightbox-art " + (art.className.replace("art-fill", "").trim());
+      // Mirror the tile's collage class + aspect ratio (art-fill paints the bg)
+      lbArt.className = "lightbox-art art-fill " + (art.className.replace("art-fill", "").trim());
       var ar = art.style.getPropertyValue("--ar");
       stage.style.setProperty("--ar", ar || "3 / 4");
       lbCap.innerHTML = "<strong>" + title + "</strong>" +
