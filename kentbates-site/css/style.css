@@ -20,10 +20,11 @@
   /* Brand accents — blue / green / grey
      (legacy names kept so existing rules remap automatically) */
   --blue:      #1f6fe5;
-  --green:     #1aa06a;
+  --green:     #1aa06a;        /* vibrant green — decorative / large areas */
+  --green-ink: #0f7a50;        /* accessible green for text/links/icons (>=4.5:1 on white, WCAG AA) */
   --grey:      #64748b;
   --magenta:   var(--blue);    /* primary accent */
-  --cyan:      var(--green);   /* secondary accent */
+  --cyan:      var(--green-ink); /* secondary accent (text-safe green) */
   --yellow:    #2bb38a;        /* soft green-teal highlight */
   --accent:    var(--blue);
 
@@ -117,7 +118,7 @@ h2.section-title { font-size: clamp(1.9rem, 1.3rem + 2.6vw, 3.1rem); margin-bott
   border-color: var(--line);
 }
 .btn--ghost:hover { border-color: var(--ink); box-shadow: none; background: rgba(22,45,70,0.05); }
-.btn--cyan { --btn-bg: var(--green); --btn-fg: #ffffff; }
+.btn--cyan { --btn-bg: var(--green-ink); --btn-fg: #ffffff; }
 .btn--cyan:hover { box-shadow: 0 12px 28px rgba(26, 160, 106, 0.30); }
 
 /* ---------- Header / Nav ---------- */
