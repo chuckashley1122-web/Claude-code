@@ -1,0 +1,38 @@
+{
+  "_comment": "Single source of truth for Kent Bates artwork. Drop a real image into assets/art/ named <slug>.<jpg|jpeg|png|webp|avif>, then run: node tools/apply-artwork.js  — it injects each image into every matching tile across all pages (gallery, collections, shop, home). Re-run any time you add more. Tiles with no matching file keep the SVG placeholder.",
+  "art": [
+    { "slug": "orbit-decay",          "title": "Orbit / Decay",        "collection": "man-vs-nature", "theme": "space"  },
+    { "slug": "cosmonaut-dreams",     "title": "Cosmonaut Dreams",     "collection": "man-vs-nature", "theme": "space"  },
+    { "slug": "man-vs-nature-i",      "title": "Man Vs Nature I",      "collection": "man-vs-nature", "theme": "space"  },
+    { "slug": "the-great-indifference","title": "The Great Indifference","collection": "man-vs-nature","theme": "space" },
+    { "slug": "weather-systems",      "title": "Weather Systems",      "collection": "man-vs-nature", "theme": "space"  },
+    { "slug": "small-blue-dot",       "title": "Small Blue Dot",       "collection": "man-vs-nature", "theme": "space"  },
+    { "slug": "saint-of-static",      "title": "Saint of Static",      "collection": "icons",         "theme": "fame"   },
+    { "slug": "idol-worship",         "title": "Idol Worship",         "collection": "icons",         "theme": "fame"   },
+    { "slug": "paper-empire",         "title": "Paper Empire",         "collection": "icons",         "theme": "money"  },
+    { "slug": "golden-calf",          "title": "Golden Calf",          "collection": "icons",         "theme": "money"  },
+    { "slug": "fifteen-minutes",      "title": "Fifteen Minutes",      "collection": "icons",         "theme": "fame"   },
+    { "slug": "tender-is-the-bill",   "title": "Tender Is the Bill",   "collection": "icons",         "theme": "money"  },
+    { "slug": "residency-no-4",       "title": "Residency No. 4",      "collection": "studio",        "theme": "studio" },
+    { "slug": "foil-and-found-paper", "title": "Foil & Found Paper",   "collection": "studio",        "theme": "studio" },
+    { "slug": "studio-offcuts",       "title": "Studio Offcuts",       "collection": "studio",        "theme": "studio" },
+    { "slug": "bench-test-no-2",      "title": "Bench Test No. 2",     "collection": "studio",        "theme": "studio" },
+    { "slug": "texture-study",        "title": "Texture Study",        "collection": "studio",        "theme": "studio" },
+    { "slug": "late-night-layers",    "title": "Late Night Layers",    "collection": "studio",        "theme": "studio" }
+  ],
+  "merch": [
+    { "slug": "organic-cotton-tee",   "title": "Organic Cotton Tee" },
+    { "slug": "iphone-cover",         "title": "iPhone Cover" },
+    { "slug": "sticker-pack",         "title": "Sticker Pack" },
+    { "slug": "heavyweight-hoodie",   "title": "Heavyweight Hoodie" }
+  ],
+  "covers": [
+    { "slug": "cover-man-vs-nature",  "match": "Man Vs Nature · 2024",            "alt": "Man Vs Nature collection cover" },
+    { "slug": "cover-the-studio",     "match": "The Studio · Residency 2020/21",  "alt": "The Studio Collection cover" },
+    { "slug": "cover-icons-idols",    "match": "Icons & Idols",                   "alt": "Icons & Idols collection cover" }
+  ],
+  "portraits": [
+    { "slug": "kent-portrait", "matchAria": "Portrait placeholder of artist Kent Bates",     "alt": "Kent Bates, surreal pop collage artist" },
+    { "slug": "kent-portrait", "matchAria": "Portrait placeholder of Kent Bates in the studio", "alt": "Kent Bates in his studio" }
+  ]
+}
