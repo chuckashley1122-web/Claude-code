@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Surreal fame and icons collage placeholder">
+  <defs>
+    <linearGradient id="fg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1f6fe5"/><stop offset="1" stop-color="#1aa06a"/>
+    </linearGradient>
+    <pattern id="dots-f" width="22" height="22" patternUnits="userSpaceOnUse">
+      <circle cx="5" cy="5" r="2.6" fill="#0d2c54" opacity="0.26"/>
+    </pattern>
+  </defs>
+  <rect width="800" height="600" fill="url(#fg)"/>
+  <g transform="translate(400 300)">
+    <g fill="#16222e" opacity="0.9">
+      <path d="M0 -260 L36 -70 L150 -110 L60 -10 L150 70 L36 30 L0 220 L-36 30 L-150 70 L-60 -10 L-150 -110 L-36 -70 Z"/>
+    </g>
+  </g>
+  <rect width="800" height="600" fill="url(#dots-f)"/>
+  <circle cx="400" cy="300" r="86" fill="#ffffff"/>
+  <circle cx="400" cy="300" r="86" fill="none" stroke="#16222e" stroke-width="8"/>
+  <rect x="0" y="0" width="800" height="46" fill="#16222e"/>
+  <rect x="0" y="554" width="800" height="46" fill="#16222e"/>
+  <g fill="#cbd5e1">
+    <rect x="40" y="8" width="22" height="30"/><rect x="100" y="8" width="22" height="30"/><rect x="160" y="8" width="22" height="30"/>
+    <rect x="620" y="562" width="22" height="30"/><rect x="680" y="562" width="22" height="30"/><rect x="740" y="562" width="22" height="30"/>
+  </g>
+</svg>
