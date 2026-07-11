@@ -263,6 +263,42 @@ Once wired up, your daily flow is simply:
 Adding a new repo to the fleet later? Just run the one-time onboarding in
 **section 3e** for it and add it to the system-prompt list.
 
+## Optional: let Claude configure Jarvis for you (ElevenLabs MCP)
+
+Instead of clicking through the ElevenLabs dashboard for Part 3, you can connect
+the **ElevenLabs MCP server** to your *local* Claude Code and have Claude create
+the `assign_coding_task` tool and update the agent's system prompt for you.
+
+This repo ships a secret-free `.mcp.json` that references the key via an
+environment variable — the key is **never** stored in the file:
+
+```json
+{
+  "mcpServers": {
+    "elevenlabs": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": ["elevenlabs-mcp"],
+      "env": { "ELEVENLABS_API_KEY": "${ELEVENLABS_API_KEY}" }
+    }
+  }
+}
+```
+
+To use it:
+
+1. **Rotate your ElevenLabs API key** if it has ever been pasted into a chat,
+   commit, or shared — treat any exposed key as compromised and regenerate it in
+   ElevenLabs → API Keys.
+2. Put the fresh key in your environment, not in any file:
+   `export ELEVENLABS_API_KEY=sk_...` (in your shell profile or OS keychain).
+3. Open this repo in your local Claude Code. It picks up `.mcp.json`, and the
+   `elevenlabs` tools become available. Ask Claude to set up the agent.
+
+> This runs in your **local** Claude Code (the MCP launches `uvx elevenlabs-mcp`
+> on your machine). The `.gitignore` in this repo blocks `.env`, `*.key`, `*.pem`,
+> and `*.local` files so a real key can never be committed by accident.
+
 ## Troubleshooting
 
 | Symptom | Fix |
