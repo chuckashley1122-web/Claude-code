@@ -229,6 +229,24 @@ present, secret set, token scoped, and listed in the prompt.
 
 ---
 
+## Talking to Jarvis every day
+
+`jarvis.html` (repo root) is your daily voice interface — a single page with a
+tap-to-talk button wired to your agent. Three ways to use it, easiest first:
+
+1. **Open the file directly.** Download `jarvis.html`, double-click it, allow the
+   microphone. Works offline-of-your-code, no hosting. Bookmark it.
+2. **Host it free on GitHub Pages** for a URL that works on your phone too:
+   repo **Settings → Pages → Build from a branch →** pick this branch and `/root`.
+   Your page appears at `https://chuckashley1122-web.github.io/claude-code/jarvis.html`.
+   Add it to your phone's home screen for one-tap access.
+3. **Embed the widget** on any site you already run by dropping in the two lines
+   from method 3 of the deploy guide.
+
+> The widget uses your agent directly (no auth), so the page is all you need on
+> the client side. Everything that turns speech into pull requests still runs
+> through the tools and secrets configured above.
+
 ## The daily loop
 
 Once wired up, your daily flow is simply:
