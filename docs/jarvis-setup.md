@@ -44,11 +44,24 @@ It needs Read & Write on **Contents**, **Issues**, and **Pull requests**.
 > Shortcut: from a Claude Code terminal you can run `/install-github-app`, which
 > installs the app and offers to add the workflow + secret for you.
 
-### 1b. Add your Anthropic API key as a repo secret
+### 1b. Add your Claude Max subscription token as a repo secret
 
-1. Get a key from https://console.anthropic.com
+The workflow authenticates against your **Claude Max plan** — no per-token API
+billing. You generate a long-lived OAuth token from the Claude Code CLI:
+
+1. In a terminal with Claude Code installed and logged into your Max account,
+   run:
+   ```
+   claude setup-token
+   ```
+   Copy the token it prints (it authorizes against your subscription).
 2. In the repo: **Settings → Secrets and variables → Actions → New repository secret**
-3. Name it exactly `ANTHROPIC_API_KEY`, paste the key, save.
+3. Name it exactly `CLAUDE_CODE_OAUTH_TOKEN`, paste the token, save.
+
+> Prefer pay-as-you-go instead? Swap `claude_code_oauth_token` for
+> `anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}` in
+> `.github/workflows/claude.yml` and store an `ANTHROPIC_API_KEY` secret from
+> https://console.anthropic.com instead. Use one or the other, not both.
 
 **Test it:** open a new issue with a body like
 `@claude add a comment to sync-claude.sh explaining the rsync flags`.
@@ -192,7 +205,7 @@ This setup targets one repo. To let Jarvis assign work across several repos:
 | Symptom | Fix |
 |---------|-----|
 | Issue is created but no Action runs | Body must contain `@claude`. Check the issue body actually starts with it. |
-| Action runs but fails on auth | `ANTHROPIC_API_KEY` secret missing/invalid in repo settings. |
+| Action runs but fails on auth | `CLAUDE_CODE_OAUTH_TOKEN` secret missing/invalid. Re-run `claude setup-token` and update the secret (tokens can expire). |
 | ElevenLabs tool returns 401/403 | GitHub token wrong, expired, or lacks Issues:write on this repo. |
 | ElevenLabs tool returns 404 | URL or repo owner/name typo, or token can't see the repo. |
 | Claude commits but CI doesn't run on its PRs | Ensure the Claude GitHub App (not the Actions user) is installed. |

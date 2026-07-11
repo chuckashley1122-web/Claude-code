@@ -40,7 +40,10 @@ jobs:
       - name: Run Claude Code
         uses: anthropics/claude-code-action@v1
         with:
-          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          # Authenticates against your Claude Max subscription (no per-token API
+          # billing). Generate the token with `claude setup-token` and store it
+          # as the CLAUDE_CODE_OAUTH_TOKEN repo secret. See docs/jarvis-setup.md.
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           # No `prompt:` here on purpose — for issue/comment events Claude reads
           # the thread and responds to the @claude mention automatically.
           claude_args: |
