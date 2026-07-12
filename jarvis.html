@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Jarvis</title>
+  <style>
+    :root {
+      --bg: #0b0f1a;
+      --bg-glow: #12203b;
+      --fg: #e8eefc;
+      --muted: #8a96b3;
+      --accent: #5b9dff;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: var(--fg);
+      background:
+        radial-gradient(1200px 800px at 50% -10%, var(--bg-glow), transparent 60%),
+        var(--bg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100dvh;
+      padding: 24px;
+      text-align: center;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .mark {
+      width: 64px; height: 64px; border-radius: 18px;
+      display: grid; place-items: center;
+      background: linear-gradient(135deg, var(--accent), #9d7bff);
+      box-shadow: 0 10px 40px rgba(91, 157, 255, 0.35);
+      font-size: 30px; margin-bottom: 22px;
+    }
+    h1 { font-size: 28px; font-weight: 650; margin: 0 0 8px; letter-spacing: -0.02em; }
+    p.sub { color: var(--muted); margin: 0 0 32px; max-width: 30ch; line-height: 1.5; }
+    .hint {
+      margin-top: 34px; color: var(--muted); font-size: 13px; line-height: 1.6;
+      max-width: 34ch;
+    }
+    .hint strong { color: var(--fg); font-weight: 600; }
+    a { color: var(--accent); text-decoration: none; }
+    /* The ElevenLabs widget renders its own floating "talk" button. */
+    elevenlabs-convai { --el-accent-color: var(--accent); }
+  </style>
+</head>
+<body>
+  <div class="mark">🎙️</div>
+  <h1>Jarvis</h1>
+  <p class="sub">Your voice command center for Claude Code. Tap the button, say what you want built, and a pull request follows.</p>
+
+  <div class="hint">
+    Tap the <strong>microphone</strong> in the corner to start talking. Try:
+    <br />“<em>Add a dark mode toggle to my website.</em>”
+  </div>
+
+  <!-- The agent. requires_auth is false, so no server or token is needed. -->
+  <elevenlabs-convai agent-id="agent_0001ktn3bhnsfwcs1csfy3qf6xky"></elevenlabs-convai>
+  <script src="https://elevenlabs.io/convai-widget/index.js" async></script>
+</body>
+</html>

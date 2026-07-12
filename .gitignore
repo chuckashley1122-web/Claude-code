@@ -1,0 +1,15 @@
+# Secrets — never commit. Keys live in environment variables or your keychain.
+.env
+.env.*
+*.local
+.claude/settings.local.json
+.mcp.local.json
+*.pem
+*.key
+
+# Local Claude Code state
+.claude/todos/
+.claude/shell-snapshots/
+
+# OS / editor noise
+.DS_Store
