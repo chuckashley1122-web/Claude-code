@@ -39,6 +39,14 @@ Specialized agents live in `.claude/agents/`:
 - `coder` — implements features and fixes from a task description.
 - `reviewer` — reviews a diff for correctness and scope before it ships.
 
+## Skills
+
+Skills live in `.claude/skills/`:
+
+- `humanizer` — rewrites AI-sounding or stiff copy so it reads like a person
+  wrote it. Use it for anything user-facing that gets read aloud or published:
+  PR bodies Jarvis reads back, issue replies, docs, and marketing copy.
+
 ## Setup & wiring
 
 The full end-to-end wiring (ElevenLabs webhook tool, GitHub secrets, the voice
