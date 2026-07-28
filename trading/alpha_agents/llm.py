@@ -48,8 +48,8 @@ class AnthropicLanguageModel:
         except ImportError as exc:  # pragma: no cover - depends on env
             raise ImportError(
                 "The Claude-backed analysts need the Anthropic SDK. "
-                "Install it with `pip install anthropic`, or run with "
-                "--no-llm to use the deterministic analysts."
+                "Install it with `pip install anthropic`, or omit the --llm "
+                "flag to use the deterministic analysts."
             ) from exc
         # A bare constructor resolves ANTHROPIC_API_KEY, ANTHROPIC_AUTH_TOKEN,
         # or an `ant auth login` profile — do not demand an explicit key.

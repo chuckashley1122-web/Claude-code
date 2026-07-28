@@ -44,6 +44,21 @@ def build_pipeline(args: argparse.Namespace) -> TradingPipeline:
             effort=settings.models.effort,
             max_tokens=settings.models.max_tokens,
         )
+        # Resolve the client now rather than on the first analyst call. The
+        # analysts fall back to their rules when a model call fails, which is
+        # right for a transient error mid-scan but wrong here: someone who
+        # passed --llm and silently received rule-based output has been
+        # misled about what produced their numbers.
+        try:
+            llm._get_client()
+        except ImportError as exc:
+            raise SystemExit(f"--llm requested but unavailable: {exc}") from exc
+        except Exception as exc:  # missing or invalid credentials
+            raise SystemExit(
+                f"--llm requested but the Anthropic client could not be "
+                f"created: {exc}\nSet ANTHROPIC_API_KEY or run `ant auth login`, "
+                f"or drop --llm to use the deterministic analysts."
+            ) from exc
 
     portfolio = Portfolio(cash=settings.starting_cash)
     broker = PaperBroker(portfolio=portfolio, costs=settings.costs)
