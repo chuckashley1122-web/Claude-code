@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "alpha-agents"
+version = "0.1.0"
+description = "A multi-agent trading research engine. Paper trading only."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+
+# The core engine is deliberately dependency-free: indicators, portfolio
+# accounting, risk sizing, the paper broker and the backtester are all pure
+# standard library. That keeps the offline path installable anywhere and makes
+# the numbers auditable without a vendor in the loop.
+dependencies = []
+
+[project.optional-dependencies]
+llm = ["anthropic>=0.60"]
+market-data = ["yfinance>=0.2.40"]
+all = ["anthropic>=0.60", "yfinance>=0.2.40"]
+
+[project.scripts]
+alpha-agents = "alpha_agents.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["alpha_agents*"]
+
+[tool.setuptools.package-data]
+alpha_agents = ["py.typed"]

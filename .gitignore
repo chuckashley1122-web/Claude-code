@@ -13,3 +13,16 @@
 
 # OS / editor noise
 .DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+
+# alpha_agents local state
+.cache/
+trading/.cache/
