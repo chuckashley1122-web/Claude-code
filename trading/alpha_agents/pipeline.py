@@ -195,7 +195,17 @@ class TradingPipeline:
                 decision.rejection = "dry run — not submitted"
                 continue
 
-            fill = self.broker.submit(order, as_of, marks[order.symbol])
+            # Execute at the next session's open, never at the close the
+            # decision was made on. `marks` stays the close because valuing the
+            # book and filling an order are different questions.
+            fill_price = self._fill_price(order.symbol, as_of)
+            if fill_price is None:
+                decision.rejection = (
+                    "queued: fills at the next session's open, which does not exist yet"
+                )
+                continue
+
+            fill = self.broker.submit(order, as_of, fill_price)
             if fill is None:
                 decision.rejection = getattr(self.broker, "last_rejection", "broker declined")
                 continue
@@ -266,6 +276,25 @@ class TradingPipeline:
                 "needs one to size positions against."
             )
         return portfolio
+
+    def _fill_price(self, symbol: str, as_of: date) -> float | None:
+        """The next session's open — the earliest price this order could fill at.
+
+        A verdict formed from ``as_of``'s bar is only known once that bar has
+        closed, so filling at that same close assumes a price the decision
+        itself depended on. Over a universe of gapping names that is a
+        systematic free edge, and it is the single most common way a backtest
+        flatters a strategy that does not work.
+
+        Returns ``None`` at the live edge, where tomorrow's open genuinely does
+        not exist yet. That is not a failure — it is the honest statement that
+        the order is queued, not filled.
+        """
+        series = self.provider.prices(symbol, as_of, as_of + timedelta(days=10))
+        for bar in series.bars:
+            if bar.ts > as_of:
+                return bar.open
+        return None
 
     def _marks(self, as_of: date) -> dict[str, float]:
         symbols = set(self.settings.universe) | set(self._portfolio.positions)
