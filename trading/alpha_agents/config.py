@@ -35,11 +35,22 @@ class RiskLimits:
     min_confidence: float = 0.60
     """Verdicts below this confidence are not traded, regardless of stance."""
 
-    vol_target_annual: float = 0.15
-    """Annualised volatility the position sizer aims each position at."""
+    vol_target_annual: float = 0.04
+    """Annualised volatility budget per position.
 
-    max_sector_pct: float = 0.35
-    """Cap per sector, when sector data is available."""
+    Sizing is ``equity * (vol_target / annual_vol) * confidence``, clamped to
+    ``max_position_pct``. The value has to be small enough that the clamp does
+    not swallow it: at the original 0.15 the 10% cap bound for any volatility
+    below 150%, so every realistic name got exactly 10% of equity and a
+    60%-vol position carried five times the risk of a 12%-vol one. At 0.04 the
+    vol term starts binding around 30% annualised, which is where it should.
+    """
+
+    # There is deliberately no max_sector_pct. It was configured, validated and
+    # serialised while never being read by any code path, and no sector data
+    # exists on Fundamentals or Position for it to read — a limit that cannot
+    # be enforced is worse than an absent one, because it reads as protection.
+    # Reinstate it together with a sector map and a check in RiskManager.
 
     def __post_init__(self) -> None:
         fractions = {
@@ -48,7 +59,6 @@ class RiskLimits:
             "max_daily_loss_pct": self.max_daily_loss_pct,
             "max_drawdown_pct": self.max_drawdown_pct,
             "min_confidence": self.min_confidence,
-            "max_sector_pct": self.max_sector_pct,
         }
         for name, value in fractions.items():
             if not 0.0 < value <= 1.0:

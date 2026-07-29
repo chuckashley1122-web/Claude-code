@@ -31,6 +31,14 @@ An order sized to be *exactly* at the cap must not be rejected because the
 division landed 1e-16 over the line.
 """
 
+COST_ALLOWANCE: float = 0.005
+"""Headroom reserved for slippage and commission in the cash check.
+
+The risk layer does not hold the broker's ``CostModel``, so it reserves a flat
+50bps rather than pretending execution is free. Comfortably covers the default
+5bps slippage plus commission at any realistic order size.
+"""
+
 
 def size_position(
     equity: float,
@@ -87,6 +95,7 @@ class RiskManager:
         self._day_open_equity: float | None = None
         self._peak_equity: float | None = None
         self._new_positions_today: int = 0
+        self._last_equity: float | None = None
         self._tripped: bool = False
         self._trip_reason: str = ""
 
@@ -129,9 +138,17 @@ class RiskManager:
         keeps the running peak that the drawdown limit measures against.
         """
         if self._day is None or when != self._day:
-            self.new_day(when, equity)
+            # Roll into the new day using the *previous* day's closing equity as
+            # the baseline, not the equity being marked now. Baselining to the
+            # current mark makes the daily move measure (E - E)/E == 0 in any
+            # system that marks once per session — which is every daily-bar
+            # backtest — so the daily loss limit would silently never fire.
+            self.new_day(
+                when, self._last_equity if self._last_equity is not None else equity
+            )
         if self._peak_equity is None or equity > self._peak_equity:
             self._peak_equity = equity
+        self._last_equity = equity
 
     def new_day(self, when: date, equity: float) -> None:
         """Start a new trading day: reset per-day counters and the open mark.
@@ -247,10 +264,17 @@ class RiskManager:
 
         notional = order.quantity * price
 
-        if notional > portfolio.cash + EPSILON:
+        # Check against notional plus a costs allowance, not bare notional. The
+        # broker charges slippage and commission on top, so a check that just
+        # clears here can still be refused there — and by then `check` has
+        # already consumed one of the day's new-position slots for a position
+        # that never opened. Approving slightly less than we can afford is the
+        # safe direction to be wrong in.
+        required = notional * (1.0 + COST_ALLOWANCE)
+        if required > portfolio.cash + EPSILON:
             return False, (
-                f"insufficient cash for {order.symbol}: needs ${notional:,.2f}, "
-                f"have ${portfolio.cash:,.2f}"
+                f"insufficient cash for {order.symbol}: needs ${required:,.2f} "
+                f"including costs, have ${portfolio.cash:,.2f}"
             )
 
         existing = portfolio.positions.get(order.symbol)

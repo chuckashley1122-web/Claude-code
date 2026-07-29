@@ -170,7 +170,13 @@ class TestRiskManagerChecks(unittest.TestCase):
         )
         self.assertFalse(allowed)
         self.assertIn("insufficient cash", reason)
-        self.assertIn("$5,000.00", reason)
+        # The requirement quoted includes a costs allowance, so it exceeds the
+        # bare $5,000 notional — the broker would charge slippage and
+        # commission on top, and approving an order it will then refuse burns a
+        # new-position slot for a position that never opens.
+        self.assertIn("including costs", reason)
+        self.assertIn("$5,025.00", reason)
+        self.assertIn("have $1,000.00", reason)
 
     def test_daily_new_position_limit_rejection(self) -> None:
         for i in range(self.limits.max_new_positions_per_day):

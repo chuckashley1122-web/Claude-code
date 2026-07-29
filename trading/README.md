@@ -121,12 +121,18 @@ the book adding risk, and a control that also traps you in the positions that
 tripped it turns a limit breach into a much larger loss. Stopping and de-risking
 are different actions, and only the first should be automatic.
 
-> Note on sizing: at the default `max_position_pct=0.10` and
-> `vol_target_annual=0.15`, the position cap binds for any annual volatility
-> below 150%, so volatility targeting is effectively inert under defaults and
-> sizing reduces to *10% of equity × confidence*. That is conservative by
-> design, but raise `max_position_pct` if you actually want the vol term to do
-> work.
+A halt suppresses **buying**, it does not abandon the book: the universe is
+still researched so exits stay reachable, and every buy is refused with the
+reason attached. The same suppression applies when a held position has no
+usable mark — an unmarked holding is valued at cost, so equity is unreliable
+and adding risk on top of it would be adding risk to a number nobody can trust.
+
+Sizing is `equity * (vol_target_annual / annual_vol) * confidence`, clamped to
+`max_position_pct`. The vol target has to be small enough that the clamp does
+not swallow it: at a 0.15 target the 10% cap bound for every volatility below
+150%, so a 60%-vol name received the same capital as a 12%-vol one and carried
+five times the risk. The default is `0.04`, where the vol term starts binding
+around 30% annualised.
 
 ## Backtesting
 
@@ -188,7 +194,7 @@ alpha_agents/
   backtest.py      walk-forward engine + statistics
   llm.py           Claude adapter
   cli.py           command line
-tests/             250 tests, stdlib unittest
+tests/             258 tests, stdlib unittest
 ```
 
 ## Tests
@@ -198,7 +204,7 @@ cd ..                                              # repo root
 python3 -m unittest discover -s trading/tests -t .
 ```
 
-250 tests, no dependencies. The indicator suite was mutation-tested: twelve
+258 tests, no dependencies. The indicator suite was mutation-tested: twelve
 deliberate breakages (Wilder→simple averaging, EMA seed and k-factor, window
 off-by-one, population↔sample stddev, dropped annualisation, flipped drawdown
 sign) were each confirmed to fail the suite.
@@ -224,7 +230,10 @@ Stated plainly, because each one matters for how much weight to put on output:
 - **Long only.** No shorting; a SELL is an exit and is a no-op when flat.
 - **Daily bars only.** No intraday data, no order book, no market impact model
   beyond a flat slippage assumption.
-- **No sector data**, so `max_sector_pct` is defined but not enforced.
+- **No sector limit.** There is no sector data on `Fundamentals` or
+  `Position`, so a book can be fully concentrated in one sector within the
+  gross cap. A `max_sector_pct` setting previously existed and was never
+  read by anything; it was removed rather than left to read as protection.
 - **Exchange holidays are not modelled** — the backtester steps over weekdays.
 - **yfinance fundamentals are not point-in-time**, so the backtester refuses to
   pair them with the fundamental analyst (see Backtesting above).

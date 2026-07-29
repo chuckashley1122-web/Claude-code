@@ -56,6 +56,8 @@ class ScanResult:
     snapshot: AccountSnapshot | None = None
     halted: bool = False
     halt_reason: str = ""
+    unmarked_positions: tuple[str, ...] = ()
+    """Held symbols with no usable mark, so equity is valued at cost for them."""
 
     @property
     def actionable(self) -> list[Decision]:
@@ -131,14 +133,34 @@ class TradingPipeline:
 
         marks = self._marks(as_of)
         equity = self._portfolio.equity(marks)
-        self.risk.new_day(as_of, equity)
+
+        # mark(), not new_day(). new_day() re-baselines the day's opening equity
+        # unconditionally, so calling it here set day_open == current equity on
+        # every scan: the daily-loss term computed (E - E)/E == 0 and the 3%
+        # limit could never fire, while every re-run on the same date also
+        # handed back a fresh new-position budget. mark() rolls the day only
+        # when the date actually changes.
+        self.risk.mark(as_of, equity)
 
         tripped, reason = self.risk.kill_switch_tripped(equity)
         if tripped:
             result.halted = True
             result.halt_reason = reason
-            result.snapshot = self.broker.snapshot(as_of, marks)
-            return result
+
+        # Equity is only as trustworthy as the marks behind it. Portfolio values
+        # an unmarked holding at cost, so a delisted or provider-dropped name
+        # would sit at its entry price indefinitely and hide the loss from the
+        # drawdown limit. Do not add risk on top of a number we cannot trust.
+        result.unmarked_positions = tuple(
+            sorted(set(self._portfolio.positions) - set(marks))
+        )
+
+        # Both conditions suppress buys only. Exits stay reachable by design:
+        # halting everything strands the book in the very positions that tripped
+        # the switch, which is the failure the risk layer explicitly guards
+        # against — and the guard is worthless if the pipeline never proposes
+        # the exit for it to approve.
+        buys_suppressed = tripped or bool(result.unmarked_positions)
 
         verdicts = sorted(
             (self.research(sym, as_of) for sym in self.settings.universe),
@@ -154,6 +176,15 @@ class TradingPipeline:
             if order is None:
                 continue
             decision.order = order
+
+            if buys_suppressed and order.side is not Stance.SELL:
+                decision.rejection = (
+                    f"buying suppressed: {reason}"
+                    if tripped
+                    else f"buying suppressed: unmarked holdings "
+                    f"{', '.join(result.unmarked_positions)} make equity unreliable"
+                )
+                continue
 
             allowed, why = self.risk.check(order, self._portfolio, marks, self.settings.risk)
             if not allowed:

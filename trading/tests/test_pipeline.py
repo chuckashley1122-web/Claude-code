@@ -162,14 +162,25 @@ class TestScan(unittest.TestCase):
         )
         self.assertIsNone(pipeline._propose_order(verdict, AS_OF, {}))
 
-    def test_tripped_kill_switch_halts_the_scan(self) -> None:
+    def test_tripped_kill_switch_halts_buying_but_still_researches(self) -> None:
+        """A halt suppresses buys; it does not abandon the book.
+
+        This previously asserted `decisions == []`, which looked like a strong
+        safety property and was the opposite: returning before any order was
+        proposed meant the risk layer's "exits stay permitted" rule could never
+        be exercised, and a stopped-out book could never be de-risked.
+        """
         pipeline = make_pipeline()
         pipeline.risk.new_day(AS_OF, 100_000.0)
         pipeline.risk.kill_switch_tripped(50_000.0)  # catastrophic loss
         result = pipeline.scan(AS_OF, execute=True)
+
         self.assertTrue(result.halted)
         self.assertTrue(result.halt_reason)
-        self.assertEqual(result.decisions, [])
+        # The universe is still researched, so exits remain reachable...
+        self.assertEqual({d.symbol for d in result.decisions}, {"AAA", "BBB"})
+        # ...but nothing was bought.
+        self.assertEqual(pipeline.broker.portfolio.positions, {})
 
     def test_scan_returns_a_snapshot(self) -> None:
         pipeline = make_pipeline()

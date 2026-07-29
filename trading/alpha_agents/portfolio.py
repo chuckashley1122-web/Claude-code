@@ -46,8 +46,15 @@ class Portfolio:
         if cash < 0:
             raise ValueError(f"starting cash must be non-negative, got {cash}")
         self.cash: float = float(cash)
-        self.initial_cash: float = float(cash)
         self.positions: dict[str, Position] = dict(positions or {})
+        # Seeded positions are capital already deployed, so they belong in the
+        # starting baseline. Counting only cash breaks the
+        # `equity == initial_cash + realized + unrealized` identity for any
+        # pre-seeded book by exactly the seeded cost basis, which quietly
+        # misstates attribution for anything that does not start flat.
+        self.initial_cash: float = float(cash) + sum(
+            p.cost_basis for p in self.positions.values()
+        )
         self.realized_pnl: float = float(realized_pnl)
 
     # ------------------------------------------------------------------
