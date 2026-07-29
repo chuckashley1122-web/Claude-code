@@ -27,9 +27,21 @@ class MarketDataProvider(Protocol):
 
     Implementations must be *point-in-time honest*: given ``end``, never return
     data that was not observable by then.
+
+    Some vendors cannot honour that for every field. ``yfinance`` exposes only
+    *current* fundamentals, so scoring a 2019 date with them leaks the future.
+    A provider that cannot slice a field historically must declare it, so the
+    backtester can refuse rather than silently producing an inflated result.
     """
 
     name: str
+
+    point_in_time_fundamentals: bool
+    """False when ``fundamentals()`` returns current data regardless of ``as_of``.
+
+    Such a provider is fine for live or paper decisions, where "now" is the
+    right answer, and unusable for backtesting the fundamental analyst.
+    """
 
     def prices(self, symbol: str, start: date, end: date) -> PriceSeries:
         """Daily bars for ``symbol`` in ``[start, end]``, oldest first."""

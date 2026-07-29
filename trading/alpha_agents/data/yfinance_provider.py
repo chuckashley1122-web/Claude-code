@@ -62,6 +62,8 @@ class YFinanceProvider:
     """Reads daily bars, fundamentals and headlines from Yahoo Finance."""
 
     name = "yfinance"
+    # ``Ticker.info`` is a snapshot of today regardless of ``as_of``.
+    point_in_time_fundamentals = False
 
     def __init__(self, auto_adjust: bool = True) -> None:
         self.auto_adjust = auto_adjust

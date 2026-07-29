@@ -109,6 +109,9 @@ class SyntheticProvider:
     """
 
     name = "synthetic"
+    # The generator derives fundamentals from the quarter preceding
+    # ``as_of``, so they are genuinely sliceable through history.
+    point_in_time_fundamentals = True
 
     def __init__(self, seed: int = 1729, annual_volume: float = 5_000_000.0) -> None:
         self.seed = seed

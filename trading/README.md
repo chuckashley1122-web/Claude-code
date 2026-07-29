@@ -142,6 +142,25 @@ enforced structurally rather than by convention, and is asserted by tests.
 Commission and slippage are charged through the broker's `CostModel`, so
 reported results already include them.
 
+Prices are only half the problem. `yfinance` serves *current* fundamentals
+regardless of the date you ask about, so backtesting the fundamental analyst
+against it would score 2019 decisions with today's numbers — look-ahead of the
+most flattering kind, since the analyst would effectively know which companies
+went on to compound. Providers therefore declare
+`point_in_time_fundamentals`, and the backtester refuses to run when a leaky
+provider is paired with the fundamental analyst:
+
+```
+$ python3 -m alpha_agents backtest --provider yfinance
+Provider 'yfinance' serves current fundamentals regardless of as_of, so
+backtesting the fundamental analyst against it ... inflates the result.
+```
+
+Three ways forward: drop the fundamental analyst from the committee, supply a
+point-in-time provider, or pass `--allow-lookahead-fundamentals` to accept a
+knowingly invalid run. Wrapping a leaky provider in `CachingProvider` does not
+clear the flag.
+
 **On the synthetic provider, a strongly positive backtest is a bug report.** The
 synthetic data is a random walk with no exploitable structure, so the honest
 result is a small loss after costs — which is what it currently produces. A
@@ -169,7 +188,7 @@ alpha_agents/
   backtest.py      walk-forward engine + statistics
   llm.py           Claude adapter
   cli.py           command line
-tests/             231 tests, stdlib unittest
+tests/             250 tests, stdlib unittest
 ```
 
 ## Tests
@@ -179,7 +198,7 @@ cd ..                                              # repo root
 python3 -m unittest discover -s trading/tests -t .
 ```
 
-231 tests, no dependencies. The indicator suite was mutation-tested: twelve
+250 tests, no dependencies. The indicator suite was mutation-tested: twelve
 deliberate breakages (Wilder→simple averaging, EMA seed and k-factor, window
 off-by-one, population↔sample stddev, dropped annualisation, flipped drawdown
 sign) were each confirmed to fail the suite.
@@ -190,7 +209,9 @@ Anything pluggable satisfies a Protocol in `interfaces.py`:
 
 - **New data vendor** — implement `MarketDataProvider`, register it in
   `data/__init__.py`. It must be point-in-time honest: given `end`, never return
-  data that was not observable by then.
+  data that was not observable by then. If it cannot be for fundamentals, set
+  `point_in_time_fundamentals = False` and the backtester will refuse it rather
+  than silently producing an inflated result.
 - **New analyst** — subclass `BaseAnalyst`, implement `gather` (numbers) and
   `decide` (rules), add it to `ANALYST_REGISTRY`.
 - **New indicator** — add to `indicators.py`. Return a list aligned to the input
@@ -205,6 +226,8 @@ Stated plainly, because each one matters for how much weight to put on output:
   beyond a flat slippage assumption.
 - **No sector data**, so `max_sector_pct` is defined but not enforced.
 - **Exchange holidays are not modelled** — the backtester steps over weekdays.
+- **yfinance fundamentals are not point-in-time**, so the backtester refuses to
+  pair them with the fundamental analyst (see Backtesting above).
 - **The synthetic provider is not a market.** It is for reproducible plumbing
   tests and demos, not for evaluating whether a strategy has edge.
 - **The sentiment lexicon cannot read negation or context.** Use `--llm` if

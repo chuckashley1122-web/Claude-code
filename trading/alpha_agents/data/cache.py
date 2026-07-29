@@ -130,6 +130,13 @@ class CachingProvider:
         self.inner = inner
         self.name = f"cached:{inner.name}"
         self.cache_dir = Path(cache_dir) / _slug(inner.name)
+        # Caching cannot make a vendor point-in-time honest, so inherit the
+        # wrapped provider's answer rather than defaulting to the safe-looking
+        # one. Defaulting to True here would let a cache wrapper launder a
+        # leaky provider past the backtester's guard.
+        self.point_in_time_fundamentals = getattr(
+            inner, "point_in_time_fundamentals", False
+        )
 
     # -- MarketDataProvider ------------------------------------------------
 

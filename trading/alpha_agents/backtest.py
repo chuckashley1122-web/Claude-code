@@ -103,17 +103,44 @@ class BacktestResult:
 class Backtester:
     """Steps a :class:`TradingPipeline` through history one session at a time."""
 
-    def __init__(self, pipeline: TradingPipeline, rebalance_every: int = 5) -> None:
+    def __init__(
+        self,
+        pipeline: TradingPipeline,
+        rebalance_every: int = 5,
+        allow_lookahead_fundamentals: bool = False,
+    ) -> None:
         """``rebalance_every`` throttles research to every Nth session.
 
         Running a four-analyst LLM committee on every symbol every day is both
         slow and expensive, and daily rebalancing rarely improves a
         multi-week-horizon strategy. Non-research days still mark the book.
+
+        ``allow_lookahead_fundamentals`` opts in to a knowingly invalid run
+        against a provider that cannot serve historical fundamentals. It exists
+        so the choice has to be made explicitly and shows up in the diff;
+        results produced under it are not evidence of anything.
         """
         if rebalance_every < 1:
             raise ValueError("rebalance_every must be at least 1")
+
+        provider = pipeline.provider
+        uses_fundamentals = any(
+            a.name == "fundamental" for a in pipeline.analysts
+        )
+        honest = getattr(provider, "point_in_time_fundamentals", False)
+        if uses_fundamentals and not honest and not allow_lookahead_fundamentals:
+            raise ValueError(
+                f"Provider {provider.name!r} serves current fundamentals "
+                f"regardless of as_of, so backtesting the fundamental analyst "
+                f"against it scores 2019 with today's numbers and inflates the "
+                f"result. Drop the fundamental analyst from the committee, use "
+                f"a point-in-time provider, or pass "
+                f"allow_lookahead_fundamentals=True to accept an invalid run."
+            )
+
         self.pipeline = pipeline
         self.rebalance_every = rebalance_every
+        self.allow_lookahead_fundamentals = allow_lookahead_fundamentals
 
     def run(self, start: date, end: date) -> BacktestResult:
         if end < start:

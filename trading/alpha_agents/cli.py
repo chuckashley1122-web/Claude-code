@@ -145,7 +145,15 @@ def cmd_backtest(args: argparse.Namespace) -> int:
     end = _parse_date(args.end) if args.end else date.today()
     start = _parse_date(args.start) if args.start else end - timedelta(days=365)
 
-    tester = Backtester(pipeline, rebalance_every=args.rebalance_every)
+    try:
+        tester = Backtester(
+            pipeline,
+            rebalance_every=args.rebalance_every,
+            allow_lookahead_fundamentals=args.allow_lookahead_fundamentals,
+        )
+    except ValueError as exc:
+        raise SystemExit(str(exc)) from exc
+
     result = tester.run(start, end)
 
     if args.json:
@@ -238,6 +246,12 @@ def main(argv: list[str] | None = None) -> int:
     bt.add_argument("--end", help="YYYY-MM-DD, defaults to today")
     bt.add_argument("--rebalance-every", type=int, default=5,
                     help="research every Nth session (default 5)")
+    bt.add_argument(
+        "--allow-lookahead-fundamentals",
+        action="store_true",
+        help="run against a provider that cannot serve historical fundamentals. "
+        "The result will be inflated by look-ahead and is not evidence of edge",
+    )
     bt.set_defaults(func=cmd_backtest)
 
     args = parser.parse_args(argv)
