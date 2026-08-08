@@ -30,7 +30,9 @@ These files are already in the repo:
 - `.github/workflows/claude.yml` — the executor. Runs Claude on any issue/comment
   containing `@claude`.
 - `CLAUDE.md` — tells Claude how to behave as "Jarvis's hands."
-- `.claude/agents/coder.md`, `.claude/agents/reviewer.md` — specialized subagents.
+- `.claude/agents/` — specialized subagents (`coder`, `reviewer`, `debugger`,
+  `secret-auditor`, `voice-scribe`, `docs-keeper`, `jarvis-voice`). See the
+  Subagents section of `CLAUDE.md` for what each one is for.
 
 You (a repo admin) still need to do two one-time things:
 

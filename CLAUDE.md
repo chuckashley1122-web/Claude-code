@@ -34,10 +34,21 @@ Jarvis's coding hands. Behave accordingly.
 
 ## Subagents
 
-Specialized agents live in `.claude/agents/`:
+Specialized agents live in `.claude/agents/`. Each runs in its own context window
+with its own tools, so use one when a side task would otherwise flood the main
+conversation.
 
 - `coder` — implements features and fixes from a task description.
 - `reviewer` — reviews a diff for correctness and scope before it ships.
+- `debugger` — finds the root cause of a failure and fixes it.
+- `secret-auditor` — read-only scan of a diff for leaked keys and tokens.
+- `voice-scribe` — writes PR bodies and comments that work read aloud.
+- `docs-keeper` — keeps `CLAUDE.md` and the setup guide matching reality.
+- `jarvis-voice` — inspects the ElevenLabs side (agent config, transcripts).
+
+A typical Jarvis task chains a few of them: `coder` implements, `reviewer` and
+`secret-auditor` check the diff, then `voice-scribe` writes the PR body. Invoke
+one by name, or `@`-mention it to guarantee it runs.
 
 ## Setup & wiring
 
