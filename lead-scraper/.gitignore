@@ -1,0 +1,8 @@
+.venv/
+__pycache__/
+*.py[cod]
+
+# Scraped contact data and run output stay local — never commit leads.
+leads.csv
+errors.log
+cron.log

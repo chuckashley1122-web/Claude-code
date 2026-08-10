@@ -1,0 +1,74 @@
+# Lead scraper configuration.
+#
+# Everything here has a sane default in lead_scraper.py — you only need to
+# override what differs. The one thing you MUST set is a source URL.
+
+sources:
+  # Point this at the directory / listing page you want to work through.
+  # Good targets: industry directories, association member lists, local
+  # business listings by city+category, conference exhibitor and speaker
+  # pages, marketplace/agency partner directories, job boards.
+  - name: example-directory
+    url: "https://example.com/directory"
+
+    # City to fall back to when individual listings don't state one. Handy
+    # when you're scraping a city-scoped listing page.
+    # city: "Austin"
+
+    # Most sites are handled by auto-detecting the "next page" link. If the
+    # site paginates with a predictable query string, set a template instead
+    # and the crawler walks it until a page comes back empty.
+    # page_url_template: "https://example.com/directory?page={page}"
+    # start_page: 1
+    # page_step: 1
+
+    # If the "next" link is unusual, name it with a CSS selector.
+    # next_page_selector: "a.pagination__next"
+
+crawl:
+  # Hard cap on result pages per source, so a bad selector can't run away.
+  max_pages: 25
+
+  # Seconds between requests. robots.txt Crawl-delay wins if it is larger.
+  # Keep this civil — the tool scales faster than your sender reputation.
+  request_delay_seconds: 2.0
+
+  respect_robots_txt: true
+
+  # A descriptive UA with contact details is the polite option and is what
+  # many site owners prefer, e.g.:
+  #   "LeadScraper/1.0 (+mailto:you@yourcompany.com)"
+  user_agent: >-
+    Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko)
+    Chrome/125.0.0.0 Safari/537.36
+
+  page_timeout_seconds: 45
+  headless: true
+
+  # "domcontentloaded" is fastest. Use "networkidle" for listings that are
+  # rendered by JavaScript after load, and add settle_seconds if needed.
+  wait_until: "domcontentloaded"
+  settle_seconds: 0.0
+
+  # Convert each page to markdown before handing it to the model. Keeps the
+  # token count (and so the runtime) far lower on a local model.
+  convert_to_markdown: true
+
+  # Escape hatches for unusual environments — normally leave these alone.
+  # browser_executable_path: "/usr/bin/google-chrome"
+  # proxy_server: "http://127.0.0.1:8080"
+  # ignore_https_errors: false
+
+llm:
+  # Local Ollama model: no API key, no per-request cost, and page content
+  # never leaves this machine. Swap llama3.1 for any model you have pulled.
+  model: "ollama/llama3.1"
+  base_url: "http://localhost:11434"
+  temperature: 0
+  # Ask Ollama to constrain output to JSON — small models need the help.
+  format: "json"
+
+output:
+  # Relative paths are resolved next to lead_scraper.py.
+  csv_path: "leads.csv"
+  error_log: "errors.log"

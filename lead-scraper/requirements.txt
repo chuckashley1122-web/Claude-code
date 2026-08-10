@@ -1,0 +1,26 @@
+# Pinned deliberately: ScrapeGraphAI's own dependency ranges are too loose and
+# resolve to a broken combination on a fresh install.
+#
+# scrapegraphai 1.72.0+ requires langchain-community >= 0.4.0, but still does
+#   `from langchain_community.chat_models import ChatOllama`, which 0.4.x
+#   removed -> the package cannot be imported at all.
+# scrapegraphai 1.65.0-1.71.x import init_chat_model from langchain-core 1.x
+#   while requiring a langchain-community that pins langchain-core < 0.4.
+#
+# 1.60.0 is the newest release that is self-consistent on the langchain 0.3
+# stack, so the whole stack is pinned here. Re-check upstream before bumping.
+
+scrapegraphai==1.60.0
+
+langchain==0.3.30
+langchain-core==0.3.86
+langchain-community==0.3.31
+langchain-ollama==0.3.10
+langchain-openai==0.3.35
+langchain-aws==0.2.35
+langchain-mistralai==0.2.12
+langchain-text-splitters==0.3.11
+
+playwright==1.62.0
+beautifulsoup4==4.15.0
+PyYAML==6.0.3
