@@ -17,6 +17,22 @@ Your account is on a **white-labelled** GHL instance:
 The white-label only changes the *dashboard* domain. The API and the app
 marketplace are still GoHighLevel's, so everything below works unchanged.
 
+## Fast path
+
+If you just want it working, run this from a checkout of this repo on your own
+machine and skip to [Verify](#verify):
+
+```bash
+./scripts/setup-ghl-mcp.sh
+```
+
+It clones the server, installs it, prompts for your Marketplace app
+credentials, runs the OAuth flow, and registers the server with Claude Code.
+It's safe to re-run. You still need the Marketplace app from Part 1 first — the
+script prompts for its client ID and secret and can't create it for you.
+
+The rest of this guide is the same thing done by hand, plus the reasoning.
+
 ## How it works
 
 ```
