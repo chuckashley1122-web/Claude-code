@@ -51,9 +51,9 @@ credential through an environment variable so nothing secret is committed:
 
 - **elevenlabs** — configure the Jarvis voice agent (needs `ELEVENLABS_API_KEY`).
 - **ghl-mcp** — GoHighLevel CRM: contacts, opportunities, calendars, forms,
-  workflows (needs `GHL_MCP_DIR`). Setup:
-  [`docs/ghl-mcp-setup.md`](docs/ghl-mcp-setup.md). GHL tools write to the live
-  CRM, so confirm before creating or changing records. Location-scoped calls
-  need a `locationId`.
+  workflows (needs `GHL_PIT_TOKEN` and `GHL_LOCATION`). Setup:
+  [`docs/ghl-mcp-setup.md`](docs/ghl-mcp-setup.md). GHL tools write to the
+  **live CRM** — there is no sandbox, so confirm before creating, changing, or
+  deleting records.
 
 Copy `.env.example` when setting these up locally.

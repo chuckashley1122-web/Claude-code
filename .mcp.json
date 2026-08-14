@@ -10,8 +10,12 @@
     },
     "ghl-mcp": {
       "type": "stdio",
-      "command": "uv",
-      "args": ["run", "--directory", "${GHL_MCP_DIR}", "python", "-m", "src.main"]
+      "command": "npx",
+      "args": ["-y", "@nerdsnipe-inc/ghl-mcp-server"],
+      "env": {
+        "GHL_PIT_TOKEN": "${GHL_PIT_TOKEN}",
+        "GHL_LOCATION": "${GHL_LOCATION}"
+      }
     }
   }
 }
