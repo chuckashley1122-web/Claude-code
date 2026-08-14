@@ -43,3 +43,17 @@ Specialized agents live in `.claude/agents/`:
 
 The full end-to-end wiring (ElevenLabs webhook tool, GitHub secrets, the voice
 → issue → PR flow) is documented in [`docs/jarvis-setup.md`](docs/jarvis-setup.md).
+
+## Connected services
+
+`.mcp.json` declares the MCP servers this repo expects, referencing every
+credential through an environment variable so nothing secret is committed:
+
+- **elevenlabs** — configure the Jarvis voice agent (needs `ELEVENLABS_API_KEY`).
+- **ghl-mcp** — GoHighLevel CRM: contacts, opportunities, calendars, forms,
+  workflows (needs `GHL_MCP_DIR`). Setup:
+  [`docs/ghl-mcp-setup.md`](docs/ghl-mcp-setup.md). GHL tools write to the live
+  CRM, so confirm before creating or changing records. Location-scoped calls
+  need a `locationId`.
+
+Copy `.env.example` when setting these up locally.

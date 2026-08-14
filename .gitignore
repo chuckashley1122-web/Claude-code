@@ -1,6 +1,7 @@
 # Secrets — never commit. Keys live in environment variables or your keychain.
 .env
 .env.*
+!.env.example
 *.local
 .claude/settings.local.json
 .mcp.local.json
