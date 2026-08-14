@@ -7,6 +7,15 @@
       "env": {
         "ELEVENLABS_API_KEY": "${ELEVENLABS_API_KEY}"
       }
+    },
+    "ghl-mcp": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@nerdsnipe-inc/ghl-mcp-server"],
+      "env": {
+        "GHL_PIT_TOKEN": "${GHL_PIT_TOKEN}",
+        "GHL_LOCATION": "${GHL_LOCATION}"
+      }
     }
   }
 }

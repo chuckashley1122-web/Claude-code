@@ -32,6 +32,29 @@ Jarvis's coding hands. Behave accordingly.
 - Never commit secrets, API keys, or tokens. This repo's integration relies on
   secrets stored in GitHub Actions and in ElevenLabs — they must stay there.
 
+## Building in GoHighLevel
+
+The [`ghl-funnel-builder`](.claude/skills/ghl-funnel-builder/SKILL.md) skill
+builds funnels, forms, calendars, pipelines, and workflows in GHL. The full
+operating model is in [`docs/funnel-build-playbook.md`](docs/funnel-build-playbook.md).
+
+These rules hold for any GHL work, skill or not:
+
+- **One location per session.** Every write goes to the location the operator
+  named. Never touch another sub-account.
+- **Least privilege.** Location-scoped token, narrowest scopes that work, and a
+  sandbox sub-account before production.
+- **Plan and dry-run before writing.** No create or update call until the
+  operator has approved the plan and the list of intended writes.
+- **Search before create.** Match on the asset naming prefix so reruns update
+  rather than duplicate. Never modify an asset that lacks the prefix.
+- **Publishing, broadcasting, deleting, charging, and DNS changes need explicit
+  per-action approval.** Building a workflow is not permission to turn it on.
+- **Claims must trace to the offer spec.** No invented testimonials, statistics,
+  guarantees, or outcomes — they become real claims on real pages.
+- **Assert outcomes, not existence.** A funnel whose assets all exist can still
+  have its logic backwards. Test every branch with synthetic leads.
+
 ## Subagents
 
 Specialized agents live in `.claude/agents/`:
@@ -43,3 +66,17 @@ Specialized agents live in `.claude/agents/`:
 
 The full end-to-end wiring (ElevenLabs webhook tool, GitHub secrets, the voice
 → issue → PR flow) is documented in [`docs/jarvis-setup.md`](docs/jarvis-setup.md).
+
+## Connected services
+
+`.mcp.json` declares the MCP servers this repo expects, referencing every
+credential through an environment variable so nothing secret is committed:
+
+- **elevenlabs** — configure the Jarvis voice agent (needs `ELEVENLABS_API_KEY`).
+- **ghl-mcp** — GoHighLevel CRM: contacts, opportunities, calendars, forms,
+  workflows (needs `GHL_PIT_TOKEN` and `GHL_LOCATION`). Setup:
+  [`docs/ghl-mcp-setup.md`](docs/ghl-mcp-setup.md). GHL tools write to the
+  **live CRM** — there is no sandbox, so confirm before creating, changing, or
+  deleting records.
+
+Copy `.env.example` when setting these up locally.

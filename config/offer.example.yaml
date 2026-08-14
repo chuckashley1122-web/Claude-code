@@ -1,0 +1,113 @@
+# Build specification for the ghl-funnel-builder skill.
+#
+# Copy to config/offer.yaml and fill in. Every TODO must be resolved before the
+# build starts — the skill asks about anything left unanswered rather than
+# inventing it. A guessed price or guarantee becomes a real claim on a real page.
+
+meta:
+  prefix: CAJ                 # asset name prefix, e.g. CAJ | HVAC5 | FORM | v1
+  offer_code: TODO            # short slug used in asset names, e.g. HVAC5
+  version: v1
+
+# --- What is being sold -------------------------------------------------------
+offer:
+  name: TODO
+  price: TODO                 # e.g. "$20,000"
+  term: TODO                  # e.g. "3 months"
+  payment: TODO               # paid in full / installments / financing
+  outcome: TODO               # the concrete result the buyer gets
+  guarantee: TODO             # exact wording, or "none" — never invent one
+  proof: []                   # testimonials/case studies you can substantiate
+
+# --- Who it is for ------------------------------------------------------------
+audience:
+  description: TODO
+  geography: TODO
+  company_size: TODO
+  revenue: TODO
+  industry: TODO
+  problem: TODO
+
+# --- Who gets turned away -----------------------------------------------------
+# Each rule sends an applicant down the disqualification branch.
+disqualification:
+  rules:
+    - field: TODO             # form field the rule reads
+      condition: TODO         # e.g. "outside service area"
+      tag: TODO               # e.g. OUTSIDE-AREA
+      action: TODO            # decline | nurture | request decision-maker
+  decline_message: TODO       # respectful; shown on page 3B
+  alternative_offer: TODO     # lower-ticket option or resource, or "none"
+
+# --- The application form -----------------------------------------------------
+form:
+  steps:
+    - name: Contact basics
+      fields:
+        - { label: TODO, type: TODO, required: true, custom_field: TODO }
+    - name: Business situation
+      fields: []
+    - name: Qualification and commitment
+      fields: []
+
+# --- Booking ------------------------------------------------------------------
+calendar:
+  type: TODO                  # round_robin | pooled | single
+  users: []                   # staff whose calendars are connected
+  duration_minutes: TODO
+  buffer_minutes: TODO
+  minimum_notice_hours: TODO
+  timezone: TODO
+
+# --- Pipeline -----------------------------------------------------------------
+pipeline:
+  name: TODO
+  stages:
+    - New Application
+    - Qualified — Needs Booking
+    - Appointment Booked
+    - Showed
+    - No Show
+    - Sales Follow-Up
+    - Won
+    - Lost
+    - Disqualified
+  opportunity_owner: TODO     # round robin | specific user
+  opportunity_value: TODO
+
+# --- Follow-up ----------------------------------------------------------------
+messaging:
+  channels: []                # email | sms | voicemail | manual_call
+  timing: TODO                # cadence for the booking-nurture sequence
+  stop_conditions: TODO       # reply, booking, DND, unsubscribe, manual override
+  quiet_hours: TODO
+
+# --- Brand --------------------------------------------------------------------
+brand:
+  legal_name: TODO
+  logo_url: TODO
+  colors: TODO
+  fonts: TODO
+  privacy_url: TODO
+  terms_url: TODO
+
+# --- Tracking -----------------------------------------------------------------
+tracking:
+  meta_pixel: TODO
+  conversions_api: TODO
+  google_tag: TODO
+  utm_fields: []
+
+# --- Compliance ---------------------------------------------------------------
+# Get these reviewed by someone qualified. Consent and DND errors carry legal
+# and deliverability consequences that no amount of QA will catch.
+compliance:
+  consent_text: TODO
+  dnd_handling: TODO
+  unsubscribe: TODO
+  recordkeeping: TODO
+  industry_restrictions: TODO
+
+# --- Definition of done -------------------------------------------------------
+success_criteria:
+  - TODO                      # what must be true for this to be traffic-ready
