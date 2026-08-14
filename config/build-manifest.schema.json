@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GHL build manifest",
+  "description": "Record of every asset a funnel build created or modified. This is what makes reruns idempotent and rollback possible, so it is written as assets are created, not at the end of a run.",
+  "type": "object",
+  "required": ["location_id", "prefix", "offer_code", "version", "assets"],
+  "additionalProperties": false,
+  "properties": {
+    "location_id": {
+      "type": "string",
+      "description": "Sub-account every asset below belongs to. A manifest never spans locations."
+    },
+    "prefix": {
+      "type": "string",
+      "description": "Asset name prefix, e.g. CAJ. Assets without it are out of scope for this build."
+    },
+    "offer_code": { "type": "string" },
+    "version": { "type": "string" },
+    "started_at": { "type": "string", "format": "date-time" },
+    "completed_at": {
+      "type": ["string", "null"],
+      "format": "date-time",
+      "description": "Null while a build is in progress or after it failed partway."
+    },
+    "status": {
+      "enum": ["dry_run", "in_progress", "complete", "failed"],
+      "description": "A dry_run manifest records what WOULD be created; nothing was written."
+    },
+    "assets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type", "name", "action"],
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "enum": ["custom_field", "tag", "pipeline", "stage", "calendar", "form", "page", "funnel", "workflow"],
+            "description": "Listed in dependency order — later types reference earlier ones."
+          },
+          "id": {
+            "type": ["string", "null"],
+            "description": "GHL-assigned ID. Null for dry-run entries and for assets whose creation failed."
+          },
+          "name": { "type": "string", "description": "Full prefixed name." },
+          "action": {
+            "enum": ["created", "updated", "skipped_exists", "would_create", "failed"],
+            "description": "skipped_exists is the idempotent path: search-before-create found a match."
+          },
+          "depends_on": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Names of assets that must exist first. Used to order reruns after a partial failure."
+          },
+          "timestamp": { "type": "string", "format": "date-time" },
+          "error": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "manual_steps": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Anything the tool layer could not do, carried into the handoff report rather than silently dropped."
+    }
+  }
+}

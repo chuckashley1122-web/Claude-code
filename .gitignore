@@ -12,5 +12,14 @@
 .claude/todos/
 .claude/shell-snapshots/
 
+# Funnel build state — machine-specific or contains live CRM asset IDs.
+config/offer.yaml
+config/location.env
+build-manifest.json
+screenshots/*
+reports/*
+!screenshots/README.md
+!reports/README.md
+
 # OS / editor noise
 .DS_Store
