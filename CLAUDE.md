@@ -39,7 +39,19 @@ Specialized agents live in `.claude/agents/`:
 - `coder` — implements features and fixes from a task description.
 - `reviewer` — reviews a diff for correctness and scope before it ships.
 
+## Task sources
+
+Tasks reach this repo two ways. The rules above apply identically to both — a
+task assigned on a Multica board is handled exactly like a Jarvis-filed issue.
+
+- **Jarvis → GitHub issue → Action** — the voice path (the default).
+- **Multica board → agent** — a managed-agent platform where issues are assigned
+  to a named agent running on your own machine.
+
 ## Setup & wiring
 
 The full end-to-end wiring (ElevenLabs webhook tool, GitHub secrets, the voice
 → issue → PR flow) is documented in [`docs/jarvis-setup.md`](docs/jarvis-setup.md).
+
+Running this repo's agent under Multica instead is documented in
+[`docs/multica-setup.md`](docs/multica-setup.md).
