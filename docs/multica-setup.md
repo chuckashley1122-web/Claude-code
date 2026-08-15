@@ -99,14 +99,22 @@ For self-hosting, run `multica setup self-host` instead. It needs a **running
 Docker daemon** — see the repo's
 [SELF_HOSTING.md](https://github.com/multica-ai/multica/blob/main/SELF_HOSTING.md).
 
-Because login is browser-based and the daemon must keep running, this step
-cannot be completed by an agent on your behalf. It's yours to run once.
+`multica setup` logs in through the browser, but there is also a non-interactive
+path — `multica login --token <TOKEN>` followed by `multica daemon start`, which
+is what the installer prints for headless hosts. So the login itself *can* be
+scripted with a token.
+
+What can't be delegated is the runtime living somewhere durable: Multica ties a
+runtime to the machine whose daemon registered it, so registering from a
+short-lived container just means the runtime disappears when that container is
+reclaimed. Run this on hardware that stays up.
 
 ### 1c. Confirm the runtime
 
 Open the Multica web app → **Settings → Runtimes**. Your machine should be
 listed as **active**. If it isn't, the daemon isn't running or didn't finish
-authenticating — check `multica status` before going further.
+authenticating — check `multica daemon status` and `multica auth status` before
+going further.
 
 The preflight script in this repo checks the local half of this for you:
 
@@ -168,6 +176,33 @@ Good first tasks are ones where you can tell at a glance whether the result is
 right. Avoid anything irreversible or security-sensitive until you've seen a few
 land.
 
+### Doing it all from the CLI
+
+Parts 2–4 have command-line equivalents, so you can skip the web app after the
+initial login. These subcommands were read off the CLI source
+(`server/cmd/multica/`) rather than a blog post — but they do move, so check
+`multica <group> --help` if one is rejected.
+
+| Group | Subcommands |
+|-------|-------------|
+| `multica daemon` | `start`, `stop`, `restart`, `status`, `logs`, `probe-runtimes`, `disk-usage` |
+| `multica agent` | `create`, `list`, `get`, `update`, `set`, `env`, `skills`, `tasks`, `archive`, `restore` |
+| `multica issue` | `create`, `assign`, `list`, `get`, `update`, `comment`, `runs`, `rerun`, `cancel-task`, `pull-requests`, `search` |
+| `multica auth` | `status`, `logout` |
+
+So the whole loop is roughly:
+
+```bash
+multica agent create        # Part 2, instead of Settings → Agents
+multica issue create        # file the task
+multica issue assign        # hand it to the agent
+multica issue runs          # watch it work
+multica issue pull-requests # see what it shipped
+```
+
+Note `multica version` — not `--version`. And the daemon status command is
+`multica daemon status`, not `multica status`.
+
 ---
 
 ## Squads and autopilots
@@ -187,7 +222,7 @@ Once one agent works, two things are worth trying:
 
 | Symptom | Fix |
 |---------|-----|
-| Machine doesn't appear under Runtimes | Daemon isn't running or login didn't complete. Check `multica status`, re-run `multica setup`. |
+| Machine doesn't appear under Runtimes | Daemon isn't running or login didn't complete. Check `multica daemon status`; restart with `multica daemon restart`, or re-run `multica setup`. |
 | Agent exists but no CLI to pick | The daemon detects CLIs at startup. Install/sign into `claude` first, then restart the daemon. |
 | `multica setup self-host` fails immediately | Docker isn't running. `docker info` should succeed before you retry. |
 | Agent picks up the task but produces nothing | Its provider CLI isn't authenticated on that machine. Run `claude` manually there once and confirm it works. |

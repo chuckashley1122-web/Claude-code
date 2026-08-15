@@ -43,15 +43,24 @@ echo
 # --- Multica CLI ------------------------------------------------------------
 echo "Multica CLI:"
 if command -v multica >/dev/null 2>&1; then
-    ok "multica — $(multica --version 2>/dev/null || echo 'version unknown')"
+    # `multica version` (not `--version`) — matches how install.sh probes it.
+    ok "multica — $(multica version 2>/dev/null | head -n1 || echo 'version unknown')"
 
     echo
     echo "Daemon:"
-    if multica status >/dev/null 2>&1; then
-        ok "daemon responding to \`multica status\`"
+    if multica daemon status >/dev/null 2>&1; then
+        ok "daemon responding to \`multica daemon status\`"
         note "confirm the machine shows as active under Settings → Runtimes."
     else
-        gap "daemon not responding. Run \`multica setup\` (first time) or start it."
+        gap "daemon not responding. Run \`multica setup\` (first time), or \`multica daemon start\`."
+    fi
+
+    echo
+    echo "Authentication:"
+    if multica auth status >/dev/null 2>&1; then
+        ok "CLI is authenticated"
+    else
+        gap "not authenticated. Run \`multica setup\`, or \`multica login --token <TOKEN>\`."
     fi
 else
     gap "not installed. See docs/multica-setup.md Part 1a."
