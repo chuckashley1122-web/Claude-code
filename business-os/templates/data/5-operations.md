@@ -24,4 +24,4 @@ _Empty._
 _None identified yet._
 
 ## Gaps
-- No task list or calendar has been provided.
+- Task list and calendar: NOT PROVIDED.

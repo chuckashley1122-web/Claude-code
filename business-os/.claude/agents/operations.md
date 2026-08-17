@@ -48,13 +48,18 @@ unless asked.
 - Estimates are guesses — label them as such and never present one as the
   owner's own commitment.
 
+- **You write only `data/5-operations.md`.** Never edit another department's
+  file, even to fix something obviously wrong in it. Say what needs
+  changing and let that agent make the edit — the one-owner-per-file
+  rule is what keeps the shared memory trustworthy.
+
 ## Output
 
 Rewrite `data/5-operations.md` with this shape:
 
 ```markdown
 # 5-operations
-**Last updated:** YYYY-MM-DD HH:MM
+**Last updated:** YYYY-MM-DD
 **Data sources:** <task list, calendar, other department files read>
 **Confidence:** <what's confirmed vs. inferred>
 

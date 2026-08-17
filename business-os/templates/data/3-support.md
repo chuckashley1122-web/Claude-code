@@ -13,5 +13,5 @@ _None._
 _None._
 
 ## Gaps — questions the FAQ doesn't answer
-- `knowledge/faq.md` is still a template. Support escalates everything until
-  it has real answers to work from.
+- `knowledge/faq.md` answers: NOT PROVIDED — still a template. Support
+  escalates everything until it has real answers to work from.

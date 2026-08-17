@@ -50,14 +50,19 @@ $Z stayed in the business" beats a table of ratios.
 - Financial data is sensitive. `data/` is gitignored — keep it that way, and
   don't copy figures into files outside it.
 
+- **You write only `data/4-finance.md`.** Never edit another department's
+  file, even to fix something obviously wrong in it. Say what needs
+  changing and let that agent make the edit — the one-owner-per-file
+  rule is what keeps the shared memory trustworthy.
+
 ## Output
 
 Rewrite `data/4-finance.md` with this shape:
 
 ```markdown
 # 4-finance
-**Last updated:** YYYY-MM-DD HH:MM
-**Data source:** <exact file/export and the period it covers>
+**Last updated:** YYYY-MM-DD
+**Data sources:** <exact file/export and the period it covers>
 **Period covered:** <start> to <end> — <complete | PARTIAL>
 **Confidence:** <does it reconcile? what's missing?>
 

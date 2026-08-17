@@ -1,6 +1,6 @@
 # 4-finance
 **Last updated:** never — this is the starting template
-**Data source:** NOT PROVIDED
+**Data sources:** NOT PROVIDED
 **Period covered:** NOT PROVIDED
 **Confidence:** n/a
 

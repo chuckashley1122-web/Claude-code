@@ -34,4 +34,5 @@ _None yet._
 - [ ] Run `/run-all` for a first end-to-end pass
 
 ## ❓ Waiting on you
-- Business details, FAQ answers, financial data, and a task list.
+- Business details, FAQ answers, financial data, and a task list: all
+  NOT PROVIDED.

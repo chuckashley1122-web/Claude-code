@@ -47,9 +47,14 @@ changed six months ago and never got updated here.
 
 ## Scheduling and changes
 
-### Can I reschedule or change my order?
-<Your answer, including any cutoff or fee.>
+### Can I reschedule?
+<Your written reschedule policy — notice required, how to do it, and how many
+times. The agent may quote this directly.>
 **Last confirmed:** <date>
+
+> **If rescheduling costs money, the fee is not answerable from here.** Write
+> the process above, and let the agent escalate anything that charges the
+> customer. See the escalation carve-out at the bottom of this file.
 
 ## Service details
 
@@ -73,5 +78,18 @@ one of them later.
 - Complaints or an unhappy tone
 - Legal, contract, liability, privacy, or data-deletion requests
 - Anything involving health, safety, or a vulnerable situation
-- Cancellations or changes to agreed terms
+- Cancellations, or changes to agreed terms **other than** a routine reschedule
+  covered by the carve-out below
 - Anything the agent is not certain about
+
+### The one carve-out: routine reschedules
+
+A reschedule that fits your written policy above is a normal support answer —
+escalating every "can we move Tuesday to Thursday?" would make the agent
+useless. So the agent may answer a reschedule request when **all** of these
+hold: the written policy covers it, no fee or charge is involved, and it isn't
+a cancellation in disguise.
+
+If any of those fail — a fee applies, it's outside the notice window, the
+customer sounds unhappy, or it's really a cancellation — it escalates. Money
+and unhappiness always win over this carve-out.

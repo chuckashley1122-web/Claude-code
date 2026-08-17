@@ -10,7 +10,7 @@ five and hands you one clear briefing.
 
 ## What this is honestly
 
-Three rules make this safe to run on a real business:
+Three promises make this safe to run on a real business:
 
 1. **They draft and organize; you approve anything that sends, posts, or
    spends.** Nothing auto-fires.
@@ -18,6 +18,10 @@ Three rules make this safe to run on a real business:
    If a number isn't real, it's marked `NOT PROVIDED` and flagged.
 3. **An integration only works once you connect it.** Until then the agents
    work from files, and they say so rather than implying otherwise.
+
+Those are backed by [five hard rules](CLAUDE.md#the-five-hard-rules) written
+into every agent definition — the three above, plus "Finance is not an
+accountant" and "secrets stay out of git."
 
 This makes you faster and more organized. It does not make you hands-off.
 
@@ -74,7 +78,7 @@ lets Marketing make the edit.
 | **Marketing** | Content ideas, drafts posts/campaigns/emails/ads, keeps the calendar | `business.md` + `1-sales.md` | `data/2-marketing.md` |
 | **Support** | Drafts replies from your knowledge base, escalates anything sensitive | `business.md` + `knowledge/faq.md` | `data/3-support.md` |
 | **Finance** | Organizes revenue/expenses, tracks invoices, flags oddities | data **you** provide | `data/4-finance.md` |
-| **Operations** | Tasks, deadlines, bottlenecks, automation candidates | your tasks + calendar | `data/5-operations.md` |
+| **Operations** | Tasks, deadlines, bottlenecks, automation candidates | your tasks + calendar, plus commitments made in `1-sales.md`, `3-support.md`, `4-finance.md` | `data/5-operations.md` |
 | **CEO** | Combines all five into one daily report | `data/1-` … `data/5-` | `data/6-ceo-report.md` |
 
 **The Finance Agent is not an accountant.** It organizes and summarizes the
@@ -130,5 +134,6 @@ Illustrative only — not a real business, and not a promise of results.
 - [ ] Run `/ceo-report`
 - [ ] Run `/run-all` end to end
 - [ ] Connect one real tool (or stay on files — that's fine)
-- [ ] Set up a recurring daily CEO report
+- [ ] Decide how you'll trigger the daily report — there's no scheduler here, so
+      that's a habit, a calendar reminder, or a cron job you add yourself
 - [ ] Keep a human approval step before anything sends or spends

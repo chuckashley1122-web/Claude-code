@@ -12,11 +12,11 @@
 _None._
 
 ## Performance
-_No real numbers provided. This section only ever contains figures the owner
-pasted in, with the dates they cover._
+NOT PROVIDED — this section only ever contains figures the owner pasted in,
+with the dates they cover.
 
 ## Ideas backlog
 _None._
 
 ## Gaps
-- `business.md` needs the voice section and any citable proof points.
+- `business.md` voice section and citable proof points: NOT PROVIDED.

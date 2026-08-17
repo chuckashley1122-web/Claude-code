@@ -1,0 +1,12 @@
+# This file makes the privacy guarantee travel with the folder. If you copy
+# business-os/ into your own repo, these rules come with it — don't delete it.
+
+# Real business data: leads, customer names, invoices, figures. Stays local.
+# Leading slash is load-bearing: an unanchored `data/` would also swallow
+# templates/data/, which must stay tracked or setup.sh has nothing to copy.
+/data/
+
+# API keys.
+.env
+.env.*
+!.env.example

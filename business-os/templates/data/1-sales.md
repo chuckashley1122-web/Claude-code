@@ -18,5 +18,9 @@ _None._
 _No real replies yet. Marketing reads this section — it stays empty until real
 conversations happen._
 
+## Objections heard
+_Nothing heard yet. Marketing reads this section too — same rule._
+
 ## Gaps
-- `business.md` needs to be filled in before the Sales Agent can target anyone.
+- `business.md`: NOT PROVIDED — fill it in before the Sales Agent can target
+  anyone.
