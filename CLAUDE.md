@@ -43,3 +43,11 @@ Specialized agents live in `.claude/agents/`:
 
 The full end-to-end wiring (ElevenLabs webhook tool, GitHub secrets, the voice
 → issue → PR flow) is documented in [`docs/jarvis-setup.md`](docs/jarvis-setup.md).
+
+## Sub-projects
+
+- [`business-os/`](business-os/README.md) — the AI Business OS: six department
+  agents (sales, marketing, support, finance, operations) plus a CEO agent that
+  writes one daily report. It's a self-contained Claude Code project with its
+  own `CLAUDE.md` and agents — open that folder directly to use it. Its `data/`
+  folder holds real business data and is gitignored.

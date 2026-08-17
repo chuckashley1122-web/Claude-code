@@ -7,6 +7,14 @@
 *.pem
 *.key
 
+# ...but the example templates are safe and belong in the repo.
+!.env.example
+!**/.env.example
+
+# Business OS working data — real leads, customers, and figures. Stays local.
+# The starting templates live in business-os/templates/data/ instead.
+business-os/data/
+
 # Local Claude Code state
 .claude/todos/
 .claude/shell-snapshots/
