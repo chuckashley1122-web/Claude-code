@@ -38,6 +38,7 @@ Each directory under `odysseus/workspaces/` holds the same six artifacts:
 | `system-prompt.md` | Purpose, allowed actions, prohibited actions, required approvals, brand and domain, audience, output formats |
 | `knowledge-manifest.yml` | Every knowledge source, explicitly approved. Nothing is indexed that is not listed here. |
 | `agents.md` | Five starter agent/task templates with inputs, outputs, and approval gates |
+| `skills/*/SKILL.md` | The same five as deployable Odysseus skills, generated from `tools/skills_source.py` |
 | `tests.md` | Three normal tests, two failure tests, one prompt-injection test |
 | `credentials.md` | Required integrations and scopes by name. Contains no secrets. |
 | `audit-checklist.md` | Per-workspace review gates layered on the shared checklist |
@@ -49,13 +50,32 @@ everyone, it changes in one file.
 
 ## Isolation model
 
-| Dimension | Rule |
-|---|---|
-| Knowledge | One manifest per workspace. No shared index, no cross-workspace retrieval. |
-| Memory | Per-workspace. An Enterprises agent cannot recall a Consulting conversation. |
-| Credentials | Separate API keys, mailboxes, and OAuth clients per business. |
-| Output | Drafts only. Sending, publishing, and CRM writes are human actions. |
-| Combination | Cross-business work happens only when explicitly requested, as a named one-off task, and never as a default behaviour. |
+Isolation is enforced by upstream code, not by convention. Each business gets
+its own Odysseus **user account**, and `SkillsManager.load(owner)` filters
+strictly on that username — skills belonging to another owner are not returned,
+and an *unowned* skill is hidden from everyone.
+
+| Business | Odysseus user | Skill category |
+|---|---|---|
+| CA-J Enterprises | `caj-enterprises` | `caj-enterprises` |
+| CA-J Consulting | `caj-consulting` | `caj-consulting` |
+| Chuck's Daily Grind | `caj-grind` | `caj-grind` |
+
+| Dimension | Rule | Enforced by |
+|---|---|---|
+| Skills | One owner per business | Upstream `load(owner)` filter |
+| Knowledge | One manifest per workspace, no shared index | Manifest + review |
+| Memory | Per-workspace; an Enterprises agent cannot recall a Consulting conversation | Per-user accounts |
+| Credentials | Separate API keys, mailboxes, and OAuth clients | Issuance discipline |
+| Model + spend | Pinned per user via `allowed_models` and `max_messages_per_day` | Upstream privileges |
+| Output | Drafts only; sending and publishing are human actions | Prompt + skill standing rules |
+| Combination | Only on explicit request, as a named one-off task | Shared safety rule 2 |
+
+Sign in as the business user to do business work. The admin account sees every
+skill, so using it for daily work defeats the isolation it was set up for.
+
+Deployment of all this — creating the users, setting privileges, installing the
+skills — is in [`WORKSPACE-DEPLOYMENT.md`](WORKSPACE-DEPLOYMENT.md).
 
 ## The workspaces
 
@@ -81,6 +101,9 @@ claims, and promotions need approval before publishing.
 
 A workspace is live only when all of these are true:
 
+- [ ] Business user account created, privileges set, own password.
+- [ ] Five skills deployed and visible to that user — and to no other user.
+- [ ] `validate_skills.py` passes.
 - [ ] System prompt loaded into Odysseus and the agent restates its own limits correctly when asked.
 - [ ] Knowledge manifest indexed, and nothing outside it appears in retrieval.
 - [ ] All five agent templates run end-to-end on test data.

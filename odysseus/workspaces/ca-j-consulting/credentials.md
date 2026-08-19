@@ -23,6 +23,36 @@ Never connected, at any phase:
 - Any e-signature platform
 - Any send-capable email scope
 
+## Odysseus-side controls
+
+This workspace gets the narrowest scopes in the system, and the narrowing is
+enforced by upstream rather than by policy alone.
+
+**API token scopes** (Settings → API Tokens; `ALLOWED_SCOPES` in
+`routes/api_token_routes.py`):
+
+| Scope | For CA-J Consulting | Why |
+|---|---|---|
+| `chat` | yes | Baseline agent use |
+| `documents:read`, `documents:write` | yes | Educational drafts |
+| `memory:read` | yes | Read-only recall |
+| `memory:write` | no | Nothing about a prospect should persist to memory |
+| `email:read` | phase 3 only, dedicated zero-PII inbox | Intake summaries |
+| `email:draft` | no | A human composes every reply in this workspace |
+| `email:send` | **never** | Not under any circumstance |
+| everything else | no | No calendar, todos, cookbook, or shell |
+
+**User privileges** (Settings → Users → Privileges):
+
+| Privilege | Value | Why |
+|---|---|---|
+| `can_use_bash` | `false` | Default; keep it |
+| `can_use_browser` | consider `false` | Shrinks the untrusted-input surface in the highest-risk workspace |
+| `can_use_research` | `true` | SBA and CFPB public sources |
+| `can_manage_memory` | `false` | Reinforces the no-persistence rule above |
+| `allowed_models` + `allowed_models_restricted` | pin one model | Reviewed, predictable behaviour on regulated content |
+| `max_messages_per_day` | set a real number | Spend ceiling |
+
 ## Rules
 
 1. **Dedicated everything.** Its own API key, its own inbox, its own storage.

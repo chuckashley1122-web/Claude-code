@@ -18,6 +18,36 @@ with CA-J Consulting or Chuck's Daily Grind.
 | GHL | Workflow design context | Read-only if used at all. Design happens outside GHL. | 3 | ☐ |
 | Email (draft only) | Outreach drafts | Draft/compose scope only. **Never** send. | 3 | ☐ |
 
+## Odysseus-side controls
+
+Two upstream mechanisms enforce parts of this table without relying on anyone
+remembering the rules.
+
+**API token scopes** (Settings → API Tokens; `ALLOWED_SCOPES` in
+`routes/api_token_routes.py`). Issue tokens per business, and only these:
+
+| Scope | For CA-J Enterprises | Why |
+|---|---|---|
+| `chat` | yes | Baseline agent use |
+| `documents:read`, `documents:write` | yes | Briefs and drafts live as documents |
+| `memory:read`, `memory:write` | yes | Workspace memory |
+| `email:read`, `email:draft` | phase 3 only | Drafting outreach |
+| `email:send` | **never** | Sending is a human action |
+| `cookbook:launch`, `todos:write`, `calendar:write` | no | Not needed by this workspace |
+
+Note that upstream auto-adds the matching read scope when you grant a write one
+(`email:draft` implies `email:read`) — so ask for the write scope you need and
+expect the read scope alongside it.
+
+**User privileges** (Settings → Users → Privileges):
+
+| Privilege | Value | Why |
+|---|---|---|
+| `can_use_bash` | `false` | Default; no marketing task needs a shell |
+| `can_use_research` | `true` | Public competitor and market research |
+| `allowed_models` + `allowed_models_restricted` | pin one model | Cost attribution per business |
+| `max_messages_per_day` | set a real number | Spend ceiling |
+
 ## Rules
 
 1. **Read-only until proven.** No write or management scope is granted during

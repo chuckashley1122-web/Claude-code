@@ -47,9 +47,11 @@ workspace layers (CA-J Enterprises, CA-J Consulting, Chuck's Daily Grind). It
 contains no upstream Odysseus source; the app stays at `odysseus-dev/odysseus`
 so it can be updated cleanly. Start at [`odysseus/README.md`](odysseus/README.md).
 
-Two rules when working in there: never edit upstream Odysseus code to solve a
-business problem, and never commit anything under
-`odysseus/workspaces/*/approved/` — those are real business documents.
+Three rules when working in there: never edit upstream Odysseus code to solve a
+business problem; never commit anything under `odysseus/workspaces/*/approved/`
+— those are real business documents; and never hand-edit a generated
+`workspaces/*/skills/*/SKILL.md` — edit `odysseus/tools/skills_source.py` and
+re-run `build_skills.py`, or the next build silently reverts you.
 
 ## Setup & wiring
 

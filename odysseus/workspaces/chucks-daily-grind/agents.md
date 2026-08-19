@@ -1,5 +1,10 @@
 # Chuck's Daily Grind — starter agents
 
+> These five are deployed as real Odysseus skills under `skills/`, owned by the
+> `caj-grind` user. This page is the human-readable version; the deployable source
+> of truth is `odysseus/tools/skills_source.py`. See
+> [`WORKSPACE-DEPLOYMENT.md`](../../docs/WORKSPACE-DEPLOYMENT.md).
+
 Five templates. All inherit `_shared/safety-rules.md` and the workspace system
 prompt. Everything is a draft until a human publishes it.
 

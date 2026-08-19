@@ -23,6 +23,31 @@ Never connected:
 - Supplier contracts or cost pricing
 - Anything with a send or publish scope
 
+## Odysseus-side controls
+
+**API token scopes** (Settings → API Tokens; `ALLOWED_SCOPES` in
+`routes/api_token_routes.py`):
+
+| Scope | For Chuck's Daily Grind | Why |
+|---|---|---|
+| `chat` | yes | Baseline agent use |
+| `documents:read`, `documents:write` | yes | Content drafts and the FAQ base |
+| `memory:read`, `memory:write` | yes | Workspace memory |
+| `email:read`, `email:draft` | phase 3 only | Campaign drafts |
+| `email:send` | **never** | A human sends |
+| `calendar:read` | optional, phase 3 | Promotion scheduling context |
+| `cookbook:launch`, `todos:write` | no | Not needed |
+
+**User privileges** (Settings → Users → Privileges):
+
+| Privilege | Value | Why |
+|---|---|---|
+| `can_use_bash` | `false` | Default; no content task needs a shell |
+| `can_use_research` | `true` | Coffee topic research |
+| `can_generate_images` | optional | Only if social assets are generated in-workspace |
+| `allowed_models` + `allowed_models_restricted` | pin one model | Cost attribution per business |
+| `max_messages_per_day` | set a real number | Spend ceiling |
+
 ## Rules
 
 1. **Read-only until proven.** Nothing gets a write scope during the pilot.

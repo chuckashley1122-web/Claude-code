@@ -1,5 +1,10 @@
 # CA-J Enterprises — starter agents
 
+> These five are deployed as real Odysseus skills under `skills/`, owned by the
+> `caj-enterprises` user. This page is the human-readable version; the deployable source
+> of truth is `odysseus/tools/skills_source.py`. See
+> [`WORKSPACE-DEPLOYMENT.md`](../../docs/WORKSPACE-DEPLOYMENT.md).
+
 Five templates. Each states its inputs, what it does, what it returns, and where
 it stops. All inherit `_shared/safety-rules.md` and the workspace system prompt.
 

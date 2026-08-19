@@ -1,5 +1,10 @@
 # CA-J Consulting — starter agents
 
+> These five are deployed as real Odysseus skills under `skills/`, owned by the
+> `caj-consulting` user. This page is the human-readable version; the deployable source
+> of truth is `odysseus/tools/skills_source.py`. See
+> [`WORKSPACE-DEPLOYMENT.md`](../../docs/WORKSPACE-DEPLOYMENT.md).
+
 Five templates. Every one is gated: nothing reaches a customer without named
 compliance review. All inherit `_shared/safety-rules.md` and the workspace
 system prompt.
