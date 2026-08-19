@@ -1,0 +1,78 @@
+# CA-J Consulting — approved knowledge sources
+#
+# Strictest manifest in the system. Nothing is indexed unless listed here and
+# approved: true. No source containing borrower data is ever eligible.
+
+workspace: ca-j-consulting
+version: 1.0
+isolation: strict
+pii_policy: prohibited     # no source containing PII may be added, at any phase
+
+sources:
+
+  - id: loan-type-reference
+    type: document
+    path: ./approved/loan-types.md
+    description: Internal reference — loan types, structures, typical uses
+    approved: false
+    approver: ""
+    contains_pii: false
+
+  - id: glossary
+    type: document
+    path: ./approved/lending-glossary.md
+    description: Plain-English definitions of lending terminology
+    approved: false
+    approver: ""
+    contains_pii: false
+
+  - id: generic-document-checklists
+    type: document
+    path: ./approved/document-checklists.md
+    description: Generic, non-borrower-specific checklists by loan type
+    approved: false
+    approver: ""
+    contains_pii: false
+
+  - id: compliance-rules
+    type: document
+    path: ./approved/compliance-guardrails.md
+    description: What may and may not be said in customer-facing content
+    approved: false
+    approver: ""
+    contains_pii: false
+    notes: Should be the FIRST source approved. Nothing ships without it.
+
+  - id: sba-public
+    type: web
+    url: https://www.sba.gov
+    description: SBA public program documentation
+    approved: false
+    approver: ""
+    contains_pii: false
+
+  - id: cfpb-public
+    type: web
+    url: https://www.consumerfinance.gov
+    description: CFPB public guidance and consumer materials
+    approved: false
+    approver: ""
+    contains_pii: false
+
+  - id: website-own
+    type: web
+    url: https://ca-jconsulting.com
+    description: Own site — existing published content and structure
+    approved: false
+    approver: ""
+    contains_pii: false
+
+# Permanently excluded. Not a phasing decision — these never become eligible.
+excluded:
+  - Loan applications, in any form or state of completion
+  - Credit reports, credit scores, or credit bureau data
+  - Bank statements, tax returns, financial statements tied to a named person
+  - SSN, DOB, driver's licence, or any government identifier
+  - Borrower names paired with any financial detail
+  - Lender rate sheets, pricing grids, and commitment letters
+  - Any CA-J Enterprises or Chuck's Daily Grind source

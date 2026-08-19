@@ -39,6 +39,18 @@ Specialized agents live in `.claude/agents/`:
 - `coder` — implements features and fixes from a task description.
 - `reviewer` — reviews a diff for correctness and scope before it ships.
 
+## Odysseus workspace
+
+`odysseus/` is the build kit for the self-hosted Odysseus AI workspace — install
+scripts, operations runbook, security guardrails, and the three business
+workspace layers (CA-J Enterprises, CA-J Consulting, Chuck's Daily Grind). It
+contains no upstream Odysseus source; the app stays at `odysseus-dev/odysseus`
+so it can be updated cleanly. Start at [`odysseus/README.md`](odysseus/README.md).
+
+Two rules when working in there: never edit upstream Odysseus code to solve a
+business problem, and never commit anything under
+`odysseus/workspaces/*/approved/` — those are real business documents.
+
 ## Setup & wiring
 
 The full end-to-end wiring (ElevenLabs webhook tool, GitHub secrets, the voice

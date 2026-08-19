@@ -1,0 +1,60 @@
+# Odysseus AI Workspace — CA&J build kit
+
+This directory is the build-out of `OdysseusClaudeCodeBuildGuide_8.18.26.docx`.
+
+It does **not** contain a copy of Odysseus. Odysseus stays upstream at
+[`odysseus-dev/odysseus`](https://github.com/odysseus-dev/odysseus) so it can be
+updated with `git pull`. This kit is everything *around* it: the install
+sequence, the operations runbook, the safety guardrails, and the three business
+workspace layers for CA-J Enterprises, CA-J Consulting, and Chuck's Daily Grind.
+
+## Layout
+
+```
+odysseus/
+├── docs/
+│   ├── BUILD-GUIDE.md              Verified install sequence (Steps 1–9)
+│   ├── CAJ-OPERATIONS.md           Start, stop, update, backup, restore, rollback
+│   ├── CAJ-CUSTOMIZATION-PLAN.md   Phase two: three business workspaces
+│   ├── SECURITY-GUARDRAILS.md      Non-negotiable rules for the pilot
+│   └── BUILD-RECORD.template.md    Fill in per install; records the pinned commit
+├── scripts/                        Windows PowerShell, run in order
+│   ├── preflight.ps1               Read-only host check. Changes nothing.
+│   ├── install.ps1                 Clone, pin, configure, build, start
+│   ├── verify.ps1                  The acceptance tests
+│   ├── backup.ps1 / restore.ps1    Wrappers over upstream scripts/odysseus-backup
+│   └── update.ps1                  Backup → review → fast-forward → rebuild
+└── workspaces/
+    ├── _shared/                    Safety rules and audit checklist all three inherit
+    ├── ca-j-enterprises/           Local-service marketing
+    ├── ca-j-consulting/            Business & mortgage lending education
+    └── chucks-daily-grind/         Coffee content and product marketing
+```
+
+## Run order
+
+```powershell
+cd <this-repo>\odysseus\scripts
+.\preflight.ps1                    # reports; installs nothing
+.\install.ps1                      # add -WhatIf first to see the plan
+.\verify.ps1
+```
+
+`install.ps1` clones into `C:\AI-Workspaces\odysseus` by default and refuses to
+touch a non-empty target. Nothing in this kit creates accounts, buys anything,
+opens a firewall port, or exposes the app beyond `127.0.0.1`.
+
+## What was verified
+
+The guide was checked line-by-line against `odysseus-dev/odysseus` branch `main`
+at commit `cf4e240ad1622da6a904f496b19d656a2b9c6393`. Findings that changed the
+build steps are listed at the top of [`docs/BUILD-GUIDE.md`](docs/BUILD-GUIDE.md).
+Re-read the upstream `README.md` and `docs/setup.md` before installing — the
+project moves fast.
+
+## Licensing
+
+Odysseus is AGPL-3.0-or-later. Running it internally is unrestricted. Offering a
+modified hosted version to customers triggers source-disclosure obligations —
+get legal guidance before that. This kit contains no upstream source, only
+configuration, documentation, and prompts.

@@ -1,0 +1,68 @@
+# Chuck's Daily Grind — approved knowledge sources
+#
+# Nothing is indexed unless listed here and approved: true.
+
+workspace: chucks-daily-grind
+version: 1.0
+isolation: strict
+
+sources:
+
+  - id: product-catalogue
+    type: document
+    path: ./approved/products.md
+    description: Every SKU — origin, process, roast level, tasting notes, price
+    approved: false
+    approver: ""
+    contains_pii: false
+    notes: Single source of truth for product facts. Copy never invents beyond it.
+
+  - id: brand-voice
+    type: document
+    path: ./approved/brand-voice.md
+    description: Voice, tone, forbidden phrases, boilerplate
+    approved: false
+    approver: ""
+    contains_pii: false
+
+  - id: coffee-reference
+    type: document
+    path: ./approved/coffee-reference.md
+    description: Internal reference — origins, processing, brewing ratios, grind
+    approved: false
+    approver: ""
+    contains_pii: false
+
+  - id: customer-questions
+    type: document
+    path: ./approved/customer-questions.md
+    description: Real customer questions and approved answers. Anonymised.
+    approved: false
+    approver: ""
+    contains_pii: false
+    notes: Must be anonymised before approval. No names, no emails, no order IDs.
+
+  - id: website-own
+    type: web
+    url: https://chucksdailygrind.com
+    description: Own site — existing content, structure, product pages
+    approved: false
+    approver: ""
+    contains_pii: false
+
+  - id: coffee-research
+    type: search
+    provider: searxng
+    scope: "coffee origins, processing, brewing, equipment"
+    description: Live public search for coffee topic research
+    approved: false
+    approver: ""
+    contains_pii: false
+    notes: Never a source for health claims. Not from any source, at any time.
+
+excluded:
+  - Customer order history, email lists, and contact details
+  - Payment or card data
+  - Supplier contracts and cost pricing
+  - Any CA-J Enterprises or CA-J Consulting source
+  - Health, nutrition, and medical literature — out of scope by design

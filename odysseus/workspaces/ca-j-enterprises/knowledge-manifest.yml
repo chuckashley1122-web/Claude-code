@@ -1,0 +1,68 @@
+# CA-J Enterprises — approved knowledge sources
+#
+# Nothing is indexed into this workspace unless it is listed here and marked
+# approved: true. Adding a source is a deliberate act with a named approver.
+
+workspace: ca-j-enterprises
+version: 1.0
+isolation: strict          # no cross-workspace retrieval, ever
+
+sources:
+
+  - id: brand-guidelines
+    type: document
+    path: ./approved/brand-guidelines.md
+    description: Voice, tone, forbidden phrases, boilerplate
+    approved: false        # flip to true once the file exists and is reviewed
+    approver: ""
+    contains_pii: false
+
+  - id: service-offerings
+    type: document
+    path: ./approved/services-and-pricing.md
+    description: What CA-J Enterprises sells, packages, and price ranges
+    approved: false
+    approver: ""
+    contains_pii: false
+
+  - id: case-studies-public
+    type: document
+    path: ./approved/case-studies-public.md
+    description: Published case studies only — anonymised, client-approved
+    approved: false
+    approver: ""
+    contains_pii: false
+
+  - id: website-own
+    type: web
+    url: https://ca-jenterprises.com
+    description: Own site — service pages, existing copy, structure
+    approved: false
+    approver: ""
+    contains_pii: false
+
+  - id: competitor-public-pages
+    type: web
+    url_list: ./approved/competitors.txt
+    description: Public competitor pages, one URL per line. Public pages only.
+    approved: false
+    approver: ""
+    contains_pii: false
+    notes: No login-gated, paywalled, or robots.txt-disallowed pages.
+
+  - id: local-market-research
+    type: search
+    provider: searxng
+    scope: "Austin / Round Rock TX local service market"
+    description: Live public web search for market and competitor research
+    approved: false
+    approver: ""
+    contains_pii: false
+
+# Explicitly excluded. Listed so the exclusion is a decision, not an oversight.
+excluded:
+  - Client CRM exports and contact lists
+  - Ad account credentials or billing data
+  - Any CA-J Consulting or Chuck's Daily Grind source
+  - Private client contracts, invoices, or agreements
+  - Anything containing a customer name paired with contact details

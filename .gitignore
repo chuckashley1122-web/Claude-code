@@ -13,3 +13,8 @@
 
 # OS / editor noise
 .DS_Store
+
+# Odysseus approved knowledge sources — real business documents, never committed.
+# The README in each directory is the exception, so the convention stays visible.
+odysseus/workspaces/*/approved/*
+!odysseus/workspaces/*/approved/README.md
