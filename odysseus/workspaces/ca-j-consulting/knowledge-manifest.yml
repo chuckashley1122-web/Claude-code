@@ -12,19 +12,21 @@ sources:
 
   - id: loan-type-reference
     type: document
-    path: ./approved/loan-types.md
+    path: ./reference/loan-types.md
     description: Internal reference — loan types, structures, typical uses
     approved: false
     approver: ""
     contains_pii: false
+    status: drafted        # drafted by Claude Code; needs review before approval
 
   - id: glossary
     type: document
-    path: ./approved/lending-glossary.md
+    path: ./reference/lending-glossary.md
     description: Plain-English definitions of lending terminology
     approved: false
     approver: ""
     contains_pii: false
+    status: drafted        # drafted by Claude Code; needs review before approval
 
   - id: generic-document-checklists
     type: document
@@ -36,12 +38,17 @@ sources:
 
   - id: compliance-rules
     type: document
-    path: ./approved/compliance-guardrails.md
+    path: ./reference/compliance-guardrails.md
     description: What may and may not be said in customer-facing content
     approved: false
     approver: ""
     contains_pii: false
-    notes: Should be the FIRST source approved. Nothing ships without it.
+    status: drafted        # drafted by Claude Code; needs LEGAL review before approval
+    notes: >-
+      Should be the FIRST source approved. Nothing ships without it. The draft
+      states US regulatory landscape and is explicitly not legal advice — a
+      qualified compliance professional or a Texas-licensed attorney must
+      verify every citation. See its "Verify before approval" section.
 
   - id: sba-public
     type: web

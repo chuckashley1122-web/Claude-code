@@ -18,3 +18,10 @@ Nothing is indexed unless it is listed in the manifest and marked approved.
 Never put in this directory: customer records, contact lists, credentials, or —
 for CA-J Consulting especially — anything containing borrower data. See
 `../../_shared/safety-rules.md` rules 15–17.
+
+## Not everything belongs here
+
+General reference material — definitions, standards, process explanations,
+compliance rules — lives in [`../reference/`](../reference/) instead, where it is
+tracked in Git and can be reviewed and versioned. This directory is only for real
+business documents that must never be committed.

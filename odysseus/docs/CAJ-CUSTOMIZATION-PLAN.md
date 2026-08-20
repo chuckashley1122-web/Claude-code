@@ -41,12 +41,32 @@ Each directory under `odysseus/workspaces/` holds the same six artifacts:
 | `skills/*/SKILL.md` | The same five as deployable Odysseus skills, generated from `tools/skills_source.py` |
 | `tests.md` | Three normal tests, two failure tests, one prompt-injection test |
 | `credentials.md` | Required integrations and scopes by name. Contains no secrets. |
+| `reference/` | General reference material — tracked in Git, reviewed like code |
+| `approved/` | Real business documents — gitignored, never committed |
 | `audit-checklist.md` | Per-workspace review gates layered on the shared checklist |
 
 Shared across all three: [`_shared/safety-rules.md`](../workspaces/_shared/safety-rules.md)
 and [`_shared/audit-checklist.md`](../workspaces/_shared/audit-checklist.md).
 Every system prompt inherits both by reference. When a rule needs to change for
 everyone, it changes in one file.
+
+## Knowledge sources: two directories, one rule
+
+Each workspace splits its sources by what they are, not by who wrote them:
+
+- **`reference/`** — definitions, standards, process explanations, compliance
+  rules. Tracked in Git so it can be reviewed, versioned, and corrected over
+  time.
+- **`approved/`** — brand guidelines, product and pricing data, case studies,
+  client material. Gitignored. Never committed.
+
+The manifest governs both identically: **a file is not used until its entry says
+`approved: true` with a named approver.** Being committed is not approval, and a
+file sitting in either directory does nothing until the manifest says so.
+
+Entries marked `status: drafted` were written by Claude Code and have not been
+checked by a human. Each such file ends with a "Verify before approval" section
+listing exactly what to confirm.
 
 ## Isolation model
 

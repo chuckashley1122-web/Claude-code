@@ -27,11 +27,12 @@ sources:
 
   - id: coffee-reference
     type: document
-    path: ./approved/coffee-reference.md
+    path: ./reference/coffee-reference.md
     description: Internal reference — origins, processing, brewing ratios, grind
     approved: false
     approver: ""
     contains_pii: false
+    status: drafted        # drafted by Claude Code; needs review before approval
 
   - id: customer-questions
     type: document

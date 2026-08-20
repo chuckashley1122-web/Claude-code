@@ -49,7 +49,8 @@ so it can be updated cleanly. Start at [`odysseus/README.md`](odysseus/README.md
 
 Three rules when working in there: never edit upstream Odysseus code to solve a
 business problem; never commit anything under `odysseus/workspaces/*/approved/`
-— those are real business documents; and never hand-edit a generated
+— those are real business documents (general reference material goes in
+`reference/`, which is tracked); and never hand-edit a generated
 `workspaces/*/skills/*/SKILL.md` — edit `odysseus/tools/skills_source.py` and
 re-run `build_skills.py`, or the next build silently reverts you.
 

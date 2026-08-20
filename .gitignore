@@ -18,3 +18,7 @@
 # The README in each directory is the exception, so the convention stays visible.
 odysseus/workspaces/*/approved/*
 !odysseus/workspaces/*/approved/README.md
+
+# Python build artifacts
+__pycache__/
+*.pyc
