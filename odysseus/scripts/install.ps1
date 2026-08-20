@@ -88,6 +88,33 @@ Write-Pass "Cloned branch '$Branch'"
 $head = (Invoke-Native -Command 'git' -Arguments @('rev-parse', 'HEAD') -WorkingDirectory $InstallPath).Output.Trim()
 Write-Pass "Pinned at commit $head"
 
+# ------------------------------------------------- upstream import guard ------
+# main at cf4e240 cannot start: src/agent_loop.py annotates dict[str, Any]
+# without importing Any, and the module is imported at app startup. Catch it
+# here rather than after a 15-minute build. See docs/BUILD-GUIDE.md section 0.
+Write-Head 'Upstream sanity check'
+$agentLoop = Join-Path $InstallPath 'src\agent_loop.py'
+if (Test-Path $agentLoop) {
+    $typingLine = (Select-String -Path $agentLoop -Pattern '^from typing import' | Select-Object -First 1).Line
+    $usesAny    = Select-String -Path $agentLoop -Pattern '\bAny\b' -Quiet
+    if ($usesAny -and $typingLine -and ($typingLine -notmatch '\bAny\b')) {
+        Write-Fail 'This commit cannot start: src/agent_loop.py uses Any but does not import it.'
+        Write-Info  "  found: $typingLine"
+        Write-Info  '  The app raises NameError on import, in Docker and natively alike.'
+        Write-Host ''
+        Write-Info  'Options:'
+        Write-Info  '  1. Use the dev branch, which has the fix:'
+        Write-Info  "       git -C $InstallPath checkout dev"
+        Write-Info  '  2. Patch this one line, and record it in BUILD-RECORD.md:'
+        Write-Info  "       add Any to the typing import in src\agent_loop.py"
+        Write-Stop  'Not building. A build now would succeed and the app would still fail to start.'
+        exit 1
+    }
+    Write-Pass 'agent_loop.py imports resolve'
+} else {
+    Write-Warn 'src/agent_loop.py not found — repository layout changed; read docs/setup.md.'
+}
+
 # ----------------------------------------------------------------- .env ------
 Write-Head 'Configuration'
 

@@ -10,7 +10,44 @@ disagree with this document, upstream wins and this document gets corrected.
 
 ---
 
-## 0. Corrections to the original guide
+## 0. STOP — `main` does not currently start
+
+**Verified by running it, 2026-08-20, at commit `cf4e240`.**
+
+`src/agent_loop.py` line 15 imports `AsyncGenerator, List, Dict, Optional, Set`
+from `typing` but **not `Any`**, and line 1503 annotates a parameter as
+`dict[str, Any]`. The file has no `from __future__ import annotations`, so the
+annotation is evaluated at import time and raises:
+
+```
+NameError: name 'Any' is not defined
+```
+
+`app.py` imports `chat_routes`, which imports `agent_loop`, so **the application
+cannot start at all** — Docker or native. It fails identically either way,
+because this is a Python import error, not an environment problem.
+
+`dev` does not have this bug: its line 15 reads
+`from typing import Any, AsyncGenerator, List, Dict, Optional, Set`.
+
+**Pick one before installing:**
+
+| Option | What to do | Trade-off |
+|---|---|---|
+| Check first | `git show main:src/agent_loop.py \| sed -n 15p` — if it lists `Any`, it is fixed upstream and `main` is fine again | Zero cost. Do this every time. |
+| Use `dev` | `git clone --branch dev …` | Has the fix, but `dev` is the fast-moving branch the original guide warned about |
+| Patch `main` | Add `Any` to that import line | One line, but it is a local edit to upstream code — record it in `BUILD-RECORD.md` and expect to drop it when upstream catches up |
+
+The patch was confirmed sufficient: with `Any` added and nothing else changed,
+the app imports, boots, serves, and enforces authentication.
+
+This is exactly the class of problem no amount of reading finds. The original
+guide's advice to prefer `main` for stability was reasonable and, at this
+commit, wrong.
+
+---
+
+## 1. Corrections to the original guide
 
 Nine things in the guide differ from the current repository. All of them change
 what you actually type.
@@ -34,7 +71,7 @@ business-specific change in `.env`, Settings, prompts, and the
 
 ---
 
-## 1. Prerequisites
+## 2. Prerequisites
 
 - Windows 11, administrator access, virtualization enabled in BIOS.
 - Docker Desktop running on the **WSL2** backend.
@@ -52,7 +89,7 @@ nothing and changes nothing.
 
 ---
 
-## 2. Step 1 — Clean project folder
+## 3. Step 1 — Clean project folder
 
 ```powershell
 mkdir C:\AI-Workspaces
@@ -65,7 +102,7 @@ credentials, a paid service, public exposure, or a destructive change.
 
 ---
 
-## 3. Steps 4–6 — Clone, pin, configure, start
+## 4. Steps 4–6 — Clone, pin, configure, start
 
 This is what `scripts\install.ps1` automates. Doing it by hand:
 
@@ -99,7 +136,7 @@ again, and use `http://localhost:7001`. Record the change in `BUILD-RECORD.md`.
 
 ---
 
-## 4. Step 7 — First login
+## 5. Step 7 — First login
 
 1. `docker compose logs odysseus | Select-String "Temporary password"`
 2. Log in at `http://localhost:7000` as `admin`.
@@ -113,7 +150,7 @@ on disk — the generated-then-changed path is cleaner.
 
 ---
 
-## 5. Step 8 — Connect exactly one model
+## 6. Step 8 — Connect exactly one model
 
 Do this in **Settings**, not `.env`. One provider, one test agent. Adding five
 providers at once means you cannot tell which one broke.
@@ -135,7 +172,7 @@ Then test, in this order:
 
 ---
 
-## 6. Step 9 — Business workspaces, in phases
+## 7. Step 9 — Business workspaces, in phases
 
 Do not build all three at once. Order matters, by risk:
 
@@ -151,7 +188,7 @@ in [`CAJ-CUSTOMIZATION-PLAN.md`](CAJ-CUSTOMIZATION-PLAN.md).
 
 ---
 
-## 7. Acceptance tests
+## 8. Acceptance tests
 
 `scripts\verify.ps1` runs these and prints pass/fail per line:
 
@@ -164,6 +201,19 @@ in [`CAJ-CUSTOMIZATION-PLAN.md`](CAJ-CUSTOMIZATION-PLAN.md).
 - [ ] Git tracks no `.env`, key, or credential.
 - [ ] `BUILD-RECORD.md`, `CAJ-OPERATIONS.md`, `CAJ-CUSTOMIZATION-PLAN.md` exist.
 - [ ] A backup has been taken **and** a restore has been tested, before live use.
+
+### Verified against a live install
+
+These were confirmed by actually running Odysseus (native install, same
+codebase as the container) rather than by inspection:
+
+- `docker compose config` validates with the generated `.env` — exit 0
+- All four published ports resolve loopback-bound; zero `0.0.0.0`
+- The app boots and serves once the `Any` import is fixed
+- `GET /` returns 302; `/api/settings`, `/api/auth/users`, `/api/skills` and
+  `/api/assistant/settings` all return **401 unauthenticated**
+- Skills deploy, load, and are owner-isolated — a user requesting another
+  workspace's skill by name gets **404**
 
 The last one is manual and it is the one people skip. An untested backup is not
 a backup.

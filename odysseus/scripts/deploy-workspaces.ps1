@@ -29,7 +29,6 @@ param(
     [string]$Url         = '',
     [string]$AdminUser   = 'admin',
     [string]$Model       = '',
-    [switch]$SkipProvision,
     [switch]$SkipRestart
 )
 
@@ -94,83 +93,54 @@ Write-Pass 'Skills and manifests valid'
 # ------------------------------------------------------------------- plan ----
 if ($WhatIfPreference) {
     Write-Head 'Plan (nothing written)'
-    Write-Info "1. Copy 15 SKILL.md files into $root\data\skills\<category>\<name>\"
-    Write-Info '   Skipping any skill already on disk under a different owner.'
-    Write-Info "2. Restart the odysseus container$(if ($SkipRestart) { ' (suppressed)' })"
-    Write-Info '3. Create users caj-enterprises, caj-consulting, caj-grind'
-    Write-Info '   Set privileges, load system prompts, apply tool allowlists'
-    Write-Info '4. Verify: prompts loaded, no denied tool granted, isolation holds'
+    Write-Info '1. Create users caj-enterprises, caj-consulting, caj-grind; set privileges'
+    Write-Info "2. Copy 15 SKILL.md files into $root\data\skills\<category>\<name>\"
+    Write-Info "3. Restart odysseus$(if ($SkipRestart) { ' (suppressed)' }) — users MUST exist by now,"
+    Write-Info '   or Odysseus reassigns every skill to admin and isolation is lost'
+    Write-Info '4. Load each system prompt and tool allowlist'
+    Write-Info '5. Verify: prompts loaded, no denied tool granted, isolation holds'
     Write-Host ''
     $plan = Invoke-Tool 'provision_workspaces.py' @('--url', $Url)
     Write-Host $plan.Output
     exit 0
 }
 
-# ----------------------------------------------------------------- deploy ----
-# Skills first: they are files, need no auth, and must be on disk before the
-# restart so Odysseus indexes them and the verify step can see them.
-Write-Head 'Deploy skills'
-$dep = Invoke-Tool 'build_skills.py' @('--odysseus-root', $root, '--deploy')
-Write-Host $dep.Output
-if (-not $dep.Success) { Write-Fail 'Deploy failed.'; exit 1 }
-if ($dep.Output -match 'SKIP') {
-    Write-Warn 'Some skills were skipped — a different owner holds them on disk. Review before assuming this is fully deployed.'
-}
-
-# ---------------------------------------------------------------- restart ----
-if ($SkipRestart) {
-    Write-Head 'Restart skipped'
-    Write-Warn 'Odysseus indexes skills at start. Provisioning will verify against a stale index until you restart.'
-} else {
-    Write-Head 'Restart so Odysseus indexes the skills'
-    $rs = Invoke-Native -Command 'docker' -Arguments @('compose', 'restart', 'odysseus') -WorkingDirectory $root
-    if ($rs.Success) {
-        Write-Pass 'odysseus restarted'
-        Write-Info 'Waiting for it to come back...'
-        $ready = $false
-        foreach ($attempt in 1..30) {
-            Start-Sleep -Seconds 2
-            try {
-                $null = Invoke-WebRequest -Uri "$Url/" -UseBasicParsing -TimeoutSec 5 -MaximumRedirection 5
-                $ready = $true; break
-            } catch {
-                $code = $_.Exception.Response.StatusCode.value__
-                if ($code -in 200, 302, 401, 403) { $ready = $true; break }
-            }
-        }
-        if ($ready) { Write-Pass 'Odysseus is responding' }
-        else { Write-Warn 'Odysseus did not respond within 60s. Check: docker compose logs --tail=120 odysseus' }
-    } else {
-        Write-Warn "Restart failed:`n$($rs.Output)"
-        Write-Info 'Restart by hand: docker compose restart odysseus'
-    }
-}
-
 # -------------------------------------------------------------- provision ----
-if ($SkipProvision) {
-    Write-Head 'Provisioning skipped'
-    Write-Info 'Run it later:'
-    Write-Info "  $python $tools\provision_workspaces.py --url $Url --apply --then-verify"
-    exit 0
-}
-
-Write-Head 'Provision the three workspaces'
+# Order matters and is not cosmetic. Odysseus reassigns any skill whose owner is
+# not a current user to the primary admin at startup (backfill_owner, called
+# from app.py). Deploying skills before the business users exist rewrites all
+# fifteen SKILL.md files to owner: admin on disk, silently, and isolation is
+# gone. Verified against a live install.
+#
+# provision_workspaces.py --orchestrate runs the whole sequence in one process,
+# in the only order that survives that: create users -> deploy skills ->
+# restart -> configure -> verify. Keeping it in one process also means the
+# generated passwords stay in memory for the verify step.
+Write-Head 'Provision all three workspaces'
 Write-Host @"
-  This creates users caj-enterprises, caj-consulting and caj-grind, then loads
-  each workspace's system prompt and tool allowlist.
+  Creates users caj-enterprises, caj-consulting and caj-grind, deploys the 15
+  skills, restarts Odysseus, loads each system prompt and tool allowlist, then
+  verifies that isolation holds.
 
-  You will be asked for the Odysseus admin password. It is not stored, not
+  You will be asked once for the Odysseus admin password. It is not stored, not
   logged, and not echoed.
 
   Three generated passwords print once at the end. Save them then.
 "@ -ForegroundColor Yellow
 
-$provArgs = @((Join-Path $tools 'provision_workspaces.py'), '--url', $Url, '--admin-user', $AdminUser, '--apply', '--then-verify')
-if ($Model) { $provArgs += @('--model', $Model) }
+$provArgs = @(
+    (Join-Path $tools 'provision_workspaces.py'),
+    '--url', $Url,
+    '--admin-user', $AdminUser,
+    '--apply', '--orchestrate', '--then-verify',
+    '--odysseus-root', $root
+)
+if ($Model)       { $provArgs += @('--model', $Model) }
+if ($SkipRestart) { $provArgs += @('--restart-cmd', '') }
 
-# Run in the foreground, not through Invoke-Native: the admin password prompt
-# needs the real console, and the output must not be captured into a variable
-# that could end up in a transcript.
+# Foreground, not through Invoke-Native: the admin password prompt needs the
+# real console, and the output must not be captured into a variable that could
+# end up in a transcript.
 & $python @provArgs
 $provisionExit = $LASTEXITCODE
 

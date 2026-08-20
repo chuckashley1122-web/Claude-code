@@ -109,6 +109,10 @@ def main() -> int:
     ap.add_argument("--odysseus-root", required=True, help="Path to the Odysseus checkout")
     ap.add_argument("--check", action="store_true", help="Verify committed files are current; write nothing")
     ap.add_argument("--deploy", action="store_true", help="Install into <odysseus-root>/data/skills/")
+    ap.add_argument("--reclaim", action="store_true",
+                    help="With --deploy: take back skills whose on-disk owner is not one of "
+                         "ours (typically 'admin' after Odysseus's startup backfill). Never "
+                         "overwrites a skill owned by another CA&J business.")
     args = ap.parse_args()
 
     fmt = load_skill_format(args.odysseus_root)
@@ -158,13 +162,30 @@ def main() -> int:
                 with open(dest, encoding="utf-8") as fh:
                     existing = fmt.Skill.from_markdown(fh.read(), path=dest)
                 if existing.owner and existing.owner != skill.owner:
-                    print(
-                        f"SKIP  {dest}\n"
-                        f"      on disk is owned by '{existing.owner}', we would write "
-                        f"'{skill.owner}'. Not overwriting another owner's skill.",
-                        file=sys.stderr,
-                    )
-                    continue
+                    # Odysseus reassigns any skill whose owner is not a current
+                    # user to the primary admin at startup (backfill_owner in
+                    # services/memory/skills.py, called from app.py). So a skill
+                    # deployed before its business user existed comes back owned
+                    # by admin, and the plain guard below then refuses to repair
+                    # it. --reclaim allows taking back a skill from an owner that
+                    # is not one of ours; a skill genuinely owned by another
+                    # business is still never overwritten.
+                    ours = {b["owner"] for b in skills_source.BUSINESSES.values()}
+                    if args.reclaim and existing.owner not in ours:
+                        print(f"reclaim   {os.path.relpath(dest, args.odysseus_root)} "
+                              f"(was owned by '{existing.owner}')")
+                    else:
+                        hint = ""
+                        if existing.owner not in ours:
+                            hint = ("\n      Odysseus reassigns unknown owners to admin at startup. "
+                                    "Create the\n      business users first, then re-run with --reclaim.")
+                        print(
+                            f"SKIP  {dest}\n"
+                            f"      on disk is owned by '{existing.owner}', we would write "
+                            f"'{skill.owner}'. Not overwriting another owner's skill.{hint}",
+                            file=sys.stderr,
+                        )
+                        continue
             os.makedirs(dest_dir, exist_ok=True)
             shutil.copyfile(repo_path(business, skill.name), dest)
             print(f"deployed  {os.path.relpath(dest, args.odysseus_root)}")

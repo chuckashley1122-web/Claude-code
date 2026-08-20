@@ -43,6 +43,35 @@ not for doing business work — do the work signed in as the business user.
 
 ---
 
+## The ordering trap — read this before deviating
+
+Odysseus reassigns any skill whose owner is not a **current user** to the
+primary admin, at startup:
+
+```python
+# services/memory/skills.py, called from app.py
+if owner and owner in valid_owners:
+    continue
+sk.owner = primary_owner        # rewritten ON DISK
+```
+
+Deploy the skills before the three business users exist and every one of the
+fifteen `SKILL.md` files is rewritten to `owner: admin`. The log says
+`Assigned 15 legacy skill file(s) to admin` and nothing else complains —
+isolation is simply gone, and the files on disk no longer match the repo.
+
+**This was not theoretical.** An earlier version of the deploy script had the
+order wrong and did exactly this on a live install. The only safe order is:
+
+> create the users → deploy the skills → restart → configure → verify
+
+`deploy-workspaces.ps1` now runs that as one process so it cannot be got wrong.
+If an install has already hit this, `build_skills.py --deploy --reclaim` takes
+the skills back; it still refuses to overwrite a skill genuinely owned by a
+different CA&J business.
+
+---
+
 ## Do it in one command
 
 ```powershell

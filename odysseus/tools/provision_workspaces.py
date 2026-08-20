@@ -41,7 +41,9 @@ import json
 import os
 import secrets
 import string
+import subprocess
 import sys
+import time
 import urllib.error
 import urllib.request
 
@@ -185,6 +187,7 @@ def apply(args) -> int:
 
     credentials: list[tuple[str, str]] = []
     problems: list[str] = []
+    pending: list[tuple] = []
 
     for business, meta in skills_source.BUSINESSES.items():
         owner = meta["owner"]
@@ -220,12 +223,50 @@ def apply(args) -> int:
             problems.append(f"{owner}: privileges failed ({status})")
             print(f"    [warn] privileges failed ({status}) — set them in Settings")
 
-        # --- system prompt + tools ----------------------------------------
+        pending.append((business, meta, owner, password))
+
+    # --- deploy skills between the two phases ------------------------------
+    # Ordering is not cosmetic. Odysseus reassigns any skill whose owner is not
+    # a current user to the primary admin at startup (backfill_owner, called
+    # from app.py). Deploy skills before the business users exist and all of
+    # them come back owned by admin, silently, and isolation is gone. So: create
+    # the users, THEN deploy, THEN restart — by which point the owners resolve.
+    if args.orchestrate:
+        print("\n  Deploying skills and restarting (users now exist, so owners survive)")
+        here = os.path.dirname(os.path.abspath(__file__))
+        build = subprocess.run(
+            [sys.executable, os.path.join(here, "build_skills.py"),
+             "--odysseus-root", args.odysseus_root, "--deploy", "--reclaim"],
+            capture_output=True, text=True,
+        )
+        if build.returncode != 0:
+            print(build.stdout + build.stderr)
+            problems.append("skill deploy failed")
+        else:
+            print(f"    [ok] skills deployed to {args.odysseus_root}/data/skills")
+
+        if args.restart_cmd:
+            restart = subprocess.run(args.restart_cmd, shell=True, cwd=args.odysseus_root,
+                                     capture_output=True, text=True)
+            if restart.returncode != 0:
+                print(f"    [warn] restart command failed: {restart.stderr.strip()[:200]}")
+            else:
+                print("    [ok] restart issued")
+            if not wait_for(args.url):
+                problems.append("Odysseus did not come back after restart")
+            else:
+                print("    [ok] Odysseus responding again")
+        else:
+            print("    [warn] no --restart-cmd given; restart Odysseus yourself before verifying")
+
+    # --- system prompt + tools ---------------------------------------------
+    for business, meta, owner, password in pending:
+        print(f"\n  {meta['label']}  ({owner}) — settings")
         if password is None:
-            print("    [skip] system prompt — needs this user's password, which we do not have.")
-            print("           Re-run with --user-password to set it, or paste the prompt in the UI.")
             supplied = (args.user_password or {}).get(owner)
             if not supplied:
+                print("    [skip] needs this user's password, which we do not have.")
+                print("           Pass --user-password, or set the prompt in the UI.")
                 continue
             password = supplied
 
@@ -389,6 +430,19 @@ def verify(args) -> int:
 
 # ---------------------------------------------------------------------- cli --
 
+def wait_for(url: str, attempts: int = 40) -> bool:
+    """Poll the base URL until Odysseus answers again after a restart."""
+    for _ in range(attempts):
+        try:
+            urllib.request.urlopen(url, timeout=3)
+            return True
+        except urllib.error.HTTPError:
+            return True          # any HTTP status means it is serving
+        except Exception:
+            time.sleep(3)
+    return False
+
+
 def parse_passwords(pairs) -> dict:
     out = {}
     env = os.environ.get("ODYSSEUS_WS_PASSWORDS", "")
@@ -416,12 +470,22 @@ def main() -> int:
     mode = ap.add_mutually_exclusive_group()
     mode.add_argument("--apply", action="store_true", help="Execute the plan")
     mode.add_argument("--verify", action="store_true", help="Check an existing install")
+    ap.add_argument("--orchestrate", action="store_true",
+                    help="With --apply: deploy the skills and restart Odysseus between "
+                         "creating the users and configuring them. This is the only "
+                         "ordering that survives Odysseus's startup owner-backfill. "
+                         "Requires --odysseus-root.")
+    ap.add_argument("--odysseus-root", help="Path to the Odysseus checkout (for --orchestrate)")
+    ap.add_argument("--restart-cmd", default="docker compose restart odysseus",
+                    help="Command used to restart Odysseus during --orchestrate")
     ap.add_argument("--then-verify", action="store_true",
                     help="With --apply: verify immediately, reusing the generated "
                          "passwords from memory. Deploy the skills first or the "
                          "skill check will fail.")
     args = ap.parse_args()
     args.user_password = parse_passwords(args.user_password)
+    if args.orchestrate and not args.odysseus_root:
+        raise SystemExit("error: --orchestrate requires --odysseus-root")
 
     if args.verify:
         return verify(args)
