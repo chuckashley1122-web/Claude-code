@@ -30,7 +30,9 @@ odysseus/
 │   ├── skills_source.py            Source of truth for all 15 skills
 │   ├── build_skills.py             Renders SKILL.md via Odysseus's own serializer
 │   ├── validate_skills.py          Round-trip + policy checks
-│   └── validate_sources.py         Manifest structure, paths, approval discipline
+│   ├── validate_sources.py         Manifest structure, paths, approval discipline
+│   ├── provision_workspaces.py     Users, prompts, tool allowlists, isolation check
+│   └── test_provision.py           Regression test — mock API, no Docker needed
 └── workspaces/
     ├── _shared/                    Safety rules and audit checklist all three inherit
     ├── ca-j-enterprises/           Local-service marketing
@@ -71,6 +73,12 @@ accounts (see [`docs/WORKSPACE-DEPLOYMENT.md`](docs/WORKSPACE-DEPLOYMENT.md)):
 .\deploy-workspaces.ps1 -WhatIf
 .\deploy-workspaces.ps1
 ```
+
+That one command validates, deploys the skills, restarts, creates the three
+business users, loads each system prompt and tool allowlist, and verifies that
+isolation holds. Draft-only is enforced by the tool allowlist rather than by the
+prompt: `send_email` and `reply_to_email` are never granted, so the agent cannot
+call them whatever it is asked.
 
 ## What was verified
 

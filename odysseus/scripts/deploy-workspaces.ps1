@@ -1,26 +1,35 @@
 <#
 .SYNOPSIS
-    Deploy the CA&J workspace skills into a running Odysseus install.
+    Set up all three CA&J business workspaces on a running Odysseus install.
 
 .DESCRIPTION
-    Builds the SKILL.md files from source, validates them against Odysseus's own
-    parser, and copies them to <odysseus>/data/skills/<category>/<name>/.
+    Phase two, end to end, in one command:
 
-    Creates no users and sets no privileges — those are admin actions done in
-    the UI, and they must exist first or the skills load for nobody. See
-    docs/WORKSPACE-DEPLOYMENT.md.
+        validate  →  deploy skills  →  restart  →  provision  →  verify
 
-    A skill already on disk under a different owner is skipped, never
-    overwritten.
+    Provisioning creates the three business users, sets their privileges, and
+    loads each one's system prompt and tool allowlist. The tool allowlist is
+    what makes draft-only real: send_email and reply_to_email are not granted,
+    so the agent cannot call them regardless of what any prompt says.
+
+    Requires the Odysseus admin password, which is typed interactively, never
+    stored, and never echoed. The three generated user passwords are printed
+    once at the end — save them before closing the terminal.
+
+    Nothing here sends, publishes, or exposes anything.
 
 .EXAMPLE
     .\deploy-workspaces.ps1 -WhatIf
     .\deploy-workspaces.ps1
-    .\deploy-workspaces.ps1 -SkipRestart
+    .\deploy-workspaces.ps1 -Model "gpt-4o" -SkipRestart
 #>
 [CmdletBinding(SupportsShouldProcess)]
 param(
     [string]$InstallPath = (Join-Path 'C:\AI-Workspaces' 'odysseus'),
+    [string]$Url         = '',
+    [string]$AdminUser   = 'admin',
+    [string]$Model       = '',
+    [switch]$SkipProvision,
     [switch]$SkipRestart
 )
 
@@ -29,121 +38,160 @@ param(
 $root     = Resolve-OdysseusRoot -InstallPath $InstallPath
 $repoRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 $tools    = Join-Path $repoRoot 'odysseus\tools'
+if (-not $Url) { $Url = "http://localhost:$(Get-AppPort -Root $root)" }
 
-Write-Host 'Deploy CA&J workspace skills' -ForegroundColor Cyan
+Write-Host 'CA&J workspace deployment' -ForegroundColor Cyan
 Write-Info "odysseus : $root"
 Write-Info "kit      : $repoRoot"
+Write-Info "url      : $Url"
 
 # ----------------------------------------------------------------- python ----
 Write-Head 'Python'
 $python = if (Test-CommandExists 'python') { 'python' } elseif (Test-CommandExists 'python3') { 'python3' } else { $null }
 if (-not $python) {
-    Write-Fail 'No Python on PATH. The build and validation tools need Python 3.'
+    Write-Fail 'No Python on PATH. The build, validation, and provisioning tools need Python 3.'
     Write-Info 'Install Python 3.11+ from https://www.python.org/downloads/ and re-run.'
     exit 1
 }
 Write-Pass "$python available"
 
-# ------------------------------------------------------------------ build ----
-Write-Head 'Build'
-$build = Invoke-Native -Command $python -Arguments @((Join-Path $tools 'build_skills.py'), '--odysseus-root', $root, '--check')
-if ($build.Success) {
-    Write-Pass 'Committed SKILL.md files are current'
-} else {
-    Write-Warn 'Committed SKILL.md files are out of date:'
-    Write-Host $build.Output
-    if ($WhatIfPreference) {
-        Write-Info 'Would regenerate them. Nothing written in -WhatIf.'
-    } else {
-        $regen = Invoke-Native -Command $python -Arguments @((Join-Path $tools 'build_skills.py'), '--odysseus-root', $root)
-        if (-not $regen.Success) {
-            Write-Fail "Build failed:`n$($regen.Output)"
-            exit 1
-        }
-        Write-Pass 'Regenerated. Commit the result.'
-    }
+function Invoke-Tool([string]$Name, [string[]]$ToolArgs) {
+    Invoke-Native -Command $python -Arguments (@((Join-Path $tools $Name)) + $ToolArgs)
 }
 
 # --------------------------------------------------------------- validate ----
 Write-Head 'Validate'
-$val = Invoke-Native -Command $python -Arguments @((Join-Path $tools 'validate_skills.py'), '--odysseus-root', $root)
-Write-Host $val.Output
-if (-not $val.Success) {
-    Write-Fail 'Validation failed.'
-    Write-Stop 'Nothing was deployed. Fix the problems above first — a skill that fails validation may load for nobody, or corrupt itself on first save.'
+
+$build = Invoke-Tool 'build_skills.py' @('--odysseus-root', $root, '--check')
+if ($build.Success) {
+    Write-Pass 'Committed SKILL.md files are current'
+} elseif ($WhatIfPreference) {
+    Write-Warn 'SKILL.md files are out of date; would regenerate.'
+} else {
+    Write-Warn 'SKILL.md files are out of date; regenerating.'
+    $regen = Invoke-Tool 'build_skills.py' @('--odysseus-root', $root)
+    if (-not $regen.Success) { Write-Fail "Build failed:`n$($regen.Output)"; exit 1 }
+    Write-Pass 'Regenerated — commit the result'
+}
+
+$vs = Invoke-Tool 'validate_skills.py' @('--odysseus-root', $root)
+Write-Host $vs.Output
+if (-not $vs.Success) {
+    Write-Fail 'Skill validation failed.'
+    Write-Stop 'Nothing deployed. A skill that fails validation may load for nobody, or corrupt itself on first save.'
     exit 1
 }
-Write-Pass 'All skills valid'
 
-# ------------------------------------------------------- validate sources ----
-Write-Head 'Validate knowledge manifests'
-$src = Invoke-Native -Command $python -Arguments @((Join-Path $tools 'validate_sources.py'))
-Write-Host $src.Output
-if (-not $src.Success) {
+$vsrc = Invoke-Tool 'validate_sources.py' @()
+Write-Host $vsrc.Output
+if (-not $vsrc.Success) {
     Write-Fail 'Manifest validation failed.'
-    Write-Stop 'Nothing was deployed. A broken manifest means a source silently never loads, or loads without an approver on record.'
+    Write-Stop 'Nothing deployed. A broken manifest means a source silently never loads, or loads with no approver on record.'
     exit 1
 }
-Write-Pass 'Manifests and reference sources valid'
+Write-Pass 'Skills and manifests valid'
 
-# ----------------------------------------------------------- users warning ---
-Write-Head 'Prerequisite: business user accounts'
-Write-Host @"
-  Skills are filtered by owner. These three users must exist in Odysseus, or the
-  skills load for nobody:
-
-      caj-enterprises      CA-J Enterprises
-      caj-consulting       CA-J Consulting
-      caj-grind            Chuck's Daily Grind
-
-  Create them as admin in Settings -> Users, non-admin, one password each.
-  The username IS the isolation key — a typo silently hides that business's
-  skills rather than erroring.
-"@ -ForegroundColor Yellow
-
+# ------------------------------------------------------------------- plan ----
 if ($WhatIfPreference) {
     Write-Head 'Plan (nothing written)'
-    $plan = Invoke-Native -Command $python -Arguments @((Join-Path $tools 'build_skills.py'), '--odysseus-root', $root, '--check')
-    Write-Info "Would copy 15 SKILL.md files into $root\data\skills\<category>\<name>\"
-    Write-Info 'Would skip any skill already on disk under a different owner.'
-    Write-Info "Would then restart the odysseus container$(if ($SkipRestart) { ' (suppressed by -SkipRestart)' })."
+    Write-Info "1. Copy 15 SKILL.md files into $root\data\skills\<category>\<name>\"
+    Write-Info '   Skipping any skill already on disk under a different owner.'
+    Write-Info "2. Restart the odysseus container$(if ($SkipRestart) { ' (suppressed)' })"
+    Write-Info '3. Create users caj-enterprises, caj-consulting, caj-grind'
+    Write-Info '   Set privileges, load system prompts, apply tool allowlists'
+    Write-Info '4. Verify: prompts loaded, no denied tool granted, isolation holds'
+    Write-Host ''
+    $plan = Invoke-Tool 'provision_workspaces.py' @('--url', $Url)
+    Write-Host $plan.Output
     exit 0
 }
 
 # ----------------------------------------------------------------- deploy ----
-Write-Head 'Deploy'
-$dep = Invoke-Native -Command $python -Arguments @((Join-Path $tools 'build_skills.py'), '--odysseus-root', $root, '--deploy')
+# Skills first: they are files, need no auth, and must be on disk before the
+# restart so Odysseus indexes them and the verify step can see them.
+Write-Head 'Deploy skills'
+$dep = Invoke-Tool 'build_skills.py' @('--odysseus-root', $root, '--deploy')
 Write-Host $dep.Output
-if (-not $dep.Success) {
-    Write-Fail 'Deploy failed.'
-    exit 1
-}
-
+if (-not $dep.Success) { Write-Fail 'Deploy failed.'; exit 1 }
 if ($dep.Output -match 'SKIP') {
-    Write-Warn 'One or more skills were skipped because a different owner holds them on disk.'
-    Write-Info 'Review those before assuming this workspace is fully deployed.'
+    Write-Warn 'Some skills were skipped — a different owner holds them on disk. Review before assuming this is fully deployed.'
 }
 
 # ---------------------------------------------------------------- restart ----
 if ($SkipRestart) {
     Write-Head 'Restart skipped'
-    Write-Info 'Odysseus re-indexes skills on start. Restart before testing:  docker compose restart odysseus'
+    Write-Warn 'Odysseus indexes skills at start. Provisioning will verify against a stale index until you restart.'
 } else {
-    Write-Head 'Restart so Odysseus re-indexes'
+    Write-Head 'Restart so Odysseus indexes the skills'
     $rs = Invoke-Native -Command 'docker' -Arguments @('compose', 'restart', 'odysseus') -WorkingDirectory $root
-    if ($rs.Success) { Write-Pass 'odysseus restarted' }
-    else { Write-Warn "Restart failed:`n$($rs.Output)"; Write-Info 'Restart by hand: docker compose restart odysseus' }
+    if ($rs.Success) {
+        Write-Pass 'odysseus restarted'
+        Write-Info 'Waiting for it to come back...'
+        $ready = $false
+        foreach ($attempt in 1..30) {
+            Start-Sleep -Seconds 2
+            try {
+                $null = Invoke-WebRequest -Uri "$Url/" -UseBasicParsing -TimeoutSec 5 -MaximumRedirection 5
+                $ready = $true; break
+            } catch {
+                $code = $_.Exception.Response.StatusCode.value__
+                if ($code -in 200, 302, 401, 403) { $ready = $true; break }
+            }
+        }
+        if ($ready) { Write-Pass 'Odysseus is responding' }
+        else { Write-Warn 'Odysseus did not respond within 60s. Check: docker compose logs --tail=120 odysseus' }
+    } else {
+        Write-Warn "Restart failed:`n$($rs.Output)"
+        Write-Info 'Restart by hand: docker compose restart odysseus'
+    }
 }
 
-# ------------------------------------------------------------------- next ----
-Write-Head 'Next'
-Write-Host @"
-  1. Sign in as each business user and confirm Skills shows exactly its own 5.
-  2. Paste each workspace system prompt from workspaces\<business>\system-prompt.md
-     into that user's assistant settings. They are not auto-deployed.
-  3. Run the six tests in workspaces\<business>\tests.md — including the
-     prompt-injection test. A workspace is not live until all six pass.
+# -------------------------------------------------------------- provision ----
+if ($SkipProvision) {
+    Write-Head 'Provisioning skipped'
+    Write-Info 'Run it later:'
+    Write-Info "  $python $tools\provision_workspaces.py --url $Url --apply --then-verify"
+    exit 0
+}
 
-  Order still matters: CA-J Enterprises first, Chuck's Daily Grind second,
-  CA-J Consulting last.
+Write-Head 'Provision the three workspaces'
+Write-Host @"
+  This creates users caj-enterprises, caj-consulting and caj-grind, then loads
+  each workspace's system prompt and tool allowlist.
+
+  You will be asked for the Odysseus admin password. It is not stored, not
+  logged, and not echoed.
+
+  Three generated passwords print once at the end. Save them then.
+"@ -ForegroundColor Yellow
+
+$provArgs = @((Join-Path $tools 'provision_workspaces.py'), '--url', $Url, '--admin-user', $AdminUser, '--apply', '--then-verify')
+if ($Model) { $provArgs += @('--model', $Model) }
+
+# Run in the foreground, not through Invoke-Native: the admin password prompt
+# needs the real console, and the output must not be captured into a variable
+# that could end up in a transcript.
+& $python @provArgs
+$provisionExit = $LASTEXITCODE
+
+Write-Head 'Result'
+if ($provisionExit -eq 0) {
+    Write-Pass 'All three workspaces provisioned, isolated, and verified'
+    Write-Host @"
+
+  Still to do, and no script can do them:
+
+    1. Connect one model in Settings, if you have not already.
+    2. Fill in each workspace's approved/ documents — brand voice, product
+       catalogue, pricing. Skills refuse unsourced claims, so they produce
+       flagged placeholders until these exist.
+    3. Run the six tests in workspaces\<business>\tests.md, signed in as that
+       business user. A workspace is not live until all six pass.
+
+  Order by risk: CA-J Enterprises, then Chuck's Daily Grind, then CA-J Consulting.
 "@ -ForegroundColor Cyan
+} else {
+    Write-Fail 'Provisioning reported problems — read the output above.'
+    Write-Info "Re-run just this step:  $python $tools\provision_workspaces.py --url $Url --verify"
+    exit 1
+}

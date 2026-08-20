@@ -136,6 +136,13 @@ def main() -> int:
             # reference/ is tracked; approved/ is gitignored business material.
             in_reference = os.sep + "reference" + os.sep in full + os.sep
             in_approved = os.sep + "approved" + os.sep in full + os.sep
+
+            # Every business document the manifest expects needs a template, so
+            # filling it in is never a blank page.
+            if in_approved:
+                template = os.path.join(base, "templates", os.path.basename(path))
+                if not os.path.isfile(template):
+                    fail(where, f"expects {path} but has no templates/{os.path.basename(path)}")
             if drafted and not in_reference:
                 fail(where, f"drafted sources belong in reference/, not {path}")
             if in_approved and os.path.isfile(full):
@@ -183,7 +190,8 @@ def main() -> int:
         return 1
 
     print(f"OK — {len(manifests)} manifests, {total_sources} sources, {total_drafted} drafted")
-    print("     structure, paths, approval discipline, draft verify-sections, PII hygiene")
+    print("     structure, paths, approval discipline, draft verify-sections, PII hygiene,")
+    print("     and every expected business document has a template")
     return 0
 
 

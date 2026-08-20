@@ -42,6 +42,7 @@ Each directory under `odysseus/workspaces/` holds the same six artifacts:
 | `tests.md` | Three normal tests, two failure tests, one prompt-injection test |
 | `credentials.md` | Required integrations and scopes by name. Contains no secrets. |
 | `reference/` | General reference material — tracked in Git, reviewed like code |
+| `templates/` | Skeletons for the business documents, so `approved/` is never a blank page |
 | `approved/` | Real business documents — gitignored, never committed |
 | `audit-checklist.md` | Per-workspace review gates layered on the shared checklist |
 
@@ -88,7 +89,7 @@ and an *unowned* skill is hidden from everyone.
 | Memory | Per-workspace; an Enterprises agent cannot recall a Consulting conversation | Per-user accounts |
 | Credentials | Separate API keys, mailboxes, and OAuth clients | Issuance discipline |
 | Model + spend | Pinned per user via `allowed_models` and `max_messages_per_day` | Upstream privileges |
-| Output | Drafts only; sending and publishing are human actions | Prompt + skill standing rules |
+| Output | Drafts only; sending and publishing are human actions | **Per-user tool allowlist** — `send_email` is never granted |
 | Combination | Only on explicit request, as a named one-off task | Shared safety rule 2 |
 
 Sign in as the business user to do business work. The admin account sees every

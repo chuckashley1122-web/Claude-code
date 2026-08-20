@@ -30,11 +30,12 @@ sources:
 
   - id: generic-document-checklists
     type: document
-    path: ./approved/document-checklists.md
+    path: ./reference/document-checklists.md
     description: Generic, non-borrower-specific checklists by loan type
     approved: false
     approver: ""
     contains_pii: false
+    status: drafted        # drafted by Claude Code; needs review before approval
 
   - id: compliance-rules
     type: document

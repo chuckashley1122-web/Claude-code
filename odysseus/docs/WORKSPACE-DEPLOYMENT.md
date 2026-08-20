@@ -43,70 +43,90 @@ not for doing business work — do the work signed in as the business user.
 
 ---
 
-## Step 1 — Create the three business users
+## Do it in one command
 
-As admin, in **Settings → Users**, or via the API (`POST /api/auth/users`,
-admin-only). Three non-admin accounts, matching the usernames above exactly —
-the username **is** the isolation key, so a typo silently hides that business's
-skills.
+```powershell
+cd <repo>\odysseus\scripts
+.\deploy-workspaces.ps1 -WhatIf     # show the whole plan, change nothing
+.\deploy-workspaces.ps1
+```
 
-Then set each user's privileges (**Settings → Users → Privileges**, or
-`PUT /api/auth/users/{username}/privileges`). The defaults are close to right;
-these are the ones worth setting deliberately:
+That runs, in this order:
 
-| Privilege | Set to | Why |
+1. **Validate** — skills build clean, manifests are sound. Refuses to go further otherwise.
+2. **Deploy skills** — copies the 15 `SKILL.md` files to `data/skills/<category>/<name>/`,
+   skipping any skill a different owner holds on disk.
+3. **Restart** — Odysseus indexes skills at start, then waits for it to answer.
+4. **Provision** — creates the three users, sets privileges, loads each system
+   prompt and tool allowlist.
+5. **Verify** — confirms the prompts loaded, no denied tool was granted, and
+   each workspace sees exactly its own five skills and none of another's.
+
+You will be asked once for the Odysseus admin password. It is not stored, not
+logged, and not echoed. The three generated user passwords print once at the
+end — save them then.
+
+Add `-Model "<model-id>"` to pin the same model across all three workspaces.
+
+### What provisioning actually sets
+
+| | Set to | Why |
 |---|---|---|
-| `can_use_bash` | `false` | Already the default. No workspace needs shell access; leave it off. |
-| `allowed_models` + `allowed_models_restricted` | pin per business | Pins each business to one model. Cost attribution, and no accidental use of an expensive model. |
-| `max_messages_per_day` | a real number | A spend ceiling per business. `0` means unlimited. |
-| `can_use_research` | `true` | Enterprises and Grind need public research. Consulting needs SBA/CFPB. |
-| `can_use_browser` | consider `false` for Consulting | Reduces the untrusted-input surface in the highest-risk workspace. |
+| `personality` | The workspace's `system-prompt.md` | This is Odysseus's per-user system prompt field |
+| `enabled_tools` | A per-business allowlist | See below — this is what makes draft-only real |
+| `allow_autonomous_email` | `false` | Belt and braces alongside the allowlist |
+| privileges | Per business | `can_use_bash: false` everywhere; browser off for Consulting |
 
-Give each account its own password. Do not reuse the admin password.
+### Draft-only is enforced by the tool list, not the prompt
 
----
+A prompt can be talked around. A tool that was never granted cannot be called.
 
-## Step 2 — Deploy the skills
+31 tools are denied to every workspace, including `send_email`,
+`reply_to_email`, `bulk_email`, `bash`, `python`, `write_file`, `manage_tokens`,
+and `manage_skills` — the last so the agent cannot rewrite the skills that
+constrain it. CA-J Consulting is tightest at 9 tools and is additionally denied
+`web_fetch`, because arbitrary page retrieval is the widest untrusted-input
+surface and that is the workspace where an injection would do most damage.
 
-```powershell
-.\odysseus\scripts\deploy-workspaces.ps1 -WhatIf     # show what would be written
-.\odysseus\scripts\deploy-workspaces.ps1
-```
+The allowlists live in `tools/skills_source.py` next to the owners they belong
+to, and `--verify` fails if any denied tool is ever granted.
 
-That wraps `odysseus/tools/build_skills.py --deploy`, which copies each
-`SKILL.md` to the path `SkillsManager` reads:
-
-```
-<odysseus>/data/skills/<category>/<name>/SKILL.md
-```
-
-It refuses to overwrite a skill whose on-disk `owner` differs from the one it
-is about to write, so a hand-edited or differently-owned skill is never
-silently replaced — it prints SKIP and moves on.
-
-Restart so Odysseus re-indexes:
+### Running the pieces separately
 
 ```powershell
-docker compose restart odysseus
+.\deploy-workspaces.ps1 -SkipProvision      # skills only
+python3 ..\tools\provision_workspaces.py --url http://localhost:7000              # plan
+python3 ..\tools\provision_workspaces.py --url http://localhost:7000 --apply --then-verify
+python3 ..\tools\provision_workspaces.py --url http://localhost:7000 --verify --user-password caj-grind=...
 ```
 
-Then sign in as each business user and confirm **Skills** shows five, and only
-its own five.
+Provisioning is idempotent: an existing user is left alone, password unchanged.
+
+### If a user already exists
+
+The tool cannot set the system prompt for a user whose password it does not
+know. Pass `--user-password owner=secret`, or set the prompt in the UI. A user
+with 2FA enabled must be provisioned through the UI — the tool says so rather
+than failing obscurely.
 
 ---
 
-## Step 3 — Load the system prompts
+## Step 3 — Load the business documents
 
-The system prompts in `workspaces/*/system-prompt.md` are not auto-deployed.
-Paste each into the workspace/assistant settings for that business user. They
-are versioned in this repo, so when one changes, bump its version, update the
-changelog at the bottom, and re-paste.
+Provisioning gets the workspaces running. They produce useful output once their
+knowledge sources exist.
 
-Skills carry their own standing rules, so a skill still behaves correctly if the
-system prompt is missing — but the prompt is what sets voice, audience, and the
-prohibitions that apply outside any particular skill. Do not skip it.
+Each workspace's `templates/` directory holds a skeleton for every business
+document its manifest expects. Copy one into `approved/`, fill it in, then set
+`approved: true` with your name in the manifest.
 
----
+`approved/` is gitignored, so completed documents never leave your machine.
+`validate_sources.py` fails if a manifest expects a document that has no
+template, so there is never a blank page to start from.
+
+**CA-J Consulting needs none of this** — all of its sources are general
+reference material already in the repo. It is ready to run as soon as a model is
+connected.
 
 ## Editing skills
 

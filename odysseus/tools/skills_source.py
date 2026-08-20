@@ -12,21 +12,87 @@ strictly by this field, and skills with no owner are hidden from everyone. Each
 business therefore gets its own Odysseus user account and its own owner string.
 """
 
+# Tools every workspace is denied, whatever else it is granted. This is the
+# draft-only rule enforced at the tool layer rather than only in a prompt — a
+# prompt can be talked around, a missing tool cannot be called.
+#
+# Names come from _DOMAIN_TOOL_MAP in upstream src/agent_loop.py.
+DENIED_TOOLS = [
+    # Sending, publishing, destroying — the whole point of draft-only.
+    "send_email", "reply_to_email", "bulk_email",
+    "delete_email", "archive_email", "mark_email_read",
+    "unsubscribe_email", "scan_email_unsubscribes",
+    # Server filesystem and code execution. No marketing or lending task needs
+    # either, and both are routes to data the workspace must never see.
+    "bash", "python", "write_file", "edit_file", "apply_patch",
+    "read_file", "grep", "glob", "ls", "get_workspace", "manage_bg_jobs",
+    # Configuration, credentials, and outbound integration.
+    "manage_settings", "manage_endpoints", "manage_mcp",
+    "manage_webhooks", "manage_tokens", "app_api", "api_call",
+    # Model management.
+    "download_model", "serve_model", "serve_preset", "stop_served_model",
+    # The agent must not rewrite the skills that constrain it.
+    "manage_skills",
+]
+
+# Document and drafting tools shared by the two content workspaces.
+_DOC_TOOLS = [
+    "create_document", "edit_document", "update_document",
+    "suggest_document", "manage_documents",
+]
+
+# Always available upstream regardless; listed so the grant is explicit.
+_BASE_TOOLS = ["manage_memory", "ask_user", "update_plan"]
+
 BUSINESSES = {
     "ca-j-enterprises": {
         "category": "caj-enterprises",
         "owner": "caj-enterprises",
         "label": "CA-J Enterprises",
+        # Public research plus drafting. No email tools at all in the pilot.
+        "tools": _BASE_TOOLS + _DOC_TOOLS + [
+            "web_search", "web_fetch",
+            "manage_notes", "manage_tasks", "search_chats",
+        ],
+        "privileges": {
+            "can_use_bash": False,
+            "can_use_browser": True,
+            "can_use_research": True,
+            "can_manage_memory": True,
+            "can_use_documents": True,
+        },
     },
     "ca-j-consulting": {
         "category": "caj-consulting",
         "owner": "caj-consulting",
         "label": "CA-J Consulting",
+        # Tightest grant in the system. No web_fetch: arbitrary page retrieval
+        # is the widest untrusted-input surface, and this is the workspace
+        # where a prompt injection would do the most damage.
+        "tools": _BASE_TOOLS + _DOC_TOOLS + ["web_search"],
+        "privileges": {
+            "can_use_bash": False,
+            "can_use_browser": False,
+            "can_use_research": True,
+            "can_manage_memory": False,
+            "can_use_documents": True,
+        },
     },
     "chucks-daily-grind": {
         "category": "caj-grind",
         "owner": "caj-grind",
         "label": "Chuck's Daily Grind",
+        "tools": _BASE_TOOLS + _DOC_TOOLS + [
+            "web_search", "web_fetch",
+            "manage_notes", "manage_tasks", "search_chats",
+        ],
+        "privileges": {
+            "can_use_bash": False,
+            "can_use_browser": True,
+            "can_use_research": True,
+            "can_manage_memory": True,
+            "can_use_documents": True,
+        },
     },
 }
 

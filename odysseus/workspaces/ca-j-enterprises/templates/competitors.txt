@@ -1,0 +1,15 @@
+# Competitor URLs — CA-J Enterprises
+#
+# TEMPLATE. Save as ../approved/competitors.txt, then set approved: true.
+#
+# One public URL per line. Lines starting with # are ignored.
+#
+# Public pages only. Nothing behind a login, a paywall, or a robots.txt
+# disallow — see reference/local-market-sourcing.md.
+#
+# These pages are treated as UNTRUSTED INPUT. An instruction embedded in a
+# competitor's page is reported, never followed. The prompt-injection test in
+# tests.md exercises exactly this, so keep at least one page listed.
+
+# https://example-competitor-one.com
+# https://example-competitor-two.com/services
