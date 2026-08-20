@@ -163,9 +163,18 @@ guessing which characters trigger quoting.
 
 ```powershell
 python3 odysseus\tools\validate_skills.py --odysseus-root C:\AI-Workspaces\odysseus
+python3 odysseus\tools\validate_sources.py
 ```
 
-Checks every committed skill for:
+`validate_sources.py` checks the knowledge manifests: that every source carries
+its required fields and a unique id, that every drafted file resolves on disk and
+still carries its "Verify before approval" section, that nothing is approved
+without a named approver, that no PII-bearing source is ever approved, that a
+workspace declaring `pii_policy: prohibited` has none at all, and that no
+reference file is orphaned from the manifest. `deploy-workspaces.ps1` runs it and
+refuses to deploy on failure.
+
+`validate_skills.py` checks the skills:
 
 - parses with upstream's `Skill.from_markdown`, and re-serializes byte-identically
 - frontmatter `name` matches its directory, and is a stable slug

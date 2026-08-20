@@ -29,7 +29,8 @@ odysseus/
 ├── tools/
 │   ├── skills_source.py            Source of truth for all 15 skills
 │   ├── build_skills.py             Renders SKILL.md via Odysseus's own serializer
-│   └── validate_skills.py          Round-trip + policy checks
+│   ├── validate_skills.py          Round-trip + policy checks
+│   └── validate_sources.py         Manifest structure, paths, approval discipline
 └── workspaces/
     ├── _shared/                    Safety rules and audit checklist all three inherit
     ├── ca-j-enterprises/           Local-service marketing
@@ -38,8 +39,17 @@ odysseus/
 ```
 
 Each workspace holds its system prompt, knowledge manifest, agent templates,
-tests, credential and audit checklists, and `skills/` — the five agents as
-deployable Odysseus skills.
+tests, credential and audit checklists, `skills/` — the five agents as
+deployable Odysseus skills — and two source directories:
+
+- **`reference/`** — general material (policies, standards, definitions,
+  sourcing protocols). Tracked in Git and reviewed like code.
+- **`approved/`** — real business documents (brand, pricing, client material).
+  Gitignored; never committed.
+
+Nothing in either is used until its manifest entry says `approved: true` with a
+named approver. Sources marked `status: drafted` were written by Claude Code and
+each ends with a "Verify before approval" list.
 
 ## Run order
 

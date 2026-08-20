@@ -26,11 +26,11 @@ disclosed is prescribed by regulation.
 advances. Expressed as a multiplier rather than a percentage: an advance with a
 factor rate of 1.3 means the business repays 1.3 times the amount advanced.
 
-> The 1.3 above is a **definitional illustration** — it explains what the
+> The 1.3 above is a **definitional illustration**: it explains what the
 > mechanism is, not what anything costs. It is not a quote, not a range, and not
-> representative of market pricing. Whether even this much is permitted in
-> customer-facing content is flagged for the reviewer in
-> `compliance-guardrails.md` §10 item 8.
+> representative of market pricing. This is the narrow mechanism-definition
+> exception in `compliance-guardrails.md` §4, and it is the only instance of it
+> in the reference set.
 
 > **Commonly misunderstood, and worth its own article.** A factor rate is not an
 > interest rate and is not an APR. Because the full amount is owed regardless of

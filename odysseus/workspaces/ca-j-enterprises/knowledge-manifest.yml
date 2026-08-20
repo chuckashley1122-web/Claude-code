@@ -59,6 +59,36 @@ sources:
     approver: ""
     contains_pii: false
 
+  - id: ad-platform-policies
+    type: document
+    path: ./reference/ad-platform-policies.md
+    description: Meta and Google ad policy, claim substantiation, Texas insurance and licensing limits
+    approved: false
+    approver: ""
+    contains_pii: false
+    status: drafted        # drafted by Claude Code; needs review, and §4 needs LEGAL review
+    notes: >-
+      Section 4 covers the Texas deductible and public-adjuster restrictions on
+      storm-damage marketing. Confirm with counsel before any storm campaign.
+
+  - id: review-platform-policies
+    type: document
+    path: ./reference/review-platform-policies.md
+    description: FTC review rule, gating, incentives, and response practice
+    approved: false
+    approver: ""
+    contains_pii: false
+    status: drafted        # drafted by Claude Code; needs review
+
+  - id: local-market-sourcing
+    type: document
+    path: ./reference/local-market-sourcing.md
+    description: Where to verify Austin/Round Rock/Texas claims. A sourcing protocol, not a facts file.
+    approved: false
+    approver: ""
+    contains_pii: false
+    status: drafted        # drafted by Claude Code; needs review
+
 # Explicitly excluded. Listed so the exclusion is a decision, not an oversight.
 excluded:
   - Client CRM exports and contact lists

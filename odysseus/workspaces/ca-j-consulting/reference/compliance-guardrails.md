@@ -123,16 +123,46 @@ this content discourage a reasonable person in a protected class from applying?*
 
 ## 4. Advertising rules
 
-### Adopted position: no figures in customer-facing content
+### Adopted position: no pricing figures in customer-facing content
 
-Whatever the regime technically permits, this workspace states **no rate, no
-payment, no term, no down-payment amount, and no finance charge** in
-customer-facing content. Not as a fact, not as an illustration, not as an
-example, not as a range.
+Whatever the regime technically permits, this workspace states **no figure that
+describes or implies the cost, terms, or availability of credit** — no rate, no
+payment, no term length, no down-payment amount, no finance charge, no fee
+amount. Not as a fact, not as an illustration, not as an example, not as a
+range, and not as a "just to show how it works."
 
-The reason is practical, not just legal: an example figure gets quoted back as a
-quote. "On a $300k loan at 6%..." is read as an offer by the person reading it,
-regardless of the label around it.
+The reason is practical, not only legal: a figure attached to a product gets
+quoted back as a quote. "On a $300k loan at 6%..." is read as an offer by the
+person reading it, regardless of the label around it.
+
+#### The one narrow exception: defining a mechanism
+
+A number used to define what a term *means*, rather than what anything *costs*,
+is not a pricing figure. "A factor rate of 1.3 means the business repays 1.3
+times the amount advanced" teaches arithmetic, not price.
+
+The exception is narrow and all four conditions must hold:
+
+1. The number defines a mechanism, not a price, a rate, or a payment.
+2. It is not attached to any product, lender, offer, or reader's situation.
+3. It is labelled as illustrative where a reader could mistake it for a market
+   figure.
+4. It is not presented as typical, representative, or current.
+
+If any condition fails, it is a pricing figure and the rule above applies.
+
+**Why the exception exists.** Factor rates are the most commonly misunderstood
+pricing mechanism in small-business lending, and the misunderstanding costs
+borrowers real money. Explaining the mechanism plainly is the single most
+protective thing this workspace can do for a reader. A rule that bars the
+explanation in the name of caution makes readers worse off, which is the
+opposite of what the rule is for.
+
+**Why it is written down rather than left to judgement.** Left implicit, this
+gets resolved differently by every person who writes a draft — and "is this
+allowed?" becomes a recurring argument instead of a settled question. The only
+current instance in the reference set is the factor rate entry in
+`lending-glossary.md`.
 
 ### Why this matters most for mortgage — triggering terms
 
@@ -260,7 +290,9 @@ Used by `compliance-review-screen` and by the human reviewer.
 
 - [ ] No approval, denial, or pre-qualification, stated or implied
 - [ ] No guarantee of rate, amount, term, timeline, or outcome
-- [ ] No rate, payment, down payment, term length, or finance charge figure — including in examples
+- [ ] No figure describing or implying the cost, terms, or availability of credit — rate, payment,
+      down payment, term length, finance charge, fee amount — including in examples
+- [ ] Any mechanism-definition number meets all four conditions in §4, or is removed
 - [ ] No individualized advice to a named or identifiable person
 - [ ] No legal or tax advice
 - [ ] No claim of government affiliation or endorsement
@@ -324,15 +356,12 @@ workspace produces:
 6. **The disclaimer text**, approved as written by counsel.
 7. **Whether the no-figures position should be relaxed** for business-lending
    content, and if so, exactly where the new line sits.
-8. **Whether definitional illustrations count as figures.** §4 says no figures
-   "not as an illustration, not as an example." Read strictly, that also bars
-   explaining what a factor rate *is* by showing one — see the factor rate entry
-   in `lending-glossary.md`, which is currently the only such case in the
-   reference set. Removing it would weaken the most useful consumer-protection
-   explanation in the glossary; keeping it is a narrow, deliberate exception for
-   mechanism rather than price. **Decide explicitly and record the decision
-   here** — this is the kind of ambiguity that otherwise gets resolved
-   differently by every person who writes a draft.
+8. **The mechanism-definition exception in §4.** The adopted position is that a
+   number defining what a term means is not a pricing figure, subject to the
+   four conditions listed there. Confirm the exception and its conditions, or
+   strike it — if struck, the factor rate entry in `lending-glossary.md` must be
+   rewritten without the multiplier, and the compliance screen should flag any
+   numeral in customer-facing content.
 
 Record the reviewer's name and the review date in the knowledge manifest when
 this is approved.

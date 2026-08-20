@@ -75,6 +75,17 @@ if (-not $val.Success) {
 }
 Write-Pass 'All skills valid'
 
+# ------------------------------------------------------- validate sources ----
+Write-Head 'Validate knowledge manifests'
+$src = Invoke-Native -Command $python -Arguments @((Join-Path $tools 'validate_sources.py'))
+Write-Host $src.Output
+if (-not $src.Success) {
+    Write-Fail 'Manifest validation failed.'
+    Write-Stop 'Nothing was deployed. A broken manifest means a source silently never loads, or loads without an approver on record.'
+    exit 1
+}
+Write-Pass 'Manifests and reference sources valid'
+
 # ----------------------------------------------------------- users warning ---
 Write-Head 'Prerequisite: business user accounts'
 Write-Host @"
