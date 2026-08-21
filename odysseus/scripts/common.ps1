@@ -67,15 +67,39 @@ function Test-DockerRunning {
 }
 
 function Test-PortFree {
+    <#
+      Returns $true (free), $false (in use), or $null (could not determine).
+
+      Never throws. The earlier version called netstat from the catch block, so
+      a host without Get-NetTCPConnection AND without netstat threw from inside
+      the handler and killed the caller outright — which is what happens on a
+      locked-down box where netstat is absent or blocked.
+    #>
     param([Parameter(Mandatory)][int]$Port)
-    try {
-        $conns = Get-NetTCPConnection -State Listen -LocalPort $Port -ErrorAction SilentlyContinue
-        return ($null -eq $conns -or $conns.Count -eq 0)
-    } catch {
-        # Get-NetTCPConnection is unavailable on some hosts; fall back to netstat.
-        $r = Invoke-Native -Command 'netstat' -Arguments @('-ano')
-        return -not ($r.Output -match ":$Port\s+.*LISTENING")
+
+    if (Get-Command Get-NetTCPConnection -ErrorAction SilentlyContinue) {
+        try {
+            $conns = Get-NetTCPConnection -State Listen -LocalPort $Port -ErrorAction SilentlyContinue
+            return ($null -eq $conns -or @($conns).Count -eq 0)
+        } catch {
+            # fall through to the command-line probes
+        }
     }
+
+    foreach ($probe in @(
+        @{ Cmd = 'netstat'; Args = @('-ano');  Pattern = ":$Port\s+.*LISTEN" },
+        @{ Cmd = 'ss';      Args = @('-ltn');  Pattern = ":$Port\s" }
+    )) {
+        if (-not (Get-Command $probe.Cmd -ErrorAction SilentlyContinue)) { continue }
+        try {
+            $r = Invoke-Native -Command $probe.Cmd -Arguments $probe.Args
+            if ($r.Success -or $r.Output) { return -not ($r.Output -match $probe.Pattern) }
+        } catch {
+            continue
+        }
+    }
+
+    return $null   # unknown — the caller decides what to do about that
 }
 
 function Resolve-OdysseusRoot {

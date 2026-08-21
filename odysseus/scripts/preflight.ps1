@@ -108,9 +108,13 @@ try {
 # ------------------------------------------------------------------- disk ----
 Write-Head 'Disk'
 
-$driveLetter = (Split-Path -Qualifier $InstallPath).TrimEnd(':')
+# Split-Path -Qualifier throws on a path with no drive letter — a UNC path
+# (\\server\share\...) or a relative one. With $ErrorActionPreference = 'Stop'
+# that killed the whole preflight mid-run instead of degrading to a warning,
+# so the qualifier lookup lives inside the try as well.
 try {
-    $drive = Get-PSDrive -Name $driveLetter -ErrorAction Stop
+    $driveLetter = (Split-Path -Qualifier $InstallPath -ErrorAction Stop).TrimEnd(':')
+    $drive  = Get-PSDrive -Name $driveLetter -ErrorAction Stop
     $freeGB = [math]::Round($drive.Free / 1GB, 1)
     Write-Info "$driveLetter`: has $freeGB GB free"
     if ($freeGB -lt $MinFreeGB) {
@@ -120,7 +124,8 @@ try {
         Write-Pass "At least $MinFreeGB GB free"
     }
 } catch {
-    Write-Warn "Could not read drive $driveLetter`: - $($_.Exception.Message)"
+    Write-Warn "Could not measure free space on '$InstallPath' - $($_.Exception.Message)"
+    Write-Info "Check by hand that at least $MinFreeGB GB is free before installing."
     $advisory++
 }
 
@@ -151,7 +156,11 @@ if ($InstallPath -match 'OneDrive|Dropbox|Google Drive|iCloud') {
 Write-Head 'Ports published by the Compose stack'
 
 foreach ($p in $script:OdysseusPorts) {
-    if (Test-PortFree -Port $p.Port) {
+    $free = Test-PortFree -Port $p.Port
+    if ($null -eq $free) {
+        Write-Warn "$($p.Port) ($($p.Service)) - could not determine whether it is free on this host"
+        $advisory++
+    } elseif ($free) {
         Write-Pass "$($p.Port) free ($($p.Service) - $($p.Note))"
     } elseif ($p.Port -eq 7000) {
         Write-Warn '7000 is in use. Set APP_PORT=7001 - install.ps1 -AppPort 7001 does this for you.'

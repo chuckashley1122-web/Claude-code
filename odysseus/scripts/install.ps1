@@ -51,12 +51,20 @@ if (Test-Path $InstallPath) {
 }
 Write-Pass 'Install path is safe to use'
 
-if (-not (Test-PortFree -Port $AppPort)) {
+# Test-PortFree returns $true / $false / $null. Treat the three cases
+# separately: -not $null is $true, so folding unknown into "in use" would both
+# block the install and say something untrue about why.
+$portFree = Test-PortFree -Port $AppPort
+if ($portFree -eq $false) {
     Write-Fail "Port $AppPort is already in use."
     Write-Stop "Re-run with -AppPort 7001 (or another free port). Record the choice in BUILD-RECORD.md."
     exit 1
+} elseif ($null -eq $portFree) {
+    Write-Warn "Could not determine whether port $AppPort is free on this host. Continuing."
+    Write-Info "If the container fails to bind, re-run with -AppPort 7001."
+} else {
+    Write-Pass "Port $AppPort is free"
 }
-Write-Pass "Port $AppPort is free"
 
 if ($WhatIfPreference) {
     Write-Head 'Plan (nothing executed)'
