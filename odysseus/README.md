@@ -32,6 +32,7 @@ odysseus/
 │   ├── validate_skills.py          Round-trip + policy checks
 │   ├── validate_sources.py         Manifest structure, paths, approval discipline
 │   ├── provision_workspaces.py     Users, prompts, tool allowlists, isolation check
+│   ├── run_acceptance_tests.py     Drives the 18 tests; mechanical checks + report
 │   └── test_provision.py           Regression test — mock API, no Docker needed
 └── workspaces/
     ├── _shared/                    Safety rules and audit checklist all three inherit

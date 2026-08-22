@@ -234,6 +234,27 @@ refuses to deploy on failure.
 - within the REST API's length limits, so the file is API-acceptable too
 - no orphans: every file has a definition, every definition has a file
 
+### Running the 18 acceptance tests
+
+```powershell
+python3 odysseus\tools\run_acceptance_tests.py --url http://localhost:7000 ^
+    --user-password caj-enterprises=... --out report.md
+```
+
+It signs in as each business user, sends all six prompts through the real chat
+API, and applies the checks that are purely mechanical — a prohibited phrase,
+a missing disclaimer, a rate quoted where none is allowed, an SSN echoed back.
+Every response lands verbatim in one report.
+
+**A mechanical pass is not a pass.** Roughly half of what these tests examine is
+judgement: did the refusal explain itself, is the brief usable, is the tone
+right. The runner guarantees no test is skipped and nothing disqualifying slips
+through; a person still reads the report against the criteria in that
+workspace's `tests.md`.
+
+Without a model connected for a business user it reports all six as NOT RUN,
+with the remedy, and exits non-zero — it never reports a pass it did not earn.
+
 Then the human checks that remain, which no script can do: sign in as each
 business user, confirm the skill list is exactly its own five, and run that
 workspace's six tests from `workspaces/<business>/tests.md`.
