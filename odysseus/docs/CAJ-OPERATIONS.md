@@ -64,6 +64,25 @@ restore, then start again. Verify the tarball before you rely on it.
 
 **Test this once, on purpose, before the system holds anything you care about.**
 
+### It has been tested
+
+The full cycle was run against a live install: snapshot → verify → delete the
+users and all fifteen skills → restore → confirm. Everything came back — the
+three accounts, the fifteen skills with their correct owners, each system
+prompt, each tool allowlist, and per-user isolation.
+
+Two things worth knowing:
+
+- **Upstream stashes rather than deletes.** The restore moved the existing
+  `data/` to `data.before-restore-<timestamp>/` instead of overwriting it. So a
+  restore from the wrong snapshot is recoverable — but that stash is not a
+  backup, and it accumulates. Clean up old ones deliberately.
+- **`restore.ps1` refuses to run under a live app.** `docker compose down`
+  reports success when there is nothing to stop, which is exactly what happens
+  on a native install where the app is a uvicorn process. Restoring `data/`
+  underneath a running app corrupts the database, so the script now probes the
+  app port after stopping the stack and stops if anything still answers.
+
 ## Update
 
 ```powershell

@@ -74,6 +74,28 @@ if (-not $down.Success) {
 }
 Write-Pass 'Stack stopped (volumes untouched)'
 
+# `docker compose down` returns success when there is nothing to stop — which
+# is exactly what happens on a native (non-Docker) install, where the app is a
+# uvicorn process rather than a container. Restoring data/ underneath a running
+# app corrupts it, so confirm the port is actually quiet before writing.
+$appPort = Get-AppPort -Root $root
+$stillUp = $false
+try {
+    $probe = Invoke-WebRequest -Uri "http://localhost:$appPort/" -UseBasicParsing -TimeoutSec 5 -MaximumRedirection 0
+    $stillUp = $true
+} catch {
+    $code = $_.Exception.Response.StatusCode.value__
+    if ($code) { $stillUp = $true }   # answered with a status: something is serving
+}
+if ($stillUp) {
+    Write-Fail "Something is still serving on port $appPort after the stack was stopped."
+    Write-Info  'A native (non-Docker) install runs as a uvicorn process that '
+    Write-Info  '`docker compose down` does not touch.'
+    Write-Stop  'Not restoring under a live app — that corrupts the database. Stop it, then re-run.'
+    exit 1
+}
+Write-Pass "Nothing is serving on port $appPort"
+
 # --------------------------------------------------------------- restore -----
 Write-Head 'Restoring'
 # The container is down, so this path needs local Python.

@@ -33,7 +33,14 @@ else { Write-Fail "docker compose config failed:`n$($cfg.Output)"; $failed++ }
 Write-Head '2. Containers'
 $psJson = Invoke-Native -Command 'docker' -Arguments @('compose', 'ps', '--format', 'json') -WorkingDirectory $root
 if (-not $psJson.Success) {
-    Write-Fail 'docker compose ps failed. Is the stack up?'
+    # Distinguish the two causes: a stopped daemon and a stopped stack need
+    # completely different fixes, and "is the stack up?" sends you looking in
+    # the wrong place when Docker Desktop simply is not running.
+    if (-not (Test-DockerRunning)) {
+        Write-Fail 'The Docker daemon is not reachable — start Docker Desktop, then re-run.'
+    } else {
+        Write-Fail "docker compose ps failed. Is the stack up?  (docker compose up -d)"
+    }
     $failed++
 } else {
     # Compose emits one JSON object per line (older) or a JSON array (newer).
