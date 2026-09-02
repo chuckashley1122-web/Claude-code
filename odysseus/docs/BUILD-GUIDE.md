@@ -41,6 +41,12 @@ because this is a Python import error, not an environment problem.
 The patch was confirmed sufficient: with `Any` added and nothing else changed,
 the app imports, boots, serves, and enforces authentication.
 
+**`dev` was then verified end to end**, at commit `affaee1`, so the
+recommendation above is not theoretical: it clones, passes the import guard with
+no patch, installs its dependencies, boots, serves, returns 401 on protected
+endpoints, and all three business workspaces provision and isolate correctly
+against it.
+
 This is exactly the class of problem no amount of reading finds. The original
 guide's advice to prefer `main` for stability was reasonable and, at this
 commit, wrong.
