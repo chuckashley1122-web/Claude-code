@@ -1,0 +1,8 @@
+# Scrapers / extraction
+scrapling[fetchers]>=0.4.15
+scrapegraphai>=1.76.0
+
+# Pipeline
+pyyaml>=6.0
+python-dotenv>=1.0
+httpx>=0.28
