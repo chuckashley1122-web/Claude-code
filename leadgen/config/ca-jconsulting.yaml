@@ -1,0 +1,52 @@
+# ca-jconsulting.com — business lending & mortgage lending
+# Two distinct motions, kept in one config because they share a pipeline:
+#   direct  -> business owners who need capital
+#   partner -> referral sources (realtors, CPAs, loan officers, brokers)
+brand: ca-jconsulting
+domain: ca-jconsulting.com
+offer: Business lending (working capital, SBA, equipment) + mortgage lending
+
+icp:
+  titles:
+    - Owner
+    - Founder
+    - CEO
+    - President
+    - Managing Partner
+    - Chief Financial Officer
+    - Controller
+    - Real Estate Agent
+    - Real Estate Broker
+    - Loan Officer
+    - Mortgage Broker
+  industries:
+    - Construction
+    - Manufacturing
+    - Transportation & Trucking
+    - Restaurants & Hospitality
+    - Real Estate
+    - Healthcare Practices
+    - Retail
+    - Staffing
+  employee_range: [3, 300]
+  locations:
+    - United States
+  exclude_titles:
+    - Intern
+    - Student
+
+signals:
+  positive:
+    capital_intensive_naics: { weight: 18, why: "equipment/inventory financing fit" }
+    hiring_growth_roles:     { weight: 12, why: "expansion implies capital need" }
+    multi_location:          { weight: 14, why: "CRE + expansion lending" }
+    nmls_licensed:           { weight: 20, why: "verified referral partner" }
+    recent_cre_activity:     { weight: 16, why: "in-market for a mortgage now" }
+    equipment_heavy:         { weight: 10, why: "equipment finance fit" }
+  negative:
+    is_lender_competitor:    { weight: -40, why: "competitor, not prospect" }
+    pre_revenue:             { weight: -25, why: "will not underwrite" }
+
+thresholds:
+  hot: 45
+  warm: 25

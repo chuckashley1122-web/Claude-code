@@ -1,0 +1,29 @@
+[
+  {
+    "id": "danawhitfield",
+    "name": "Dana Whitfield",
+    "position": "Owner at Northgate Roofing",
+    "url": "https://www.linkedin.com/in/danawhitfield",
+    "city": "Columbus, Ohio, United States",
+    "current_company": {
+      "name": "Northgate Roofing",
+      "website": "https://www.northgateroofing.example",
+      "industry": "Construction"
+    }
+  },
+  {
+    "linkedin_id": "priyaraghavan",
+    "full_name": "Priya Raghavan",
+    "title": "Founder",
+    "input_url": "https://linkedin.com/in/priyaraghavan",
+    "location": "Newark, NJ",
+    "current_company_name": "Raghavan Freight",
+    "current_company": null
+  },
+  {
+    "id": "solo",
+    "name": "Cher",
+    "position": "Consultant",
+    "url": "https://linkedin.com/in/cher"
+  }
+]

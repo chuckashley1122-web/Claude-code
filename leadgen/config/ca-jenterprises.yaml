@@ -1,0 +1,55 @@
+# ca-jenterprises.com — AI marketing agency
+# ICP: SMB / lower-mid-market businesses with real revenue and visible marketing
+# spend, but weak marketing infrastructure. They already pay someone for
+# marketing; we are a swap, not a new line item.
+brand: ca-jenterprises
+domain: ca-jenterprises.com
+offer: AI-powered marketing (content, paid social, SEO, marketing automation)
+
+icp:
+  titles:
+    - Owner
+    - Founder
+    - CEO
+    - President
+    - Chief Marketing Officer
+    - VP Marketing
+    - Director of Marketing
+    - Marketing Manager
+    - Head of Growth
+  industries:
+    - Professional Services
+    - Real Estate
+    - Health & Wellness
+    - Home Services
+    - Legal Services
+    - Financial Services
+    - E-Commerce
+    - Restaurants & Hospitality
+  employee_range: [5, 200]
+  locations:
+    - United States
+  exclude_titles:
+    - Intern
+    - Student
+    - Assistant
+    - Retired
+
+# Signals pulled off the prospect's OWN website by the enrichment step.
+# Each hit adds its weight; see leadgen/score.py.
+signals:
+  positive:
+    running_ads:             { weight: 12, why: "already buying demand" }
+    has_blog_but_stale:      { weight: 15, why: "content need, no capacity" }
+    no_marketing_automation: { weight: 10, why: "greenfield for automation" }
+    hiring_marketing_role:   { weight: 18, why: "budget approved, seat unfilled" }
+    thin_seo:                { weight: 10, why: "missing meta/schema/H1s" }
+    no_social_links:         { weight: 6,  why: "no organic distribution" }
+    dated_site:              { weight: 8,  why: "site refresh usually bundled" }
+  negative:
+    is_marketing_agency:     { weight: -40, why: "competitor, not prospect" }
+    enterprise_scale:        { weight: -20, why: "procurement cycle too long" }
+
+thresholds:
+  hot: 45
+  warm: 25
