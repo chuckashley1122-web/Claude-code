@@ -130,6 +130,9 @@ class ApolloSource(Source):
         location = ", ".join(
             x for x in (person.get("city"), person.get("state"), person.get("country")) if x
         )
+        # Apollo sends explicit nulls rather than omitting keys, so a plain
+        # .get(key, {}) still hands back None. Coalesce before chaining.
+        org_phone = org.get("primary_phone") or {}
         return Lead(
             first_name=person.get("first_name") or "",
             last_name=person.get("last_name") or "",
@@ -140,7 +143,7 @@ class ApolloSource(Source):
             employee_count=org.get("estimated_num_employees"),
             location=location,
             email=email,
-            phone=person.get("sanitized_phone") or org.get("primary_phone", {}).get("number", "") or "",
+            phone=person.get("sanitized_phone") or org_phone.get("number") or "",
             linkedin_url=person.get("linkedin_url") or "",
             website=org.get("website_url") or "",
             source="apollo",

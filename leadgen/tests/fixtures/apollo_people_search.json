@@ -1,0 +1,50 @@
+{
+  "people": [
+    {
+      "id": "5f1a2b3c4d5e6f0001",
+      "first_name": "Dana",
+      "last_name": "Whitfield",
+      "title": "Owner",
+      "linkedin_url": "https://www.linkedin.com/in/danawhitfield",
+      "email": "dana@northgateroofing.example",
+      "email_status": "verified",
+      "city": "Columbus",
+      "state": "Ohio",
+      "country": "United States",
+      "organization": {
+        "name": "Northgate Roofing",
+        "website_url": "http://www.northgateroofing.example",
+        "primary_domain": "northgateroofing.example",
+        "industry": "construction",
+        "estimated_num_employees": 24,
+        "primary_phone": { "number": "+16145550142", "source": "Scraped" }
+      }
+    },
+    {
+      "id": "5f1a2b3c4d5e6f0002",
+      "first_name": "Marcus",
+      "last_name": "Ellery",
+      "title": "VP Marketing",
+      "linkedin_url": "https://www.linkedin.com/in/marcusellery",
+      "email": "email_not_unlocked@domain.com",
+      "city": "Austin",
+      "state": "Texas",
+      "country": "United States",
+      "organization": {
+        "name": "Bluepeak Dental Group",
+        "primary_domain": "bluepeakdental.example",
+        "estimated_num_employees": 120,
+        "primary_phone": null
+      }
+    },
+    {
+      "id": "5f1a2b3c4d5e6f0003",
+      "first_name": "Priya",
+      "last_name": "Raghavan",
+      "title": "Founder",
+      "email": null,
+      "organization": null
+    }
+  ],
+  "pagination": { "page": 1, "per_page": 100, "total_entries": 3 }
+}

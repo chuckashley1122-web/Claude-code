@@ -11,18 +11,23 @@ source  ->  dedupe  ->  enrich (Scrapling / Scrapegraph-ai)  ->  score  ->  CSV 
 
 ```bash
 python3 -m venv .venv && source .venv/bin/activate
-pip install -r leadgen/requirements.txt
-scrapling install          # downloads the browsers Scrapling drives
+pip install -e leadgen/            # puts a `leadgen` command on your PATH
+scrapling install                  # downloads the browsers Scrapling drives
 cp leadgen/.env.example leadgen/.env   # then fill in the keys you have
 ```
 
-Run everything from inside `leadgen/`:
-
 ```bash
-cd leadgen
-python -m leadgen sources
-python -m leadgen run --brand ca-jenterprises --source apollo --limit 100 --enrich
+leadgen sources                    # what is configured and what still needs a key
+leadgen run --brand ca-jenterprises --source apollo --limit 100 --enrich
 ```
+
+`python -m leadgen` also works, but **only from inside `leadgen/`** — the outer
+folder shadows the package. The installed `leadgen` command works anywhere, so
+prefer it.
+
+Start with `leadgen sources`. It tells you which sources are live and which are
+waiting on a key, and marks which ones involve LinkedIn data. `nmls` needs no
+key at all, so you can get real output before you buy anything.
 
 ## Read this before you point it at LinkedIn
 
@@ -67,7 +72,7 @@ Highest-quality and zero-risk. In Sales Navigator, build the search, save to a
 lead list, export to CSV (Advanced Plus seats), then:
 
 ```bash
-python -m leadgen run --brand ca-jconsulting --source sales-nav-csv \
+leadgen run --brand ca-jconsulting --source sales-nav-csv \
   --csv ~/Downloads/list.csv --enrich
 ```
 
@@ -80,7 +85,7 @@ Set `APOLLO_API_KEY`. Search is included in your plan; revealing emails and
 phone numbers costs credits, so it is behind `--reveal`:
 
 ```bash
-python -m leadgen run --brand ca-jenterprises --source apollo --limit 200 --reveal --enrich
+leadgen run --brand ca-jenterprises --source apollo --limit 200 --reveal --enrich
 ```
 
 ### `brightdata` — licensed LinkedIn public-profile dataset
@@ -95,7 +100,7 @@ that exists for the lending side, and it carries something LinkedIn never
 will: a verified NMLS ID and current licence status.
 
 ```bash
-python -m leadgen run --brand ca-jconsulting --source nmls --state OH --limit 200
+leadgen run --brand ca-jconsulting --source nmls --state OH --limit 200
 ```
 
 NMLS publishes no free API, so this drives the public site and parses the
@@ -125,7 +130,7 @@ The same lead scores differently per brand, which is the point. A trucking
 founder is a hot lending lead and a lukewarm marketing lead:
 
 ```
-$ python -m leadgen explain --brand ca-jconsulting --csv list.csv
+$ leadgen explain --brand ca-jconsulting --csv list.csv
 
 Priya Raghavan — Founder @ Raghavan Freight
    +20 title matches ICP (Founder)
@@ -147,9 +152,17 @@ lists contain personal data and do not belong in the repo.
 ## Tests
 
 ```bash
-python -m pytest tests -q        # 9 tests, no network, no API keys
+cd leadgen
+python -m pytest tests -q        # 17 tests, no network, no API keys
 python tests/smoke_live.py       # live network check of the fetchers
 ```
+
+The suite covers CSV header handling, dedupe, per-brand scoring and competitor
+demotion, plus the Apollo and Bright Data response parsers against recorded
+fixtures. Those two parsers cannot be exercised without a paid key, so their
+edge cases are pinned instead: Apollo masks locked emails as
+`email_not_unlocked@domain.com`, nulls out `organization` for people with no
+current employer, and sends `primary_phone: null` rather than omitting the key.
 
 ## Known environment limitation
 

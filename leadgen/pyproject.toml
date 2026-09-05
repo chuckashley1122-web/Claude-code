@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "leadgen"
+version = "0.1.0"
+description = "Lead sourcing, enrichment and ICP scoring for ca-jenterprises and ca-jconsulting"
+requires-python = ">=3.10"
+dependencies = [
+    "scrapling[fetchers]>=0.4.15",
+    "scrapegraphai>=1.76.0",
+    "pyyaml>=6.0",
+    "python-dotenv>=1.0",
+    "httpx>=0.28",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
+[project.scripts]
+# Installing with `pip install -e leadgen/` puts a `leadgen` command on PATH,
+# so the CLI works from any directory. Running `python -m leadgen` only works
+# from inside this folder, because the outer `leadgen/` directory shadows the
+# package.
+leadgen = "leadgen.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["leadgen*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
