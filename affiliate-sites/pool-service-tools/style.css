@@ -1,0 +1,269 @@
+/* Pool Service Tools Review — plain mobile-first CSS. No frameworks, no external requests. */
+
+:root {
+  --bg: #ffffff;
+  --surface: #f6f7f9;
+  --border: #d9dde3;
+  --text: #16191d;
+  --muted: #5a626d;
+  --brand: hsl(176, 58%, 31%);
+  --brand-ink: hsl(176, 58%, 22%);
+  --brand-wash: hsl(176, 50%, 96%);
+  --accent: #e11d48;
+  --notice-bg: hsl(176, 50%, 94%);
+  --radius: 8px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #14171b;
+    --surface: #1c2026;
+    --border: #333a43;
+    --text: #eef1f4;
+    --muted: #a3acb8;
+    --brand: hsl(176, 54%, 68%);
+    --brand-ink: hsl(176, 54%, 78%);
+    --brand-wash: hsl(176, 28%, 18%);
+    --accent: #fb7185;
+    --notice-bg: hsl(176, 28%, 17%);
+  }
+}
+
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.wrap {
+  max-width: 62rem;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+/* --- Disclosure banner --- */
+.disclosure {
+  background: var(--notice-bg);
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  padding: 10px 0;
+}
+.disclosure p { margin: 0; }
+
+/* --- Masthead --- */
+.masthead {
+  background: var(--brand);
+  border-bottom: 4px solid var(--accent);
+  color: #fff;
+  padding: 18px 0;
+}
+.masthead a { color: #fff; text-decoration: none; }
+.masthead h1, .masthead .sitename {
+  font-size: 1.375rem;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+.masthead .tagline {
+  color: rgba(255,255,255,0.88);
+  font-size: 0.875rem;
+  margin: 4px 0 0;
+}
+
+main { padding: 24px 0 8px; }
+
+h1, h2, h3 { line-height: 1.25; letter-spacing: -0.01em; }
+h1 { font-size: 1.625rem; margin: 0 0 12px; }
+h2 {
+  font-size: 1.1875rem;
+  margin: 32px 0 10px;
+  padding-bottom: 6px;
+  border-bottom: 2px solid var(--brand-wash);
+}
+p { margin: 0 0 14px; }
+a { color: var(--brand-ink); }
+
+.lede { color: var(--muted); font-size: 1.0625rem; }
+
+.note {
+  background: var(--surface);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  color: var(--muted);
+  font-size: 0.875rem;
+  margin: 0 0 20px;
+  padding: 12px 14px;
+}
+.note p:last-child { margin: 0; }
+
+/* --- Search --- */
+.search { margin: 0 0 16px; }
+.search label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+.search input {
+  background: var(--bg);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-size: 1rem;
+  padding: 11px 12px;
+  width: 100%;
+}
+.search input:focus {
+  border-color: var(--brand);
+  outline: 2px solid var(--brand-wash);
+  outline-offset: 1px;
+}
+.search .count {
+  color: var(--muted);
+  display: block;
+  font-size: 0.8125rem;
+  margin-top: 6px;
+}
+
+/* --- Table --- */
+.table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+table {
+  border-collapse: collapse;
+  min-width: 46rem;
+  width: 100%;
+}
+caption {
+  caption-side: bottom;
+  color: var(--muted);
+  font-size: 0.8125rem;
+  padding: 10px 2px 0;
+  text-align: left;
+}
+th, td {
+  padding: 11px 12px;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.9375rem;
+}
+thead th {
+  background: var(--brand-wash);
+  color: var(--brand-ink);
+  font-size: 0.8125rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+tbody tr:last-child td { border-bottom: 0; }
+tbody tr:nth-child(even) { background: var(--surface); }
+td .toolname { font-weight: 600; }
+td .cat {
+  color: var(--muted);
+  display: block;
+  font-size: 0.75rem;
+  margin-top: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.price { white-space: nowrap; }
+.empty {
+  color: var(--muted);
+  padding: 20px 12px;
+  text-align: center;
+}
+[hidden] { display: none !important; }
+
+/* --- Review page --- */
+.facts {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin: 0 0 22px;
+  padding: 4px 14px;
+}
+.facts dl { margin: 0; }
+.facts div {
+  border-bottom: 1px solid var(--border);
+  padding: 10px 0;
+}
+.facts div:last-child { border-bottom: 0; }
+.facts dt {
+  color: var(--muted);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.facts dd { margin: 3px 0 0; }
+
+.shortfall {
+  background: var(--brand-wash);
+  border-left: 4px solid var(--accent);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 4px 16px 6px;
+}
+.shortfall h2 { border-bottom: 0; margin-top: 18px; }
+
+.cta {
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  margin: 26px 0;
+  padding: 16px;
+}
+.cta p { margin: 0 0 10px; }
+.cta .btn {
+  background: var(--brand);
+  border-radius: var(--radius);
+  color: #fff;
+  display: inline-block;
+  font-weight: 600;
+  padding: 11px 18px;
+  text-decoration: none;
+}
+.cta small { color: var(--muted); display: block; margin-top: 10px; font-size: 0.8125rem; }
+
+.backlink { display: inline-block; margin: 8px 0 24px; font-size: 0.9375rem; }
+
+/* --- Footer --- */
+footer {
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 0.875rem;
+  margin-top: 40px;
+  padding: 24px 0 32px;
+}
+footer h2 {
+  border-bottom: 0;
+  color: var(--text);
+  font-size: 0.9375rem;
+  margin: 0 0 8px;
+}
+footer p { margin: 0 0 12px; }
+footer a { color: var(--brand-ink); }
+.amazon {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  margin-bottom: 16px;
+}
+.bizinfo { list-style: none; margin: 0; padding: 0; }
+.bizinfo li { margin-bottom: 4px; }
+
+@media (min-width: 40rem) {
+  h1 { font-size: 2rem; }
+  .masthead h1, .masthead .sitename { font-size: 1.625rem; }
+  main { padding: 32px 0 8px; }
+  .facts dl { display: grid; grid-template-columns: 1fr 1fr; gap: 0 24px; }
+}

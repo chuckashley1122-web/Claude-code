@@ -1,6 +1,7 @@
 # Secrets — never commit. Keys live in environment variables or your keychain.
 .env
 .env.*
+!.env.example
 *.local
 .claude/settings.local.json
 .mcp.local.json
@@ -10,6 +11,15 @@
 # Local Claude Code state
 .claude/todos/
 .claude/shell-snapshots/
+
+# Funnel build state — machine-specific or contains live CRM asset IDs.
+config/offer.yaml
+config/location.env
+build-manifest.json
+screenshots/*
+reports/*
+!screenshots/README.md
+!reports/README.md
 
 # OS / editor noise
 .DS_Store
