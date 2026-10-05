@@ -1,0 +1,406 @@
+{
+  "assets": [
+    {
+      "id": "ASSET-REGISTER-MD",
+      "path": "out/asset_register.md",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "ATTRIBUTION-FIXTURES",
+      "path": "out/attribution_fixtures.json",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "CALENDAR-SPEC",
+      "path": "out/calendar_spec.md",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "CLOSE-PACK",
+      "path": "out/close_pack.md",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "COPY-A01",
+      "path": "out/copy/A01.md",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "COPY-A02",
+      "path": "out/copy/A02.md",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "COPY-A03",
+      "path": "out/copy/A03.md",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "COPY-A04",
+      "path": "out/copy/A04.md",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "COPY-A05",
+      "path": "out/copy/A05.md",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "CREATIVE-A01-JSON",
+      "path": "out/creatives/A01.json",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "CREATIVE-A01-MD",
+      "path": "out/creatives/A01.md",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "CREATIVE-A02-JSON",
+      "path": "out/creatives/A02.json",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "CREATIVE-A02-MD",
+      "path": "out/creatives/A02.md",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "CREATIVE-A03-JSON",
+      "path": "out/creatives/A03.json",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "CREATIVE-A03-MD",
+      "path": "out/creatives/A03.md",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "CREATIVE-A04-JSON",
+      "path": "out/creatives/A04.json",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "CREATIVE-A04-MD",
+      "path": "out/creatives/A04.md",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "CREATIVE-A05-JSON",
+      "path": "out/creatives/A05.json",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "CREATIVE-A05-MD",
+      "path": "out/creatives/A05.md",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "DELIVERY-SCOPE",
+      "path": "out/delivery_scope.md",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "ECON-AGENCY-MARGIN",
+      "path": "out/economics/agency_margin.md",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "ECON-BREAK-EVEN",
+      "path": "out/economics/client_break_even.md",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "FIELD-MAP",
+      "path": "out/field_map.json",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "FORM-SPEC",
+      "path": "out/form_spec.md",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "GHL-CUSTOM-FIELDS",
+      "path": "out/ghl_custom_fields.json",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "GHL-FB-INTEGRATION",
+      "path": "out/ghl_facebook_integration.md",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "GHL-PIPELINE-JSON",
+      "path": "out/ghl_pipeline_spec.json",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "GHL-PIPELINE-SPEC",
+      "path": "out/ghl_pipeline_spec.md",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "INTAKE-FORM",
+      "path": "out/intake_form.json",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "LAUNCH-REVIEW",
+      "path": "out/launch_review.md",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "MSG-BOOKING_ACK",
+      "path": "out/messages/booking_ack.md",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "MSG-CONFIRMATION",
+      "path": "out/messages/confirmation.md",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "MSG-NO_SHOW",
+      "path": "out/messages/no_show.md",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "MSG-REMINDER_SMS",
+      "path": "out/messages/reminder_sms.md",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "MSG-UNBOOKED_FOLLOWUP",
+      "path": "out/messages/unbooked_followup.md",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "MSG-UNBOOKED_REMINDER",
+      "path": "out/messages/unbooked_reminder.md",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "NICHE-BRIEF-JSON",
+      "path": "out/niche_brief.json",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "NICHE-BRIEF-MD",
+      "path": "out/niche_brief.md",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "OFFER-SPEC",
+      "path": "out/offer_spec.md",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "POSITIONING",
+      "path": "out/positioning.md",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "PRECALL-PAGE",
+      "path": "out/precall_page/index.html",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "QUALIFICATION-LOGIC",
+      "path": "out/qualification_logic.json",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "RISK-REVERSAL",
+      "path": "out/risk_reversal.md",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "SALES-CALL-GUIDE",
+      "path": "out/sales_call_guide.md",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "TEST-LOG",
+      "path": "out/tests/test_log.md",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "TEST-T01",
+      "path": "out/tests/T01.json",
+      "status": "Blocked",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "TEST-T02",
+      "path": "out/tests/T02.json",
+      "status": "Blocked",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "TEST-T03",
+      "path": "out/tests/T03.json",
+      "status": "Blocked",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "TEST-T04",
+      "path": "out/tests/T04.json",
+      "status": "Blocked",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "TEST-T05",
+      "path": "out/tests/T05.json",
+      "status": "Blocked",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "TEST-T06",
+      "path": "out/tests/T06.json",
+      "status": "Blocked",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "TEST-T07",
+      "path": "out/tests/T07.json",
+      "status": "Blocked",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "TEST-T08",
+      "path": "out/tests/T08.json",
+      "status": "Blocked",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "TEST-T09",
+      "path": "out/tests/T09.json",
+      "status": "Blocked",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "TEST-T10",
+      "path": "out/tests/T10.json",
+      "status": "Blocked",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "TEST-T11",
+      "path": "out/tests/T11.json",
+      "status": "Blocked",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "TEST-T12",
+      "path": "out/tests/T12.json",
+      "status": "Tested",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "TEST-T13",
+      "path": "out/tests/T13.json",
+      "status": "Blocked",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "TEST-T14",
+      "path": "out/tests/T14.json",
+      "status": "Blocked",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "UI-GHL-CHECKLIST",
+      "path": "ui-tasks/GHL-BUILD-CHECKLIST.md",
+      "status": "Not started",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "UI-HUMAN-DECISIONS",
+      "path": "ui-tasks/HUMAN-DECISIONS.md",
+      "status": "Not started",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "UI-META-CHECKLIST",
+      "path": "ui-tasks/META-BUILD-CHECKLIST.md",
+      "status": "Not started",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "WELCOME-PAGE",
+      "path": "out/welcome_page/index.html",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "WORKFLOW-01",
+      "path": "out/workflows/01-intake.md",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "WORKFLOW-02",
+      "path": "out/workflows/02-unbooked.md",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "WORKFLOW-03",
+      "path": "out/workflows/03-booked.md",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "WORKFLOW-04",
+      "path": "out/workflows/04-outcome.md",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    }
+  ]
+}
