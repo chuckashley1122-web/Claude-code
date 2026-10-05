@@ -13,3 +13,6 @@
 
 # OS / editor noise
 .DS_Store
+
+# Env templates hold names only, never values
+!.env.example

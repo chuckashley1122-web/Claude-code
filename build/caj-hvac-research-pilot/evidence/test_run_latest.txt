@@ -1,0 +1,102 @@
+run_tests.py at 2026-10-05T23:48:34Z (python 3.11.15, workflow 0.1.0)
+
+test_area_patterns (test_extraction.ExtractionRules.test_area_patterns) ... ok
+test_contact_types (test_extraction.ExtractionRules.test_contact_types) ... ok
+test_contract_refuses_unsourced_fact (test_extraction.ExtractionRules.test_contract_refuses_unsourced_fact) ... ok
+test_embedded_instructions_are_data_not_commands (test_extraction.ExtractionRules.test_embedded_instructions_are_data_not_commands) ... ok
+test_excerpt_window_is_80_chars (test_extraction.ExtractionRules.test_excerpt_window_is_80_chars) ... ok
+test_failed_pages_block_without_facts (test_extraction.ExtractionRules.test_failed_pages_block_without_facts) ... ok
+test_hvac_does_not_falsely_match_ac (test_extraction.ExtractionRules.test_hvac_does_not_falsely_match_ac) ... ok
+test_label_bound_to_page_where_fact_was_read (test_extraction.ExtractionRules.test_label_bound_to_page_where_fact_was_read) ... ok
+test_T01_no_added_services_or_claims (test_extraction.T01CompleteFixture.test_T01_no_added_services_or_claims) ... ok
+test_T01_status_complete_with_supplied_facts (test_extraction.T01CompleteFixture.test_T01_status_complete_with_supplied_facts) ... ok
+test_T02_partial_with_exact_missing_label (test_extraction.T02MissingInformation.test_T02_partial_with_exact_missing_label) ... ok
+test_T05_blocked_identity_mismatch_zero_facts (test_extraction.T05IdentityMismatch.test_T05_blocked_identity_mismatch_zero_facts) ... ok
+test_T05_identity_is_case_and_whitespace_insensitive (test_extraction.T05IdentityMismatch.test_T05_identity_is_case_and_whitespace_insensitive) ... ok
+test_T05_same_page_matches_its_own_business (test_extraction.T05IdentityMismatch.test_T05_same_page_matches_its_own_business) ... ok
+test_no_banned_phrases_in_tree (test_guards.BannedPhrases.test_no_banned_phrases_in_tree) ... ok
+test_config_freeze_constants (test_guards.FrozenCampaignTripwire.test_config_freeze_constants) ... ok
+test_fires_for_every_action (test_guards.FrozenCampaignTripwire.test_fires_for_every_action) ... ok
+test_other_ids_pass_through (test_guards.FrozenCampaignTripwire.test_other_ids_pass_through) ... ok
+test_env_flag_parsing (test_guards.LockedConfig.test_env_flag_parsing) ... ok
+test_gates_and_terms (test_guards.LockedConfig.test_gates_and_terms) ... ok
+test_clean_copy_passes (test_guards.PriceScanner.test_clean_copy_passes) ... ok
+test_flags_price_tokens (test_guards.PriceScanner.test_flags_price_tokens) ... ok
+test_injected_price_blocked_in_hypothesis_cell_and_brief (test_guards.PriceScanner.test_injected_price_blocked_in_hypothesis_cell_and_brief) ... ok
+test_returns_offending_span (test_guards.PriceScanner.test_returns_offending_span) ... ok
+test_honest_lower_statuses (test_guards.ReleaseGate.test_honest_lower_statuses) ... ok
+test_never_v1_without_every_gate (test_guards.ReleaseGate.test_never_v1_without_every_gate) ... ok
+test_status_is_always_a_handoff_status (test_guards.ReleaseGate.test_status_is_always_a_handoff_status) ... ok
+test_check_env_never_prints_values (test_guards.Scripts.test_check_env_never_prints_values) ... ok
+test_repo_scan_finds_planted_problems (test_guards.Scripts.test_repo_scan_finds_planted_problems) ... ok
+test_repo_scan_passes_on_project_root (test_guards.Scripts.test_repo_scan_passes_on_project_root) ... ok
+test_brand_leak_into_brief_fails_validation (test_guards.SourceClaimAndBrandScanners.test_brand_leak_into_brief_fails_validation) ... ok
+test_consumer_brands_blocked_in_b2b_output (test_guards.SourceClaimAndBrandScanners.test_consumer_brands_blocked_in_b2b_output) ... ok
+test_flags_presenter_claims (test_guards.SourceClaimAndBrandScanners.test_flags_presenter_claims) ... ok
+test_bom_is_accepted (test_input_validation.InputContract.test_bom_is_accepted) ... ok
+test_cap_cannot_be_raised_by_env (test_input_validation.InputContract.test_cap_cannot_be_raised_by_env) ... ok
+test_header_only_is_input_required (test_input_validation.InputContract.test_header_only_is_input_required) ... ok
+test_missing_file_is_invalid (test_input_validation.InputContract.test_missing_file_is_invalid) ... ok
+test_other_rejections (test_input_validation.InputContract.test_other_rejections) ... ok
+test_valid_one_to_three_rows (test_input_validation.InputContract.test_valid_one_to_three_rows) ... ok
+test_T03_each_case_invalid_before_retrieval_and_no_output_folder (test_input_validation.T03InvalidInput.test_T03_each_case_invalid_before_retrieval_and_no_output_folder) ... ok
+test_T03_errors_carry_row_index_and_reason (test_input_validation.T03InvalidInput.test_T03_errors_carry_row_index_and_reason) ... ok
+test_T06_commas_round_trip_and_manifest_agrees (test_output_validation.T06OutputIntegrity.test_T06_commas_round_trip_and_manifest_agrees) ... ok
+test_T06_fixture_run_manifest_matches_csv (test_output_validation.T06OutputIntegrity.test_T06_fixture_run_manifest_matches_csv) ... ok
+test_T07_existing_run_id_gets_suffix (test_output_validation.T07RepeatExecution.test_T07_existing_run_id_gets_suffix) ... ok
+test_T07_new_run_dir_and_earlier_files_byte_identical (test_output_validation.T07RepeatExecution.test_T07_new_run_dir_and_earlier_files_byte_identical) ... ok
+test_blocked_row_with_fact (test_output_validation.ValidatorCatchesDefects.test_blocked_row_with_fact) ... ok
+test_brief_fact_without_source (test_output_validation.ValidatorCatchesDefects.test_brief_fact_without_source) ... ok
+test_clean_run_passes (test_output_validation.ValidatorCatchesDefects.test_clean_run_passes) ... ok
+test_duplicate_company_and_count_mismatch (test_output_validation.ValidatorCatchesDefects.test_duplicate_company_and_count_mismatch) ... ok
+test_http_label_in_fixture_run (test_output_validation.ValidatorCatchesDefects.test_http_label_in_fixture_run) ... ok
+test_missing_artifact_and_bad_json (test_output_validation.ValidatorCatchesDefects.test_missing_artifact_and_bad_json) ... ok
+test_mock_label_in_non_fixture_run (test_output_validation.ValidatorCatchesDefects.test_mock_label_in_non_fixture_run) ... ok
+test_near_miss_missing_label (test_output_validation.ValidatorCatchesDefects.test_near_miss_missing_label) ... ok
+test_tampered_excerpt (test_output_validation.ValidatorCatchesDefects.test_tampered_excerpt) ... ok
+test_unsourced_fact (test_output_validation.ValidatorCatchesDefects.test_unsourced_fact) ... ok
+test_cap_raise_refused (test_pipeline_endtoend.CliGates.test_cap_raise_refused) ... ok
+test_filedrop_real_style_run (test_pipeline_endtoend.CliGates.test_filedrop_real_style_run) ... ok
+test_filedrop_with_empty_template_reports_input_required (test_pipeline_endtoend.CliGates.test_filedrop_with_empty_template_reports_input_required) ... ok
+test_invalid_input_exits_nonzero_without_output (test_pipeline_endtoend.CliGates.test_invalid_input_exits_nonzero_without_output) ... ok
+test_network_retrieval_refused_without_allow_live (test_pipeline_endtoend.CliGates.test_network_retrieval_refused_without_allow_live) ... ok
+test_no_dry_run_refused_without_allow_live (test_pipeline_endtoend.CliGates.test_no_dry_run_refused_without_allow_live) ... ok
+test_simulated_retrieval_failure (test_pipeline_endtoend.CliGates.test_simulated_retrieval_failure) ... ok
+test_T08_runbook_command_produces_all_four_artifacts (test_pipeline_endtoend.T08FreshSession.test_T08_runbook_command_produces_all_four_artifacts) ... ok
+test_T08_runbook_states_the_contracts (test_pipeline_endtoend.T08FreshSession.test_T08_runbook_states_the_contracts) ... ok
+test_T08_validator_command_from_runbook (test_pipeline_endtoend.T08FreshSession.test_T08_validator_command_from_runbook) ... ok
+test_reads_in_filename_order_capped_and_labeled (test_retrieval.FileDropMode.test_reads_in_filename_order_capped_and_labeled) ... ok
+test_retrieval_failure_marker_and_missing_folder (test_retrieval.FileDropMode.test_retrieval_failure_marker_and_missing_folder) ... ok
+test_labels_are_mock (test_retrieval.FixtureMode.test_labels_are_mock) ... ok
+test_unknown_company_has_no_fixture (test_retrieval.FixtureMode.test_unknown_company_has_no_fixture) ... ok
+test_default_gates_come_from_config (test_retrieval.LiveRetrieverRefuses.test_default_gates_come_from_config) ... ok
+test_is_not_a_bare_not_implemented_error (test_retrieval.LiveRetrieverRefuses.test_is_not_a_bare_not_implemented_error) ... ok
+test_raises_even_when_gates_are_set (test_retrieval.LiveRetrieverRefuses.test_raises_even_when_gates_are_set) ... ok
+test_raises_typed_error_with_gates_off (test_retrieval.LiveRetrieverRefuses.test_raises_typed_error_with_gates_off) ... ok
+test_T04_one_retry_then_blocked_and_other_rows_continue (test_retrieval.T04UnavailableSite.test_T04_one_retry_then_blocked_and_other_rows_continue) ... ok
+test_T04_retries_never_exceed_locked_cap (test_retrieval.T04UnavailableSite.test_T04_retries_never_exceed_locked_cap) ... ok
+test_T04_transient_failure_recovers_on_the_single_retry (test_retrieval.T04UnavailableSite.test_T04_transient_failure_recovers_on_the_single_retry) ... ok
+
+----------------------------------------------------------------------
+Ran 76 tests in 0.768s
+
+OK
+
+Per-test-ID results:
+  T01: pass (2 test(s))
+  T02: pass (1 test(s))
+  T03: pass (2 test(s))
+  T04: pass (3 test(s))
+  T05: pass (3 test(s))
+  T06: pass (2 test(s))
+  T07: pass (2 test(s))
+  T08: pass (3 test(s))
+  T09: not run (live pilot needs real URLs and human-supplied pages)
+
+Release gate (from these executed results): SPECIFICATION_READY
+  - file write/read probe: passed
+  - T01-T08: all passed
+  - real (non-fixture) run passing validation: none yet (INPUT_REQUIRED)
+
+Ran 76 tests: 76 passed, 0 failed, 0 skipped
+RESULT: OK

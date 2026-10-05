@@ -1,0 +1,2 @@
+# SPEC-06 HVAC research pilot: Python 3.11 standard library only.
+# This spec adds no third-party dependency. Tests use stdlib unittest (no pytest).
