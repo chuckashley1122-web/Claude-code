@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Asset_Register row",
+  "description": "Every page, calendar, agent, knowledge base, widget, product, and workflow id with version and status.",
+  "type": "object",
+  "x-csv-file": "Asset_Register.csv",
+  "x-columns": ["asset_type", "name", "id_or_url", "version", "source", "status", "verified_by", "verified_date"],
+  "x-evidence-field": "verified_by",
+  "x-done-statuses": ["VERIFIED"],
+  "required": ["asset_type", "name", "status"],
+  "additionalProperties": false,
+  "properties": {
+    "asset_type": {"type": "string", "enum": ["subaccount", "snapshot", "page", "calendar", "form", "agent", "knowledge_base", "widget", "product", "workflow", "phone_number", "other"]},
+    "name": {"type": "string", "minLength": 1},
+    "id_or_url": {"type": "string"},
+    "version": {"type": "string"},
+    "source": {"type": "string"},
+    "status": {"type": "string", "enum": ["NEEDS_EVIDENCE", "VERIFIED", "BLOCKED", "N/A"]},
+    "verified_by": {"type": "string"},
+    "verified_date": {"type": "string", "format": "date"}
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Test_Results row",
+  "description": "Result of one acceptance test T01-T12. PASS requires an evidence reference.",
+  "type": "object",
+  "x-csv-file": "Test_Results.csv",
+  "x-columns": ["test_id", "pass_condition", "actual_result", "evidence_ref", "result", "fix", "retest_date"],
+  "x-evidence-field": "evidence_ref",
+  "x-done-statuses": ["PASS"],
+  "x-status-field": "result",
+  "required": ["test_id", "pass_condition", "result"],
+  "additionalProperties": false,
+  "properties": {
+    "test_id": {"type": "string", "pattern": "^T(0[1-9]|1[0-2])$"},
+    "pass_condition": {"type": "string", "minLength": 1},
+    "actual_result": {"type": "string"},
+    "evidence_ref": {"type": "string"},
+    "result": {"type": "string", "enum": ["PASS", "FAIL", "NOT_RUN", "N/A"]},
+    "fix": {"type": "string"},
+    "retest_date": {"type": "string", "format": "date"}
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Build_Log row",
+  "description": "One row per source step (01-51) action. A DONE row needs evidence, an object id or URL, and a UTC timestamp.",
+  "type": "object",
+  "x-csv-file": "Build_Log.csv",
+  "x-columns": ["step", "title", "status", "account_id", "object_id_or_url", "timestamp_utc", "change_made", "evidence", "next_action"],
+  "x-evidence-field": "evidence",
+  "x-done-statuses": ["DONE"],
+  "required": ["step", "title", "status"],
+  "additionalProperties": false,
+  "properties": {
+    "step": {"type": "string", "pattern": "^(0[1-9]|[1-4][0-9]|5[01])$"},
+    "title": {"type": "string", "minLength": 1},
+    "status": {"type": "string", "enum": ["NOT_STARTED", "IN_PROGRESS", "DONE", "NEEDS_EVIDENCE", "BLOCKED", "N/A"]},
+    "account_id": {"type": "string"},
+    "object_id_or_url": {"type": "string"},
+    "timestamp_utc": {"type": "string", "format": "date-time"},
+    "change_made": {"type": "string"},
+    "evidence": {"type": "string"},
+    "next_action": {"type": "string"}
+  }
+}

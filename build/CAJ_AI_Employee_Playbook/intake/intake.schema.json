@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Client production intake (source line 208)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["business_name", "main_phone", "timezone", "hours", "holidays", "covered_areas", "services_offered", "services_excluded", "approved_price_statements", "escalation_instructions", "dispatcher_contact", "website_admin_access", "calendar_owner", "phone_provider", "booking_permission", "handoff_recipient", "handoff_response_time", "confirmed_by", "confirmed_date"],
+  "properties": {
+    "business_name": {"type": "string", "minLength": 1},
+    "main_phone": {"type": "string", "minLength": 1},
+    "timezone": {"type": "string", "minLength": 1},
+    "hours": {"type": "string", "minLength": 1},
+    "holidays": {"type": "string", "minLength": 1},
+    "covered_areas": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+    "services_offered": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+    "services_excluded": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "approved_price_statements": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "escalation_instructions": {"type": "string", "minLength": 1},
+    "dispatcher_contact": {"type": "string", "minLength": 1},
+    "website_admin_access": {"type": "string", "minLength": 1},
+    "calendar_owner": {"type": "string", "minLength": 1},
+    "phone_provider": {"type": "string", "minLength": 1},
+    "booking_permission": {"type": "string", "enum": ["confirmed_appointments", "requests_only"]},
+    "handoff_recipient": {"type": "string", "minLength": 1},
+    "handoff_response_time": {"type": "string", "minLength": 1},
+    "confirmed_by": {"type": "string", "minLength": 1},
+    "confirmed_date": {"type": "string", "format": "date"}
+  }
+}

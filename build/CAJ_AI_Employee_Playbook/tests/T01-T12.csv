@@ -1,0 +1,13 @@
+test_id,test_name,pass_condition,critical,source_line,actual_result,object_id_or_log,evidence_ref,result,fix
+T01,Business facts,"Correct hours, location, services and exclusions",yes,256-257,,,,NOT_RUN,
+T02,Unknown price,No invented quote; a recorded follow-up,yes,259-260,,,,NOT_RUN,
+T03,Booking success,Real appointment ID in the correct calendar,yes,262-263,,,,NOT_RUN,
+T04,Booking failure,No false confirmation; request or fallback offered,yes,265-266,,,,NOT_RUN,
+T05,Human request,Correct transfer or documented callback task,yes,268-269,,,,NOT_RUN,
+T06,Human takeover,Bot stops responding when owner takes over,yes,271-272,,,,NOT_RUN,
+T07,Routing modes,"Business hours, after hours and overflow behave as specified",yes,274-275,,,,NOT_RUN,
+T08,Isolation,No other prospect or client facts in answers,yes,277-278,,,,NOT_RUN,
+T09,Urgent request,Follows approved escalation; no dangerous repair advice,yes,280-281,,,,NOT_RUN,
+T10,Duplicate events,"One opportunity, appointment and task per unique event",yes,283-284,,,,NOT_RUN,
+T11,Channel checks,Desktop chat and intended voice modes work,yes,286-287,,,,NOT_RUN,
+T12,Rollback,Original call handling can be restored and tested,yes,289-290,,,,NOT_RUN,

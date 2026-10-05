@@ -1,0 +1,21 @@
+{
+  "business_name": "Example Heating and Air (synthetic)",
+  "main_phone": "512-555-0100",
+  "timezone": "America/Chicago",
+  "hours": "Mon-Fri 08:00-17:00 (synthetic)",
+  "holidays": "Closed on listed holidays (synthetic)",
+  "covered_areas": ["Example City A", "Example City B"],
+  "services_offered": ["AC repair", "Furnace repair"],
+  "services_excluded": ["Commercial refrigeration"],
+  "approved_price_statements": [],
+  "escalation_instructions": "Synthetic: transfer urgent calls to the on-call line",
+  "dispatcher_contact": "512-555-0101",
+  "website_admin_access": "Owner grants editor access (synthetic)",
+  "calendar_owner": "Office manager (synthetic)",
+  "phone_provider": "Example Carrier (synthetic)",
+  "booking_permission": "requests_only",
+  "handoff_recipient": "dispatch@example.com",
+  "handoff_response_time": "Next business morning (synthetic)",
+  "confirmed_by": "Synthetic Owner",
+  "confirmed_date": "2026-10-01"
+}

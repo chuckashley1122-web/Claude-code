@@ -1,0 +1,5 @@
+#! channel: dm
+#! source: playbook line 308 (Instagram DM).
+#! rule: identify the business honestly; never imply a personal relationship, a prior conversation, or that we have met.
+#! rule: no price, fee, or figure; pricing questions get the meeting-first reply (guardrails/meeting_first.py).
+Hi {{first_name}}, I'm Chuck with CA-J Enterprises. I help HVAC owners handle after-hours inquiries. Would you be open to trying a short AI demo customized for {{business}}? If so, you can pick a time here: https://ca-jenterprises.com/ai

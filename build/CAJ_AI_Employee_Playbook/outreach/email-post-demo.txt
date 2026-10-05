@@ -1,0 +1,14 @@
+#! channel: email
+#! source: playbook line 306. Use ONLY after the specific demo for this business exists and its demo checks passed.
+#! requires-evidence: demo_evidence_ref
+#! rule: no price, fee, or figure of any kind; pricing questions route to a meeting at the booking URL.
+Subject: I prepared a demo for {{business}}
+
+Hi {{first_name}}, I prepared a demo for {{business}}. It is a private preview built from your business information, so you can ask it the questions your customers ask after hours and see how it captures service requests. Nothing on your live website or phone line was changed. Would you like to try it together in a 15-minute walkthrough? You can pick a time here: https://ca-jenterprises.com/ai
+
+Chuck Ashley | CA-J Enterprises
+Owner: Chuck Ashley | 512-229-9199 | chuck@ca-jconsulting.com
+CA&J Enterprises LLC
+{{sender_mailing_address}}
+
+If this is not relevant, reply no and I will stop following up.

@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Blockers row",
+  "description": "Blocker, owner, dependency, REQUIRED/OPTIONAL priority, and unblock action. A RESOLVED blocker needs the unblock action recorded.",
+  "type": "object",
+  "x-csv-file": "Blockers.csv",
+  "x-columns": ["blocker_id", "description", "blocks_step", "owner", "dependency", "priority", "unblock_action", "status"],
+  "x-evidence-field": "unblock_action",
+  "x-done-statuses": ["RESOLVED"],
+  "required": ["blocker_id", "description", "owner", "priority", "status"],
+  "additionalProperties": false,
+  "properties": {
+    "blocker_id": {"type": "string", "pattern": "^B[0-9]{3}$"},
+    "description": {"type": "string", "minLength": 1},
+    "blocks_step": {"type": "string", "pattern": "^((0[1-9]|[1-4][0-9]|5[01]))(;(0[1-9]|[1-4][0-9]|5[01]))*$"},
+    "owner": {"type": "string", "minLength": 1},
+    "dependency": {"type": "string"},
+    "priority": {"type": "string", "enum": ["REQUIRED", "OPTIONAL"]},
+    "unblock_action": {"type": "string"},
+    "status": {"type": "string", "enum": ["OPEN", "RESOLVED", "N/A"]}
+  }
+}

@@ -1,0 +1,60 @@
+# Human-maintained monthly cost rates for ONE active client (internal only).
+# Every row stays `verified: false` until a human confirms the figure from an
+# invoice, a contract, or the provider's current published rate, and records
+# where in `evidence`. Amounts are 0 placeholders, NOT real rates: no figure
+# here has been verified, and none may be invented (NEEDS_EVIDENCE).
+# Parsed by scripts/mini_yaml.py (flat keys + one list of flat mappings).
+#
+# basis:
+#   fixed_monthly       amount * quantity_per_month
+#   per_unit            amount * quantity_per_month   (e.g. per AI minute)
+#   percent_of_revenue  amount is a percentage of monthly revenue
+currency: USD
+booked_appointments_per_month: 0
+booked_appointments_verified: false
+included_usage_policy: NEEDS_EVIDENCE
+rates:
+  - name: platform_allocation
+    category: platform_allocation
+    basis: fixed_monthly
+    amount: 0
+    quantity_per_month: 1
+    verified: false
+    evidence: NEEDS_EVIDENCE
+  - name: ai_usage
+    category: ai_usage
+    basis: per_unit
+    unit: minute
+    amount: 0
+    quantity_per_month: 0
+    verified: false
+    evidence: NEEDS_EVIDENCE
+  - name: telephony
+    category: telephony
+    basis: per_unit
+    unit: minute
+    amount: 0
+    quantity_per_month: 0
+    verified: false
+    evidence: NEEDS_EVIDENCE
+  - name: phone_number
+    category: telephony
+    basis: fixed_monthly
+    amount: 0
+    quantity_per_month: 1
+    verified: false
+    evidence: NEEDS_EVIDENCE
+  - name: payment_processing
+    category: payment_fees
+    basis: percent_of_revenue
+    amount: 0
+    verified: false
+    evidence: NEEDS_EVIDENCE
+  - name: support_labour
+    category: support_labour
+    basis: per_unit
+    unit: hour
+    amount: 0
+    quantity_per_month: 0
+    verified: false
+    evidence: NEEDS_EVIDENCE

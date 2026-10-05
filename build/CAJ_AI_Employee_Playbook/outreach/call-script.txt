@@ -1,0 +1,19 @@
+#! channel: call
+#! source: playbook line 308 (call) and gatekeeper basis 1:38:45-1:44:38 (see gatekeeper-questions.md).
+#! rule: identify the business honestly to receptionists; do not imply a personal relationship that does not exist.
+#! rule: never quote a figure on the call; if asked how much, use the meeting line below.
+#! rule: record wrong numbers and opt-outs immediately; no unattended or automated dialing.
+OPENING
+Hi, this is Chuck with CA-J Enterprises. Who handles after-hours calls? I can show a short demo that answers routine questions and captures service requests. Would {{specific_available_time}} work for a walkthrough?
+
+IF ASKED "DO I KNOW YOU?" OR "HAVE WE TALKED?"
+No, we have not spoken before. I'm calling because I work with HVAC businesses on after-hours call handling.
+
+IF ASKED HOW MUCH IT IS
+That depends on how your after-hours calls are handled today, so we walk through it together in a short meeting. You can pick a time here: https://ca-jenterprises.com/ai
+
+IF THEY ASK NOT TO BE CONTACTED
+Understood, I'll make sure you are not contacted again. Thank you for your time.
+
+CLOSE
+Thanks. I'll send the invite for {{specific_available_time}}. The booking page is https://ca-jenterprises.com/ai if another time is easier.

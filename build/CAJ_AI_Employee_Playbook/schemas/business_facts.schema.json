@@ -1,0 +1,20 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Business_Facts row",
+  "description": "Every fact needs an evidence URL or owner confirmation, a verification date, and a status. Default status is NEEDS_EVIDENCE.",
+  "type": "object",
+  "x-csv-file": "Business_Facts.csv",
+  "x-columns": ["fact", "value", "evidence_url_or_owner_confirmation", "verified_date", "status", "notes"],
+  "x-evidence-field": "evidence_url_or_owner_confirmation",
+  "x-done-statuses": ["VERIFIED"],
+  "required": ["fact", "status"],
+  "additionalProperties": false,
+  "properties": {
+    "fact": {"type": "string", "minLength": 1},
+    "value": {"type": "string"},
+    "evidence_url_or_owner_confirmation": {"type": "string"},
+    "verified_date": {"type": "string", "format": "date"},
+    "status": {"type": "string", "enum": ["NEEDS_EVIDENCE", "VERIFIED", "BLOCKED", "N/A"], "default": "NEEDS_EVIDENCE"},
+    "notes": {"type": "string"}
+  }
+}

@@ -1,0 +1,14 @@
+#! channel: email
+#! source: playbook lines 300-306. Use ONLY before a demo exists: "I can prepare" wording, never "I already built it".
+#! rule: no price, fee, or figure of any kind; pricing questions route to a meeting at the booking URL.
+#! rule: sending is a human action after channel launch authorization; this file is a draft.
+Subject: After-hours calls at {{business}}
+
+Hi {{first_name}}, I'm Chuck with CA-J Enterprises. We help HVAC teams handle routine after-hours questions and capture service requests. I can prepare a short AI demo using your business information so you can try it yourself. Open to a 15-minute walkthrough? You can pick a time here: https://ca-jenterprises.com/ai
+
+Chuck Ashley | CA-J Enterprises
+Owner: Chuck Ashley | 512-229-9199 | chuck@ca-jconsulting.com
+CA&J Enterprises LLC
+{{sender_mailing_address}}
+
+If this is not relevant, reply no and I will stop following up.

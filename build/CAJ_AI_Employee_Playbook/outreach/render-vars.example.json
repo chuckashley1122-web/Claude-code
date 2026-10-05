@@ -1,0 +1,8 @@
+{
+  "_comment": "Synthetic example values only. Replace per prospect from verified sources before any send. NEEDS_EVIDENCE values must be resolved before --for-send rendering.",
+  "business": "Example Heating and Air (synthetic)",
+  "first_name": "Alex",
+  "specific_available_time": "Tuesday at 10 a.m. Central",
+  "sender_mailing_address": "NEEDS_EVIDENCE: CA&J mailing address to be supplied by Chuck before any send",
+  "demo_evidence_ref": "NEEDS_EVIDENCE"
+}
