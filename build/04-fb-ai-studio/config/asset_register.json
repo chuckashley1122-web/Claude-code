@@ -1,0 +1,250 @@
+{
+  "assets": [
+    {
+      "id": "ad_copy_A01",
+      "path": "out/ads/copy/A01.md",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "ad_copy_A02",
+      "path": "out/ads/copy/A02.md",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "ad_copy_A03",
+      "path": "out/ads/copy/A03.md",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "ad_copy_A04",
+      "path": "out/ads/copy/A04.md",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "ads_angles_json",
+      "path": "out/ads/angles.json",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "ads_angles_md",
+      "path": "out/ads/angles.md",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "ai_studio_prompt_pack",
+      "path": "out/landing/ai_studio_prompt_pack.md",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "asset_register_md",
+      "path": "out/asset_register.md",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "campaign_config",
+      "path": "out/campaign_config.json",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "campaign_spec",
+      "path": "out/campaign_spec.md",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "capi_settings",
+      "path": "out/capi_settings.json",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "creative_specs",
+      "path": "out/ads/creative_specs.md",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "landing_content_json",
+      "path": "out/landing/content_spec.json",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "landing_content_md",
+      "path": "out/landing/content_spec.md",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "landing_index_html",
+      "path": "out/landing/index.html",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "landing_thank_you_html",
+      "path": "out/landing/thank-you.html",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "launch_review",
+      "path": "out/launch_review.md",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "message_internal_alerts",
+      "path": "out/messages/internal_alerts.md",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "message_sms_01",
+      "path": "out/messages/sms_01.md",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "message_sms_02",
+      "path": "out/messages/sms_02.md",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "message_sms_03",
+      "path": "out/messages/sms_03.md",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "message_sms_04",
+      "path": "out/messages/sms_04.md",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "message_sms_05",
+      "path": "out/messages/sms_05.md",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "message_sms_06",
+      "path": "out/messages/sms_06.md",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "offer",
+      "path": "out/offer.md",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "pipeline_json",
+      "path": "out/pipeline.json",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "pipeline_spec",
+      "path": "out/pipeline_spec.md",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "pixel_capi_spec",
+      "path": "out/pixel_capi_spec.md",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "test_urls",
+      "path": "out/test_urls.txt",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "ui_ai_studio_checklist",
+      "path": "ui-tasks/AI-STUDIO-CHECKLIST.md",
+      "status": "Not started",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "ui_dns_checklist",
+      "path": "ui-tasks/DNS-CHECKLIST.md",
+      "status": "Not started",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "ui_ghl_checklist",
+      "path": "ui-tasks/GHL-CHECKLIST.md",
+      "status": "Not started",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "ui_human_decisions",
+      "path": "ui-tasks/HUMAN-DECISIONS.md",
+      "status": "Not started",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "ui_meta_checklist",
+      "path": "ui-tasks/META-CHECKLIST.md",
+      "status": "Not started",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "work_order_dns-subdomain",
+      "path": "/home/user/Claude-code/ui-work-orders/004-dns-subdomain.md",
+      "status": "Not started",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "work_order_ghl-ai-studio-landing-page",
+      "path": "/home/user/Claude-code/ui-work-orders/004-ghl-ai-studio-landing-page.md",
+      "status": "Not started",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "work_order_ghl-pipeline-and-workflows",
+      "path": "/home/user/Claude-code/ui-work-orders/004-ghl-pipeline-and-workflows.md",
+      "status": "Not started",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "work_order_meta-pixel-capi-and-draft-campaign",
+      "path": "/home/user/Claude-code/ui-work-orders/004-meta-pixel-capi-and-draft-campaign.md",
+      "status": "Not started",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "workflow_01",
+      "path": "out/workflows/01-new-lead-automation.md",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "workflow_02",
+      "path": "out/workflows/02-hot-lead-replied.md",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    },
+    {
+      "id": "workflow_03",
+      "path": "out/workflows/03-landing-page-capi-lead.md",
+      "status": "Draft",
+      "owner": "Chuck Ashley"
+    }
+  ]
+}
