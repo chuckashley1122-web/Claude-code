@@ -147,7 +147,7 @@ Execute in order. Every step writes its file, appends to `config\decision_log.js
 1. **Guardrails.** Write `tools\guardrails.py`. All functions raise on violation, are used by `compliance_scan.py` and `run_tests.py`, and are individually tested in `tests\test_guardrails.py`:
    - `assert_no_spend(item, approval_ref)` — raises unless an explicit written approval reference is supplied. Applies to domains, upgrades, subscriptions, SEO tools, ad spend, payment methods, plan changes. `AD_SPEND_CAP_USD` stays `0`.
 
-   - `assert_no_price_in_message(text)` — raises if any CA-J price appears in page copy, form copy, ad copy, email, SMS, chat or AI-agent reply: `$650`, `650/mo`, any setup fee, `$150`, `$300`, "per appointment", "$150–$300". Booking destination is always `https://ca-jenterprises.com/ai` and is **the only** commercial call to action permitted. Locked pricing lives in `constants.py` for internal reference and is never emitted into a customer-facing string.
+   - `assert_no_price_in_message(text)` — raises if any CA-J price appears in page copy, form copy, ad copy, email, SMS, chat or AI-agent reply: `$650`, `650/mo`, any setup fee, `$250`, `$300`, "per booked appointment", "$250 to $300". Booking destination is always `https://ca-jenterprises.com/ai` and is **the only** commercial call to action permitted. Locked pricing lives in `constants.py` for internal reference and is never emitted into a customer-facing string.
 
    - `assert_logo_not_first(creative)` — raises if the CA-J logo is the first visual element of any hero image, OG image, ad creative or page lead. Creatives lead with the outcome or offer; the logo is a small footer disclaimer only. Applies to every `hero_image` / `og_image` record.
 
@@ -238,8 +238,8 @@ PROPOSED_ROUTES         = ["/", "/services/lead-generation", "/services/reputati
 # --- locked pricing (INTERNAL REFERENCE ONLY; must never appear in customer-facing copy) ---
 TECH_FEE_MONTHLY_USD    = 650
 SETUP_FEE_USD           = 0            # waived
-PER_APPOINTMENT_MIN_USD = 150
-PER_APPOINTMENT_MAX_USD = 300
+PER_BOOKED_APPOINTMENT_MIN_USD = 250
+PER_BOOKED_APPOINTMENT_MAX_USD = 300
 QUOTE_PRICE_IN_MESSAGE  = False        # MEETING-FIRST: no price in email, chat, page copy or AI reply
 # --- guard flags ---
 NO_SPEND_DEFAULT        = True
@@ -323,7 +323,7 @@ AD_SPEND_CAP_USD=`
 - [ ] Y/N — `out\site\` contains one mock per proposed route plus `404.html` and `thank-you.html`; each opens standalone from `file://`, loads no external script or CDN, and displays the "STATIC CONTENT MOCK" banner.
 - [ ] Y/N — every mock's raw HTML contains its title, H1, core copy, canonical and navigation links without JavaScript.
 - [ ] Y/N — no testimonial, review, review count, rating, client count, years-in-business figure, license, guarantee or result appears anywhere unless `config\business_facts.json` carries it with an evidence source; unsourced properties appear in `_blocked_fields` instead.
-- [ ] Y/N — `assert_no_price_in_message()` passes on all page copy, form copy, message templates and generated strings; no `$650`, `$150`, `$300` or "per appointment" figure appears in any customer-facing output.
+- [ ] Y/N — `assert_no_price_in_message()` passes on all page copy, form copy, message templates and generated strings; no `$650`, `$250`, `$300` or "per booked appointment" figure appears in any customer-facing output.
 - [ ] Y/N — `assert_logo_not_first()` passes on every hero/OG/creative record and each `opening_element` is an outcome or offer.
 - [ ] Y/N — `assert_canonical_unique()` passes; every indexable route has exactly one canonical and a unique title and description.
 - [ ] Y/N — `out\seo\sitemap.xml` contains only canonical public routes and excludes drafts, private tools and thank-you pages.

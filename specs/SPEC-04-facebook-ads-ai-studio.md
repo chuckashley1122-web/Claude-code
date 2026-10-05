@@ -136,7 +136,7 @@ Execute in order. Every step writes its file, appends to `config\decision_log.js
 
    - `assert_no_spend(item, approval_ref)` — raises unless an explicit approval reference is supplied. Applies to ad budget, domains, subscriptions, tools, upgrades, payment methods.
 
-   - `assert_no_price_in_message(text)` — raises if any CA-J price ($650/mo, $150–$300 per appointment, any setup fee, or any other CA-J service figure) appears in ad copy, SMS, email, form copy, or AI-reply copy. Booking destination is always `https://ca-jenterprises.com/ai`. Discount/price offers for a *client's* consumers are out of scope and also require approval.
+   - `assert_no_price_in_message(text)` — raises if any CA-J price ($650/mo, $250 to $300 per booked appointment, any setup fee, or any other CA-J service figure) appears in ad copy, SMS, email, form copy, or AI-reply copy. Booking destination is always `https://ca-jenterprises.com/ai`. Discount/price offers for a *client's* consumers are out of scope and also require approval.
 
    - `assert_logo_not_first(creative)` — raises if a creative's first visual element is the CA-J logo. Creatives lead with the outcome or the offer; the logo appears only as a small footer disclaimer.
 
@@ -222,8 +222,8 @@ DOMAIN_CONTACT_SLUG     = "contact"
 CNAME_VALUE           = "NEEDS_EVIDENCE"          # source says vibe.cloud; unverified
 TECH_FEE_MONTHLY_USD  = 650      # locked
 SETUP_FEE_USD         = 0        # locked: waived
-PER_APPOINTMENT_MIN_USD = 150    # locked
-PER_APPOINTMENT_MAX_USD = 300    # locked
+PER_BOOKED_APPOINTMENT_MIN_USD = 250    # locked
+PER_BOOKED_APPOINTMENT_MAX_USD = 300    # locked
 QUOTE_PRICE_IN_MESSAGE = False   # MEETING-FIRST: no price in email, chat or AI reply
 FROZEN_CAMPAIGN_NAME  = "CAJ_HVAC27_US_PURCHASE_TEST02"
 FROZEN_CAMPAIGN_PROTECTED = True # never edit / pause / duplicate-in-place; new work = separate NEW draft
@@ -303,7 +303,7 @@ The spec must NOT assume any of the following:
 1. **The entire SOP is UI-only.** Its "execution checklist for automation" block mislabels browser steps as a code task list. The correct reading is: almost every step requires a logged-in human. Claude Code produces specs, mocks and checklists only.
 1. **The frozen campaign is untouchable.** `CAJ_HVAC27_US_PURCHASE_TEST02` must never be edited, paused, or duplicated in a way that touches the original — editing resets Meta's learning phase. Any new campaign is a SEPARATE new draft. This build activates and publishes nothing.
 1. **No spend.** Ad budget, payment methods, domains, subscriptions, tools and upgrades all require **explicit written human approval**. The source's `$70/day` (and $50/60/100) is instructor guidance, not authority. `AD_SPEND_CAP_USD` stays `0`.
-1. **The source's offer examples are not CA-J offers.** "$100 discount on first service", "$49 drain cleaning", "50% off first visit" are tutorial examples. CA-J's agency pricing is locked ($650/mo tech fee, setup waived, $150–$300 per qualified appointment) and under the MEETING-FIRST rule must never appear in an email, chat, ad, or AI agent reply.
+1. **The source's offer examples are not CA-J offers.** "$100 discount on first service", "$49 drain cleaning", "50% off first visit" are tutorial examples. CA-J's agency pricing is locked ($650/mo tech fee, setup waived, $250 to $300 per booked appointment) and under the MEETING-FIRST rule must never appear in an email, chat, ad, or AI agent reply.
 1. **The worked example is a different business.** Junk removal in Cary, North Carolina is not CA-J's ICP. All example content must be re-derived, and CA-J's own location, service area, Page, ad account, brand colors, logo files, hero images, before/after images and review data are all `NEEDS_EVIDENCE`.
 1. **The Google Doc mega prompt was never supplied.** The AI Studio landing-page prompt (the "Alex Hormozi framework") cannot be reproduced. Do not attempt to fetch it or fabricate its contents. Build a placeholder-fill script with `NEEDS_EVIDENCE` for the missing template body.
 1. **AI Studio availability is unverified.** `Settings → Labs → AI Studio` may not exist on the CA&J agency account. Embedded calendar booking for Facebook lead forms, conditional form endings, and multi-page lead sync are likewise unverified capabilities — each needs account-level confirmation before it is relied on.
