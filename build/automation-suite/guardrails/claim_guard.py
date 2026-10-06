@@ -38,8 +38,8 @@ CONSUMER_BRANDS = (
 BANNED_TERMS = (
     "qualified" + " appointment",
     "shows" + " up",
-    "10-25 leads" + "/month",
-    "10–25 leads" + "/month",
+    "10-25" + " leads" + "/month",
+    "10–25" + " leads" + "/month",
 )
 
 
