@@ -1,0 +1,7 @@
+# Local secrets (never commit)
+.env
+# Generated run output (dry-run reports, .eml drafts, stub job records, error records)
+data/out/
+*.log
+.venv/
+__pycache__/

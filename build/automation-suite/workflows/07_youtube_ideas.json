@@ -1,0 +1,360 @@
+{
+  "name": "07 Viral YouTube Video Idea Generator",
+  "nodes": [
+    {
+      "id": "0b021046-04da-56e6-94aa-cc09eec51fc4",
+      "name": "Weekly Monday 7am",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 7 * * 1"
+            }
+          ]
+        }
+      },
+      "notes": "Step 5 Automate: Cron weekly Monday 7am + Run Automation button.",
+      "notesInFlow": true
+    },
+    {
+      "id": "1e6a76fe-08ee-5e02-ba68-cef774ffdaf7",
+      "name": "Fetch Top Videos (YouTube API)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        240,
+        160
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://www.googleapis.com/youtube/v3/search",
+        "authentication": "predefinedCredentialType (human-created)",
+        "sendQuery": true,
+        "queryParameters": {
+          "part": "snippet",
+          "type": "video",
+          "q": "={{ $json.niche_keywords }}",
+          "order": "viewCount",
+          "publishedAfter": "={{ $today.plusDays(-30) }}",
+          "maxResults": 50
+        }
+      },
+      "notes": "Step 1 Fetch Top Videos: YouTube Data API v3 search, order viewCount, publishedAfter last 30 days. Pull 50 videos.",
+      "notesInFlow": true
+    },
+    {
+      "id": "93fd0aaf-3738-587f-a772-875bd56e0231",
+      "name": "Engagement Ratio",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [
+        480,
+        0
+      ],
+      "parameters": {
+        "keepOtherFields": true,
+        "assignments": {
+          "engagement_ratio": "={{ $json.likes / $json.views }}"
+        }
+      },
+      "notes": "Step 2: engagement ratio likes/views.",
+      "notesInFlow": true
+    },
+    {
+      "id": "62fbfe38-b616-5445-9552-55ae2f287359",
+      "name": "Analyze Content",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1,
+      "position": [
+        720,
+        160
+      ],
+      "parameters": {
+        "resource": "text",
+        "operation": "message",
+        "promptId": "07_youtube_analysis",
+        "promptFile": "prompts/07_youtube_analysis.txt",
+        "promptVariables": {
+          "title": "={{ $json.title }}",
+          "views": "={{ $json.views }}",
+          "description": "={{ $json.description }}",
+          "booking_url": "={{ $vars.BOOKING_URL }}"
+        },
+        "model": "gpt-4o (unverified)",
+        "jsonOutput": true,
+        "outputField": "analysis"
+      },
+      "notes": "Step 2 Analyze Content: title formula, keywords, angle, why performed.",
+      "notesInFlow": true
+    },
+    {
+      "id": "6f4b676a-3f05-51bb-8921-d0e1946f14ef",
+      "name": "Aggregate Analyses",
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        960,
+        0
+      ],
+      "parameters": {
+        "include": [
+          "title",
+          "views",
+          "likes",
+          "engagement_ratio",
+          "analysis"
+        ],
+        "outputField": "analyses"
+      },
+      "notes": "Combine all analyses for idea generation.",
+      "notesInFlow": true
+    },
+    {
+      "id": "10d7f548-bba7-56bd-a368-b748ebe26cf3",
+      "name": "Generate 10 Ideas",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1,
+      "position": [
+        1200,
+        160
+      ],
+      "parameters": {
+        "resource": "text",
+        "operation": "message",
+        "promptId": "07_youtube_ideas",
+        "promptFile": "prompts/07_youtube_ideas.txt",
+        "promptVariables": {
+          "analysis": "={{ $json.analyses }}",
+          "booking_url": "={{ $vars.BOOKING_URL }}"
+        },
+        "model": "gpt-4o (unverified)",
+        "jsonOutput": true,
+        "mergeOutput": true
+      },
+      "notes": "Step 3 Generate Fresh Ideas: 10 ideas. For each: Title 3 variants, Angle, Target keyword, Hook script, Outline.",
+      "notesInFlow": true
+    },
+    {
+      "id": "4b3e9ee1-291b-5ace-861b-9f31485e1662",
+      "name": "Save Ideas (Airtable)",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 1,
+      "position": [
+        1440,
+        0
+      ],
+      "parameters": {
+        "operation": "upsert",
+        "table": "youtube_ideas",
+        "key": "={{ $today }}",
+        "fields": {
+          "ideas": "={{ $json.ideas }}",
+          "data_source": "synthetic fixture (dry run)"
+        }
+      },
+      "notes": "Step 4 Actionable Output: Format into Airtable/Notion.",
+      "notesInFlow": true
+    },
+    {
+      "id": "f75528dd-66f8-59ae-9797-d180f0e034a7",
+      "name": "Format Report",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [
+        1680,
+        160
+      ],
+      "parameters": {
+        "keepOtherFields": true,
+        "assignments": {
+          "report_subject": "=Weekly video ideas ({{ $today }}) - dry run, synthetic data",
+          "report_body": "=Ideas generated from synthetic fixture data:\n{{ $json.ideas }}"
+        }
+      },
+      "notes": "Step 5: Email report.",
+      "notesInFlow": true
+    },
+    {
+      "id": "5280eca4-95d0-5e23-8bcf-12f58352c889",
+      "name": "Pricing Guard (report)",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1,
+      "position": [
+        1920,
+        0
+      ],
+      "parameters": {
+        "workflowId": "caj_guardrails",
+        "mode": "each",
+        "guard": "pricing",
+        "fields": [
+          "report_subject",
+          "report_body"
+        ]
+      },
+      "notes": "pricing_guard on every outbound-sending node.",
+      "notesInFlow": true
+    },
+    {
+      "id": "25515beb-d9c5-541a-bd36-36f241ac9543",
+      "name": "Email Report",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2,
+      "position": [
+        2160,
+        160
+      ],
+      "parameters": {
+        "operation": "send",
+        "sendTo": "={{ $vars.OWNER_EMAIL }}",
+        "subject": "={{ $json.report_subject }}",
+        "message": "={{ $json.report_body }}",
+        "fromInbox": "={{ $vars.OWNER_EMAIL }}"
+      },
+      "notes": "Step 5: Email report (internal). Dry run writes a .eml draft.",
+      "notesInFlow": true
+    }
+  ],
+  "connections": {
+    "Weekly Monday 7am": {
+      "main": [
+        [
+          {
+            "node": "Fetch Top Videos (YouTube API)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Top Videos (YouTube API)": {
+      "main": [
+        [
+          {
+            "node": "Engagement Ratio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Engagement Ratio": {
+      "main": [
+        [
+          {
+            "node": "Analyze Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze Content": {
+      "main": [
+        [
+          {
+            "node": "Aggregate Analyses",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate Analyses": {
+      "main": [
+        [
+          {
+            "node": "Generate 10 Ideas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate 10 Ideas": {
+      "main": [
+        [
+          {
+            "node": "Save Ideas (Airtable)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Ideas (Airtable)": {
+      "main": [
+        [
+          {
+            "node": "Format Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Report": {
+      "main": [
+        [
+          {
+            "node": "Pricing Guard (report)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pricing Guard (report)": {
+      "main": [
+        [
+          {
+            "node": "Email Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataErrorExecution": "all",
+    "errorWorkflow": "_common_error_handler"
+  },
+  "pinData": {
+    "Weekly Monday 7am": [
+      {
+        "json": {
+          "niche_keywords": "hvac maintenance",
+          "_simulated_today": "2026-10-05"
+        }
+      }
+    ]
+  },
+  "meta": {
+    "source_line": 89,
+    "verified": false,
+    "spec": "SPEC-01",
+    "source": "01-8-best-ai-automations.md:89",
+    "node_types_verified": false,
+    "unverified_node_types": [
+      "@n8n/n8n-nodes-langchain.openAi",
+      "n8n-nodes-base.aggregate",
+      "n8n-nodes-base.airtable",
+      "n8n-nodes-base.executeWorkflow",
+      "n8n-nodes-base.gmail",
+      "n8n-nodes-base.httpRequest",
+      "n8n-nodes-base.scheduleTrigger",
+      "n8n-nodes-base.set"
+    ],
+    "unverified_note": "Node types, parameters, and vendor endpoints come from the source's screenshot descriptions and have not been validated against a current n8n node inventory or vendor API docs.",
+    "pin_data": "synthetic test items only (example.com / 555-01xx)"
+  }
+}

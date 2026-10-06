@@ -1,0 +1,447 @@
+{
+  "name": "03 AI UGC Ads Spy Generator",
+  "nodes": [
+    {
+      "id": "7b69fb4d-5fa6-5fdb-be3f-f99a1db6035a",
+      "name": "Ad Input Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ugc-ad-input",
+        "options": {
+          "binaryData": true
+        }
+      },
+      "notes": "Step 1 Input: n8n Webhook with file upload + URL field.",
+      "notesInFlow": true
+    },
+    {
+      "id": "010fd185-e425-5d74-8c27-05129ed523c2",
+      "name": "Download Ad (Apify)",
+      "type": "@apify/n8n-nodes-apify.apify",
+      "typeVersion": 1,
+      "position": [
+        240,
+        160
+      ],
+      "parameters": {
+        "operation": "runActor",
+        "actorId": "tiktok-scraper",
+        "actorInput": {
+          "url": "={{ $json.ad_url }}"
+        }
+      },
+      "notes": "Step 1: Use Apify TikTok Scraper or yt-dlp to download video. (Paid compute + ToS review; yt-dlp not used.)",
+      "notesInFlow": true
+    },
+    {
+      "id": "0aa9710b-0a5c-5794-a0cc-2426b3c7bd0b",
+      "name": "Transcribe (Whisper)",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1,
+      "position": [
+        480,
+        0
+      ],
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "mediaRef": "={{ $json.media_id }}",
+        "outputField": "transcript"
+      },
+      "notes": "Step 2: transcript via Whisper.",
+      "notesInFlow": true
+    },
+    {
+      "id": "04e36623-17cc-5d27-ba7c-aaf9faa51f23",
+      "name": "Analyze Ad (Vision + Transcript)",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1,
+      "position": [
+        720,
+        160
+      ],
+      "parameters": {
+        "resource": "text",
+        "operation": "message",
+        "promptId": "03_ad_deconstruction",
+        "promptFile": "prompts/03_ad_deconstruction.txt",
+        "promptVariables": {
+          "transcript": "={{ $json.transcript }}",
+          "frame_notes": "={{ $json.frames }}",
+          "booking_url": "={{ $vars.BOOKING_URL }}"
+        },
+        "model": "gpt-4o (unverified)",
+        "jsonOutput": true,
+        "outputField": "analysis"
+      },
+      "notes": "Step 2 Analyze Ad: GPT-4o Vision: Send 5 frames + transcript. Extract Hook (first 3 sec), Script, Visual Style, CTA, Music vibe, Camera.",
+      "notesInFlow": true
+    },
+    {
+      "id": "23ad2971-da0d-50de-9c62-6905081b69f2",
+      "name": "Get Insights",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [
+        960,
+        0
+      ],
+      "parameters": {
+        "keepOtherFields": true,
+        "assignments": {
+          "hook_type": "={{ $json.analysis.hook_type }}",
+          "script_structure": "={{ $json.analysis.script_structure }}",
+          "emotional_trigger": "={{ $json.analysis.emotional_trigger }}",
+          "ad_format": "={{ $json.analysis.format }}",
+          "why_viral": "={{ $json.analysis.why_it_worked }}"
+        }
+      },
+      "notes": "Step 3 Get Insights: hook_type, script_structure, emotional_trigger, format (green-screen/testimonial), why_viral.",
+      "notesInFlow": true
+    },
+    {
+      "id": "cdf1f500-f42f-50fc-acc1-0f616fdb5c24",
+      "name": "Generate 5 Sora Prompts",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1,
+      "position": [
+        1200,
+        160
+      ],
+      "parameters": {
+        "resource": "text",
+        "operation": "message",
+        "promptId": "03_sora_prompt_format",
+        "promptFile": "prompts/03_sora_prompt_format.txt",
+        "promptVariables": {
+          "hook_type": "={{ $json.hook_type }}",
+          "ad_format": "={{ $json.ad_format }}",
+          "script_structure": "={{ $json.script_structure }}",
+          "brand_desc": "={{ $json.brand_desc }}",
+          "product": "={{ $json.product }}",
+          "booking_url": "={{ $vars.BOOKING_URL }}"
+        },
+        "model": "gpt-4o (unverified)",
+        "jsonOutput": true,
+        "mergeOutput": true
+      },
+      "notes": "Step 4: Given insights + your brand {{brand_desc}} {{product}}, generate 5 detailed Sora 2 prompts. 9:16, 8 sec.",
+      "notesInFlow": true
+    },
+    {
+      "id": "9e0dd1b2-04c3-5917-8175-6bd5ade77f1d",
+      "name": "Split Prompts",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1440,
+        0
+      ],
+      "parameters": {
+        "fieldToSplitOut": "prompts",
+        "destinationFieldName": "sora_prompt"
+      },
+      "notes": "Step 5: Loop prompts.",
+      "notesInFlow": true
+    },
+    {
+      "id": "2427882b-0f69-5a09-8c8f-ba30b8dc4659",
+      "name": "Claim Guard (brand copy)",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1,
+      "position": [
+        1680,
+        160
+      ],
+      "parameters": {
+        "workflowId": "caj_guardrails",
+        "mode": "each",
+        "guard": "claims",
+        "fields": [
+          "sora_prompt"
+        ]
+      },
+      "notes": "claim_guard: B2B brand only, no consumer brands, no source-author results.",
+      "notesInFlow": true
+    },
+    {
+      "id": "83e8a7d7-6d3c-5a0c-907a-0546bd316ea9",
+      "name": "Pricing Guard (brand copy)",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1,
+      "position": [
+        1920,
+        0
+      ],
+      "parameters": {
+        "workflowId": "caj_guardrails",
+        "mode": "each",
+        "guard": "pricing",
+        "fields": [
+          "sora_prompt"
+        ]
+      },
+      "notes": "pricing_guard on generated ad copy.",
+      "notesInFlow": true
+    },
+    {
+      "id": "664ad80c-58cf-5c2c-b791-63c3c2bcea08",
+      "name": "Create UGC Video (Sora)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        2160,
+        160
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/videos",
+        "authentication": "predefinedCredentialType (human-created)",
+        "sendBody": true,
+        "jsonBody": {
+          "model": "sora-2 (unverified)",
+          "prompt": "={{ $json.sora_prompt }}",
+          "size": "1080x1920",
+          "seconds": 8
+        },
+        "responseField": "video_job"
+      },
+      "notes": "Step 5 Create UGC: Loop prompts to Sora 2 API or Runway/Pika/HeyGen. Paid; dry run writes a stub job record.",
+      "notesInFlow": true
+    },
+    {
+      "id": "c63c411b-02fc-5bdd-bad7-f8abcfeba818",
+      "name": "Save Output (Airtable)",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 1,
+      "position": [
+        2400,
+        0
+      ],
+      "parameters": {
+        "operation": "upsert",
+        "table": "ugc_prompts",
+        "key": "={{ $json.video_job.job_id }}",
+        "fields": {
+          "ad_url": "={{ $json.ad_url }}",
+          "sora_prompt": "={{ $json.sora_prompt }}",
+          "job_status": "={{ $json.video_job.status }}"
+        }
+      },
+      "notes": "Step 5: Save (source says Google Drive; table store used offline).",
+      "notesInFlow": true
+    },
+    {
+      "id": "663324c1-d0a9-5523-b409-ab0ced30137b",
+      "name": "Aggregate Results",
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        2640,
+        160
+      ],
+      "parameters": {
+        "include": [
+          "sora_prompt",
+          "video_job"
+        ],
+        "outputField": "results"
+      },
+      "notes": "Step 6: collect the 5 outputs.",
+      "notesInFlow": true
+    },
+    {
+      "id": "680a63f0-f0ce-5560-ae9c-9894fb82307f",
+      "name": "Notify Slack",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 1,
+      "position": [
+        2880,
+        0
+      ],
+      "parameters": {
+        "channel": "#ugc",
+        "text": "=UGC dry run complete (stub jobs only, nothing rendered): {{ $json.results }}"
+      },
+      "notes": "Step 6 Output: Slack notification with 5 video links + caption suggestions.",
+      "notesInFlow": true
+    }
+  ],
+  "connections": {
+    "Ad Input Webhook": {
+      "main": [
+        [
+          {
+            "node": "Download Ad (Apify)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Ad (Apify)": {
+      "main": [
+        [
+          {
+            "node": "Transcribe (Whisper)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcribe (Whisper)": {
+      "main": [
+        [
+          {
+            "node": "Analyze Ad (Vision + Transcript)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze Ad (Vision + Transcript)": {
+      "main": [
+        [
+          {
+            "node": "Get Insights",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Insights": {
+      "main": [
+        [
+          {
+            "node": "Generate 5 Sora Prompts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate 5 Sora Prompts": {
+      "main": [
+        [
+          {
+            "node": "Split Prompts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Prompts": {
+      "main": [
+        [
+          {
+            "node": "Claim Guard (brand copy)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Claim Guard (brand copy)": {
+      "main": [
+        [
+          {
+            "node": "Pricing Guard (brand copy)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pricing Guard (brand copy)": {
+      "main": [
+        [
+          {
+            "node": "Create UGC Video (Sora)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create UGC Video (Sora)": {
+      "main": [
+        [
+          {
+            "node": "Save Output (Airtable)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Output (Airtable)": {
+      "main": [
+        [
+          {
+            "node": "Aggregate Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate Results": {
+      "main": [
+        [
+          {
+            "node": "Notify Slack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataErrorExecution": "all",
+    "errorWorkflow": "_common_error_handler"
+  },
+  "pinData": {
+    "Ad Input Webhook": [
+      {
+        "json": {
+          "ad_url": "https://example.com/ads/synthetic-001",
+          "brand_desc": "CA-J Enterprises, which builds AI front desks for home service companies",
+          "product": "an AI front desk that answers calls and books visits"
+        }
+      }
+    ]
+  },
+  "meta": {
+    "source_line": 42,
+    "verified": false,
+    "spec": "SPEC-01",
+    "source": "01-8-best-ai-automations.md:42",
+    "node_types_verified": false,
+    "unverified_node_types": [
+      "@apify/n8n-nodes-apify.apify",
+      "@n8n/n8n-nodes-langchain.openAi",
+      "n8n-nodes-base.aggregate",
+      "n8n-nodes-base.airtable",
+      "n8n-nodes-base.executeWorkflow",
+      "n8n-nodes-base.httpRequest",
+      "n8n-nodes-base.set",
+      "n8n-nodes-base.slack",
+      "n8n-nodes-base.splitOut",
+      "n8n-nodes-base.webhook"
+    ],
+    "unverified_note": "Node types, parameters, and vendor endpoints come from the source's screenshot descriptions and have not been validated against a current n8n node inventory or vendor API docs.",
+    "pin_data": "synthetic test items only (example.com / 555-01xx)"
+  }
+}

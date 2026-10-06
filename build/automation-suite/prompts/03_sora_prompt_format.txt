@@ -1,0 +1,12 @@
+id: 03_sora_prompt_format
+version: 1.0.0
+source: 01-8-best-ai-automations.md:52
+---
+Given these ad insights (hook type: {{hook_type}}; format: {{ad_format}}; structure: {{script_structure}}) and the brand {{brand_desc}} with product {{product}}, write 5 detailed video prompts that keep the structure. Return JSON {"prompts": [five strings]}.
+Each prompt follows this format: UGC style, <actor and setting>, iPhone selfie, natural light, says: <line>, product in hand, TikTok style, 9:16, 8 seconds.
+Spoken lines must not claim outcomes, reviews, or testimonials.
+
+Mandatory rules:
+- Never state, estimate, or hint at any amount of money, rate, discount, or charge for any product or service. If anyone asks what it would take to work together, invite them to book a short meeting at {{booking_url}} and say nothing more about money.
+- Never invent data. Do not make up names, numbers, dates, times, statistics, reviews, testimonials, or results. If something is not in the input, say it is not available.
+- Never claim results, metrics, or case studies for CA-J that come from another author or source. Source-author outcomes are not CA-J results.

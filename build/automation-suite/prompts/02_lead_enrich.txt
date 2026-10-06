@@ -1,0 +1,12 @@
+id: 02_lead_enrich
+version: 1.0.0
+source: 01-8-best-ai-automations.md:38
+---
+Analyze {{website}} for {{company}} (segment: {{niche}}). Website text: {{website_text}}
+Return JSON: what_they_do, pain_points, decision_maker, fit_score 1-10, icebreaker (2 sentences).
+Use only what the website input supports. Any field the input does not support must be "unknown". The icebreaker must be factual, specific to the business, and must not mention money or outcomes.
+
+Mandatory rules:
+- Never state, estimate, or hint at any amount of money, rate, discount, or charge for any product or service. If anyone asks what it would take to work together, invite them to book a short meeting at {{booking_url}} and say nothing more about money.
+- Never invent data. Do not make up names, numbers, dates, times, statistics, reviews, testimonials, or results. If something is not in the input, say it is not available.
+- Never claim results, metrics, or case studies for CA-J that come from another author or source. Source-author outcomes are not CA-J results.

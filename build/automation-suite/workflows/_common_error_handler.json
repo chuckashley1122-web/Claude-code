@@ -1,0 +1,108 @@
+{
+  "name": "_common_error_handler",
+  "nodes": [
+    {
+      "id": "045680f2-d34e-5f69-996f-18e1ba181d40",
+      "name": "Error Trigger",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {},
+      "notes": "Catch-all error trigger referenced by all eight workflows (settings.errorWorkflow).",
+      "notesInFlow": true
+    },
+    {
+      "id": "8df31e85-b74b-579a-8bed-77e8fd9ce364",
+      "name": "Build Error Record",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [
+        240,
+        160
+      ],
+      "parameters": {
+        "keepOtherFields": false,
+        "assignments": {
+          "execution_id": "={{ $json.execution.id }}",
+          "error_record": {
+            "workflow": "={{ $json.workflow.name }}",
+            "node": "={{ $json.execution.lastNodeExecuted }}",
+            "message": "={{ $json.execution.error.message }}",
+            "error_type": "={{ $json.execution.error.type }}",
+            "timestamp": "={{ $now }}",
+            "synthetic": "={{ $json.execution.synthetic }}",
+            "external_action": "none"
+          }
+        }
+      },
+      "notes": "Spec 5.9: JSON error record (workflow name, node, message, timestamp, synthetic-vs-real flag).",
+      "notesInFlow": true
+    },
+    {
+      "id": "ce4947b8-187d-5af3-a6f6-eb13d899ec30",
+      "name": "Write Error Record",
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        480,
+        0
+      ],
+      "parameters": {
+        "operation": "write",
+        "baseDir": "errors",
+        "fileName": "={{ $json.execution_id }}.json",
+        "dataField": "error_record"
+      },
+      "notes": "Writes to data/out/errors/. Performs no external action.",
+      "notesInFlow": true
+    }
+  ],
+  "connections": {
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Build Error Record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Error Record": {
+      "main": [
+        [
+          {
+            "node": "Write Error Record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataErrorExecution": "all"
+  },
+  "pinData": {},
+  "meta": {
+    "source_line": null,
+    "verified": false,
+    "spec": "SPEC-01",
+    "source": null,
+    "node_types_verified": false,
+    "unverified_node_types": [
+      "n8n-nodes-base.errorTrigger",
+      "n8n-nodes-base.readWriteFile",
+      "n8n-nodes-base.set"
+    ],
+    "unverified_note": "Node types, parameters, and vendor endpoints come from the source's screenshot descriptions and have not been validated against a current n8n node inventory or vendor API docs.",
+    "pin_data": "synthetic test items only (example.com / 555-01xx)",
+    "shared": true,
+    "external_actions": "none"
+  }
+}

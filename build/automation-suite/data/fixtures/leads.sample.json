@@ -1,0 +1,90 @@
+{
+  "_note": "Entirely synthetic fixture data. Fake businesses, example.com domains, 555-01xx numbers. Not real leads.",
+  "synthetic": true,
+  "leads": [
+    {
+      "lead_id": "lead-001",
+      "company": "Fixture HVAC Co 01 (synthetic)",
+      "niche": "HVAC contractors",
+      "city": "Fixture City",
+      "state": "TX",
+      "website": "https://hvac01.example.com",
+      "website_text": "Family-run heating and cooling repair. Emergency after-hours service. Call our office line to book a visit.",
+      "email": "owner@hvac01.example.com",
+      "phone": "202-555-0101",
+      "contacted_before": false,
+      "opted_out": false,
+      "suppressed": false
+    },
+    {
+      "lead_id": "lead-002",
+      "company": "Fixture HVAC Co 02 (synthetic)",
+      "niche": "HVAC contractors",
+      "city": "Fixture City",
+      "state": "TX",
+      "website": "https://hvac02.example.com",
+      "website_text": "Heating and cooling installs. 24/7 emergency line. Phone us for a visit.",
+      "email": "",
+      "phone": "202-555-0102",
+      "contacted_before": false,
+      "opted_out": false,
+      "suppressed": false
+    },
+    {
+      "lead_id": "lead-003",
+      "company": "Fixture HVAC Co 03 (synthetic)",
+      "niche": "HVAC contractors",
+      "city": "Fixture City",
+      "state": "TX",
+      "website": "https://hvac03.example.com",
+      "website_text": "Emergency furnace repair, call any time to book.",
+      "email": "office@hvac03.example.com",
+      "phone": "202-555-0103",
+      "contacted_before": true,
+      "opted_out": false,
+      "suppressed": false
+    },
+    {
+      "lead_id": "lead-004",
+      "company": "Fixture HVAC Co 04 (synthetic)",
+      "niche": "HVAC contractors",
+      "city": "Fixture City",
+      "state": "TX",
+      "website": "https://hvac04.example.com",
+      "website_text": "After-hours emergency AC repair. Call to schedule.",
+      "email": "hello@hvac04.example.com",
+      "phone": "202-555-0104",
+      "contacted_before": false,
+      "opted_out": true,
+      "suppressed": false
+    },
+    {
+      "lead_id": "lead-005",
+      "company": "Fixture Plumbing Co 05 (synthetic)",
+      "niche": "HVAC contractors",
+      "city": "Fixture City",
+      "state": "TX",
+      "website": "https://hvac05.example.com",
+      "website_text": "Drain cleaning and water heaters. Call the office or use the online booking form.",
+      "email": "team@hvac05.example.com",
+      "phone": "202-555-0105",
+      "contacted_before": false,
+      "opted_out": false,
+      "suppressed": false
+    },
+    {
+      "lead_id": "lead-006",
+      "company": "Fixture Marketing Agency 06 (synthetic)",
+      "niche": "marketing agencies",
+      "city": "Fixture City",
+      "state": "TX",
+      "website": "https://agency06.example.com",
+      "website_text": "Digital marketing agency for local businesses.",
+      "email": "info@agency06.example.com",
+      "phone": "202-555-0106",
+      "contacted_before": false,
+      "opted_out": false,
+      "suppressed": false
+    }
+  ]
+}

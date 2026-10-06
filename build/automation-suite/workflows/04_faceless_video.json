@@ -1,0 +1,426 @@
+{
+  "name": "04 Animated Faceless AI Videos",
+  "nodes": [
+    {
+      "id": "1629f010-d23e-5fef-8705-84f35e42fe71",
+      "name": "Daily 6am",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 6 * * *"
+            }
+          ]
+        }
+      },
+      "notes": "Step 1: Cron daily 6am.",
+      "notesInFlow": true
+    },
+    {
+      "id": "1332ad49-3116-5b14-bf10-061f1f56e970",
+      "name": "Trending Topics",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1,
+      "position": [
+        240,
+        160
+      ],
+      "parameters": {
+        "resource": "text",
+        "operation": "message",
+        "promptId": "04_trending_topics",
+        "promptFile": "prompts/04_trending_topics.txt",
+        "promptVariables": {
+          "niche": "={{ $json.niche }}",
+          "booking_url": "={{ $vars.BOOKING_URL }}"
+        },
+        "model": "gpt-4o (unverified)",
+        "jsonOutput": true,
+        "mergeOutput": true
+      },
+      "notes": "Step 1 Trending Topics: Apify TikTok trending scraper or Perplexity API: Top 10 viral topics in [niche] today.",
+      "notesInFlow": true
+    },
+    {
+      "id": "6c1ca52c-d289-53e7-8d28-0da86063dc26",
+      "name": "Split Topics",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        480,
+        0
+      ],
+      "parameters": {
+        "fieldToSplitOut": "topics",
+        "destinationFieldName": "trending_topic"
+      },
+      "notes": "One video per topic.",
+      "notesInFlow": true
+    },
+    {
+      "id": "317a58aa-fb9d-5a2c-b45a-e22c8c25c856",
+      "name": "Write Script",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1,
+      "position": [
+        720,
+        160
+      ],
+      "parameters": {
+        "resource": "text",
+        "operation": "message",
+        "promptId": "04_faceless_script",
+        "promptFile": "prompts/04_faceless_script.txt",
+        "promptVariables": {
+          "trending_topic": "={{ $json.trending_topic }}",
+          "niche": "={{ $json.niche }}",
+          "booking_url": "={{ $vars.BOOKING_URL }}"
+        },
+        "model": "gpt-4o (unverified)",
+        "outputField": "script"
+      },
+      "notes": "Step 2 Write Script: 30-sec script: Hook, 3 value points, CTA. Input: Trending topic.",
+      "notesInFlow": true
+    },
+    {
+      "id": "eaf56fe5-22f1-5671-bfb5-6b25d2eedcc9",
+      "name": "Claim Guard (script)",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1,
+      "position": [
+        960,
+        0
+      ],
+      "parameters": {
+        "workflowId": "caj_guardrails",
+        "mode": "each",
+        "guard": "claims",
+        "fields": [
+          "script"
+        ]
+      },
+      "notes": "claim_guard on public copy.",
+      "notesInFlow": true
+    },
+    {
+      "id": "0a275135-8a98-5718-a093-6e9c012bd7be",
+      "name": "Pricing Guard (script)",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1,
+      "position": [
+        1200,
+        160
+      ],
+      "parameters": {
+        "workflowId": "caj_guardrails",
+        "mode": "each",
+        "guard": "pricing",
+        "fields": [
+          "script"
+        ]
+      },
+      "notes": "pricing_guard on public copy.",
+      "notesInFlow": true
+    },
+    {
+      "id": "dd6268e6-2421-5ff4-91c6-5e16f00a0e0d",
+      "name": "Voiceover (ElevenLabs)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        1440,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.elevenlabs.io/v1/text-to-speech/VOICE_ID_SET_BY_HUMAN",
+        "authentication": "predefinedCredentialType (human-created)",
+        "sendBody": true,
+        "jsonBody": {
+          "text": "={{ $json.script }}"
+        },
+        "responseField": "voice_job"
+      },
+      "notes": "Step 3: ElevenLabs voiceover (paid).",
+      "notesInFlow": true
+    },
+    {
+      "id": "0933efc0-c731-505f-9ed3-b4c76a432f59",
+      "name": "Render Video (Creatomate)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        1680,
+        160
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.creatomate.com/v1/renders",
+        "authentication": "predefinedCredentialType (human-created)",
+        "sendBody": true,
+        "jsonBody": {
+          "template": "faceless-9x16 (human-created)",
+          "modifications": {
+            "script": "={{ $json.script }}",
+            "voiceover_job": "={{ $json.voice_job.job_id }}",
+            "subtitles": "big-word captions"
+          }
+        },
+        "responseField": "render_job"
+      },
+      "notes": "Step 3 Create Faceless Video: Creatomate or JSON2Video: stock footage + ElevenLabs voiceover + Auto-subtitles.",
+      "notesInFlow": true
+    },
+    {
+      "id": "576b000b-e858-517f-8da9-14c50bc5f5b7",
+      "name": "Publish (Ayrshare)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        1920,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.ayrshare.com/api/post",
+        "authentication": "predefinedCredentialType (human-created)",
+        "sendBody": true,
+        "jsonBody": {
+          "platforms": [
+            "tiktok",
+            "instagram",
+            "youtube"
+          ],
+          "post": "={{ $json.script }}",
+          "mediaRef": "={{ $json.render_job.job_id }}"
+        },
+        "responseField": "post"
+      },
+      "notes": "Step 4 Publish: Ayrshare API: Upload to TikTok, IG Reels, YouTube Shorts. Dry run records intent only.",
+      "notesInFlow": true
+    },
+    {
+      "id": "ef7bc543-3866-5f1e-84c1-b926fe1505cc",
+      "name": "Wait 24h",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1,
+      "position": [
+        2160,
+        160
+      ],
+      "parameters": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "notes": "Step 5: After 24h.",
+      "notesInFlow": true
+    },
+    {
+      "id": "eaf4474f-93e9-57e3-bb83-a20c8b64a339",
+      "name": "Track Performance",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        2400,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.ayrshare.com/api/analytics/post",
+        "authentication": "predefinedCredentialType (human-created)",
+        "sendBody": true,
+        "jsonBody": {
+          "id": "={{ $json.post.post_id }}"
+        },
+        "responseField": "performance"
+      },
+      "notes": "Step 5 Track Performance: pull views/likes (source: Apify). Nothing is published in dry run, so metrics are null.",
+      "notesInFlow": true
+    },
+    {
+      "id": "d14c8896-e8cd-5d58-88e6-5708f5a6703e",
+      "name": "Log Performance (Airtable)",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 1,
+      "position": [
+        2640,
+        160
+      ],
+      "parameters": {
+        "operation": "upsert",
+        "table": "faceless_posts",
+        "key": "={{ $json.post.post_id }}",
+        "fields": {
+          "topic": "={{ $json.trending_topic }}",
+          "views": "={{ $json.performance.views }}",
+          "likes": "={{ $json.performance.likes }}",
+          "status": "={{ $json.performance.status }}"
+        }
+      },
+      "notes": "Step 5: into Airtable.",
+      "notesInFlow": true
+    }
+  ],
+  "connections": {
+    "Daily 6am": {
+      "main": [
+        [
+          {
+            "node": "Trending Topics",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trending Topics": {
+      "main": [
+        [
+          {
+            "node": "Split Topics",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Topics": {
+      "main": [
+        [
+          {
+            "node": "Write Script",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write Script": {
+      "main": [
+        [
+          {
+            "node": "Claim Guard (script)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Claim Guard (script)": {
+      "main": [
+        [
+          {
+            "node": "Pricing Guard (script)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pricing Guard (script)": {
+      "main": [
+        [
+          {
+            "node": "Voiceover (ElevenLabs)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Voiceover (ElevenLabs)": {
+      "main": [
+        [
+          {
+            "node": "Render Video (Creatomate)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Render Video (Creatomate)": {
+      "main": [
+        [
+          {
+            "node": "Publish (Ayrshare)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Publish (Ayrshare)": {
+      "main": [
+        [
+          {
+            "node": "Wait 24h",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 24h": {
+      "main": [
+        [
+          {
+            "node": "Track Performance",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Track Performance": {
+      "main": [
+        [
+          {
+            "node": "Log Performance (Airtable)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataErrorExecution": "all",
+    "errorWorkflow": "_common_error_handler"
+  },
+  "pinData": {
+    "Daily 6am": [
+      {
+        "json": {
+          "niche": "home services"
+        }
+      }
+    ]
+  },
+  "meta": {
+    "source_line": 55,
+    "verified": false,
+    "spec": "SPEC-01",
+    "source": "01-8-best-ai-automations.md:55",
+    "node_types_verified": false,
+    "unverified_node_types": [
+      "@n8n/n8n-nodes-langchain.openAi",
+      "n8n-nodes-base.airtable",
+      "n8n-nodes-base.executeWorkflow",
+      "n8n-nodes-base.httpRequest",
+      "n8n-nodes-base.scheduleTrigger",
+      "n8n-nodes-base.splitOut",
+      "n8n-nodes-base.wait"
+    ],
+    "unverified_note": "Node types, parameters, and vendor endpoints come from the source's screenshot descriptions and have not been validated against a current n8n node inventory or vendor API docs.",
+    "pin_data": "synthetic test items only (example.com / 555-01xx)"
+  }
+}

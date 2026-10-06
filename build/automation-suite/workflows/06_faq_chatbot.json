@@ -1,0 +1,579 @@
+{
+  "name": "06 Multilingual FAQ Chatbot",
+  "nodes": [
+    {
+      "id": "53a8fdc0-d8c9-575f-8f69-e0f738dcffaa",
+      "name": "Chat Message",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "public": true,
+        "mode": "hostedChat"
+      },
+      "notes": "Step 1 Deploy Widget: n8n Chat Trigger. Hosted link (domain/DNS is a human step).",
+      "notesInFlow": true
+    },
+    {
+      "id": "8d02fbf6-33d4-51c7-83ac-b3336e1f7706",
+      "name": "Chat Memory (last 5)",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1,
+      "position": [
+        240,
+        160
+      ],
+      "parameters": {
+        "sessionKey": "={{ $json.session_id }}",
+        "message": "={{ $json.user_message }}",
+        "contextWindowLength": 5
+      },
+      "notes": "Step 5: n8n memory or Redis store last 5 messages.",
+      "notesInFlow": true
+    },
+    {
+      "id": "a5c7c105-48a6-5f35-9e9b-fc7ac6c721f2",
+      "name": "Detect Language",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1,
+      "position": [
+        480,
+        0
+      ],
+      "parameters": {
+        "resource": "text",
+        "operation": "message",
+        "promptId": "06_language_detect",
+        "promptFile": "prompts/06_language_detect.txt",
+        "promptVariables": {
+          "user_message": "={{ $json.user_message }}",
+          "booking_url": "={{ $vars.BOOKING_URL }}"
+        },
+        "model": "gpt-4o (unverified)",
+        "outputField": "lang"
+      },
+      "notes": "Step 2 Language Detection: Detect language of {{user_message}} Return ISO code.",
+      "notesInFlow": true
+    },
+    {
+      "id": "57a27ee7-6ad9-5e4d-b4ac-062acb6010a6",
+      "name": "Meeting-First Guard",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1,
+      "position": [
+        720,
+        160
+      ],
+      "parameters": {
+        "workflowId": "caj_guardrails",
+        "mode": "each",
+        "guard": "meeting_first",
+        "inboundField": "user_message",
+        "replyField": "answer",
+        "intentField": "pricing_intent"
+      },
+      "notes": "CA-J rule: pricing intent gets the booking link, never a price.",
+      "notesInFlow": true
+    },
+    {
+      "id": "84718251-8b1b-54b0-90c6-d135a9055f3a",
+      "name": "Pricing Intent?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        960,
+        0
+      ],
+      "parameters": {
+        "conditions": [
+          {
+            "leftValue": "={{ $json.pricing_intent }}",
+            "operator": "isTrue"
+          }
+        ],
+        "combinator": "and"
+      },
+      "notes": "Meeting-first branch.",
+      "notesInFlow": true
+    },
+    {
+      "id": "31ec7013-623a-5411-ac26-0767e1864d6c",
+      "name": "Retrieve FAQ (vector search)",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1,
+      "position": [
+        1200,
+        160
+      ],
+      "parameters": {
+        "resource": "assistant",
+        "operation": "fileSearch",
+        "query": "={{ $json.user_message }}",
+        "knowledgeBase": "faqs.sample.md",
+        "topK": 2,
+        "outputField": "retrieved",
+        "textField": "retrieved_text",
+        "confidenceField": "confidence"
+      },
+      "notes": "Step 3: Vector DB: Upload FAQs to Pinecone/Supabase Vector. RAG: Retrieve relevant chunks.",
+      "notesInFlow": true
+    },
+    {
+      "id": "78f41084-53ef-5b65-b393-a6a34260f162",
+      "name": "Scheduling Intent?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1440,
+        0
+      ],
+      "parameters": {
+        "conditions": [
+          {
+            "leftValue": "={{ $json.user_message }}",
+            "operator": "containsAny",
+            "rightValue": [
+              "book",
+              "schedule",
+              "appointment",
+              "cita",
+              "reprogramar",
+              "termin",
+              "rendez"
+            ]
+          }
+        ],
+        "combinator": "and"
+      },
+      "notes": "Step 3: Check Calendar availability if scheduling intent.",
+      "notesInFlow": true
+    },
+    {
+      "id": "9da56b6e-c594-53c1-9458-7c9ad1c69dc8",
+      "name": "Check Availability",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1,
+      "position": [
+        1680,
+        160
+      ],
+      "parameters": {
+        "operation": "availability",
+        "date": "={{ $json.requested_date }}",
+        "outputField": "free_slots"
+      },
+      "notes": "Step 3: Check Calendar availability.",
+      "notesInFlow": true
+    },
+    {
+      "id": "a77ecc3e-c207-5f71-a870-82034e82a2f1",
+      "name": "Add Availability to Context",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [
+        1920,
+        0
+      ],
+      "parameters": {
+        "keepOtherFields": true,
+        "assignments": {
+          "retrieved_text": "={{ $json.retrieved_text + ' Open times: ' + $json.free_slots_text }}"
+        }
+      },
+      "notes": "RAG prompt: If scheduling, mention availability.",
+      "notesInFlow": true
+    },
+    {
+      "id": "d71257c5-c8cc-5eaa-86b8-1a09d787cc1e",
+      "name": "FAQ Answer",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1,
+      "position": [
+        2160,
+        160
+      ],
+      "parameters": {
+        "resource": "text",
+        "operation": "message",
+        "promptId": "06_faq_rag",
+        "promptFile": "prompts/06_faq_rag.txt",
+        "promptVariables": {
+          "retrieved_faq": "={{ $json.retrieved_text }}",
+          "user_msg": "={{ $json.user_message }}",
+          "booking_url": "={{ $vars.BOOKING_URL }}"
+        },
+        "model": "gpt-4o (unverified)",
+        "outputField": "answer"
+      },
+      "notes": "Step 3: GPT-4o generates answer. Answer only from context. Keep <50 words.",
+      "notesInFlow": true
+    },
+    {
+      "id": "5669555c-9ffb-5405-8f30-51bda86dc2bc",
+      "name": "Confident?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        2400,
+        0
+      ],
+      "parameters": {
+        "conditions": [
+          {
+            "leftValue": "={{ $json.confidence }}",
+            "operator": "gte",
+            "rightValue": 0.7
+          }
+        ],
+        "combinator": "and"
+      },
+      "notes": "Step 5: Confidence <0.7 => handoff to human via Slack (threshold from source, unverified).",
+      "notesInFlow": true
+    },
+    {
+      "id": "b318b9ee-b9c4-5bdb-87b6-1a45176ababe",
+      "name": "Escalate to Human (Slack)",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 1,
+      "position": [
+        2640,
+        160
+      ],
+      "parameters": {
+        "channel": "#chat-handoff",
+        "text": "=Chat {{ $json.session_id }} needs a person: {{ $json.user_message }}"
+      },
+      "notes": "Step 5: handoff via Slack.",
+      "notesInFlow": true
+    },
+    {
+      "id": "e082b3ec-f7c7-57a3-b138-70887a4e212b",
+      "name": "Handoff Reply",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [
+        2880,
+        0
+      ],
+      "parameters": {
+        "keepOtherFields": true,
+        "assignments": {
+          "answer": "Thanks for your message. A team member will follow up with you here."
+        }
+      },
+      "notes": "Tell the user a person will follow up.",
+      "notesInFlow": true
+    },
+    {
+      "id": "bfa23533-bab5-569d-a018-ba56a3163af1",
+      "name": "Translate Reply",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1,
+      "position": [
+        3120,
+        160
+      ],
+      "parameters": {
+        "resource": "text",
+        "operation": "message",
+        "promptId": "06_translate",
+        "promptFile": "prompts/06_translate.txt",
+        "promptVariables": {
+          "lang": "={{ $json.lang }}",
+          "text": "={{ $json.answer }}",
+          "booking_url": "={{ $vars.BOOKING_URL }}"
+        },
+        "model": "gpt-4o (unverified)",
+        "outputField": "reply_text"
+      },
+      "notes": "Step 4 Translate Reply: Translate answer to {{detected_language}} friendly tone.",
+      "notesInFlow": true
+    },
+    {
+      "id": "9c6fae90-271f-5668-b53b-8ea276f0f43c",
+      "name": "Pricing Guard (reply)",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1,
+      "position": [
+        3360,
+        0
+      ],
+      "parameters": {
+        "workflowId": "caj_guardrails",
+        "mode": "each",
+        "guard": "pricing",
+        "fields": [
+          "reply_text"
+        ]
+      },
+      "notes": "pricing_guard.assert_clean on every outbound-sending node.",
+      "notesInFlow": true
+    },
+    {
+      "id": "5cc0d343-7d5c-5518-b3e9-5ebb441062cc",
+      "name": "Send Reply",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        3600,
+        160
+      ],
+      "parameters": {
+        "respondWith": "text",
+        "sessionId": "={{ $json.session_id }}",
+        "responseBody": "={{ $json.reply_text }}"
+      },
+      "notes": "Step 4: Send via chat widget. Dry run records the reply only.",
+      "notesInFlow": true
+    }
+  ],
+  "connections": {
+    "Chat Message": {
+      "main": [
+        [
+          {
+            "node": "Chat Memory (last 5)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Chat Memory (last 5)": {
+      "main": [
+        [
+          {
+            "node": "Detect Language",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Detect Language": {
+      "main": [
+        [
+          {
+            "node": "Meeting-First Guard",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Meeting-First Guard": {
+      "main": [
+        [
+          {
+            "node": "Pricing Intent?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pricing Intent?": {
+      "main": [
+        [
+          {
+            "node": "Translate Reply",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Retrieve FAQ (vector search)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Retrieve FAQ (vector search)": {
+      "main": [
+        [
+          {
+            "node": "Scheduling Intent?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Scheduling Intent?": {
+      "main": [
+        [
+          {
+            "node": "Check Availability",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "FAQ Answer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Availability": {
+      "main": [
+        [
+          {
+            "node": "Add Availability to Context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Availability to Context": {
+      "main": [
+        [
+          {
+            "node": "FAQ Answer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "FAQ Answer": {
+      "main": [
+        [
+          {
+            "node": "Confident?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Confident?": {
+      "main": [
+        [
+          {
+            "node": "Translate Reply",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Escalate to Human (Slack)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Escalate to Human (Slack)": {
+      "main": [
+        [
+          {
+            "node": "Handoff Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Handoff Reply": {
+      "main": [
+        [
+          {
+            "node": "Translate Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Translate Reply": {
+      "main": [
+        [
+          {
+            "node": "Pricing Guard (reply)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pricing Guard (reply)": {
+      "main": [
+        [
+          {
+            "node": "Send Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataErrorExecution": "all",
+    "errorWorkflow": "_common_error_handler"
+  },
+  "pinData": {
+    "Chat Message": [
+      {
+        "json": {
+          "session_id": "chat-001",
+          "user_message": "How do I book an appointment?",
+          "requested_date": "2026-10-06"
+        }
+      },
+      {
+        "json": {
+          "session_id": "chat-002",
+          "user_message": "Hola, quiero reprogramar mi cita por favor",
+          "requested_date": "2026-10-06"
+        }
+      },
+      {
+        "json": {
+          "session_id": "chat-003",
+          "user_message": "What does it cost per month?",
+          "requested_date": null
+        }
+      },
+      {
+        "json": {
+          "session_id": "chat-004",
+          "user_message": "Can you fix my solar panels?",
+          "requested_date": null
+        }
+      }
+    ]
+  },
+  "meta": {
+    "source_line": 77,
+    "verified": false,
+    "spec": "SPEC-01",
+    "source": "01-8-best-ai-automations.md:77",
+    "node_types_verified": false,
+    "unverified_node_types": [
+      "@n8n/n8n-nodes-langchain.chatTrigger",
+      "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "@n8n/n8n-nodes-langchain.openAi",
+      "n8n-nodes-base.executeWorkflow",
+      "n8n-nodes-base.googleCalendar",
+      "n8n-nodes-base.if",
+      "n8n-nodes-base.respondToWebhook",
+      "n8n-nodes-base.set",
+      "n8n-nodes-base.slack"
+    ],
+    "unverified_note": "Node types, parameters, and vendor endpoints come from the source's screenshot descriptions and have not been validated against a current n8n node inventory or vendor API docs.",
+    "pin_data": "synthetic test items only (example.com / 555-01xx)",
+    "languages_claim": "source claims 20+ languages (unverified); mock tags replies with the target language"
+  }
+}

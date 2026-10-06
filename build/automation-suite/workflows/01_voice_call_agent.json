@@ -1,0 +1,696 @@
+{
+  "name": "01 AI Voice Call Agent",
+  "nodes": [
+    {
+      "id": "c0456711-5c2a-5015-b6c1-376d673eb0e6",
+      "name": "Call Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "voice-call",
+        "responseMode": "onReceived"
+      },
+      "notes": "Step 2: Webhook Trigger in n8n: New Workflow > Webhook Trigger (POST). Copy URL. Paste into Vapi > Server URL. (Vapi URL entry is UI-only.)",
+      "notesInFlow": true
+    },
+    {
+      "id": "183972e1-b42f-58a0-89c8-7821e80cfd8a",
+      "name": "Call Agent",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1,
+      "position": [
+        240,
+        160
+      ],
+      "parameters": {
+        "resource": "text",
+        "operation": "message",
+        "promptId": "01_voice_receptionist_system",
+        "promptFile": "prompts/01_voice_receptionist_system.txt",
+        "promptVariables": {
+          "business_name": "={{ $json.business_name }}",
+          "caller_utterance": "={{ $json.utterance }}",
+          "booking_url": "={{ $vars.BOOKING_URL }}"
+        },
+        "model": "gpt-4o (unverified)",
+        "outputField": "agent_reply"
+      },
+      "notes": "Step 4: Configure Call Agent: Model GPT-4o, System Prompt: receptionist, concise. Attach all 4 tools. (Vapi assistant settings are UI-only.)",
+      "notesInFlow": true
+    },
+    {
+      "id": "71324c2b-6870-5800-aa81-21ed36efeb56",
+      "name": "Meeting-First Guard",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1,
+      "position": [
+        480,
+        0
+      ],
+      "parameters": {
+        "workflowId": "caj_guardrails",
+        "mode": "each",
+        "guard": "meeting_first",
+        "inboundField": "utterance",
+        "replyField": "agent_reply",
+        "intentField": "pricing_intent"
+      },
+      "notes": "CA-J rule: pricing intent gets the booking link, never a price (spec 8.11).",
+      "notesInFlow": true
+    },
+    {
+      "id": "628dfb98-a775-5731-865e-4580177a611f",
+      "name": "Needs Human?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        720,
+        160
+      ],
+      "parameters": {
+        "conditions": [
+          {
+            "leftValue": "={{ $json.confusion_count }}",
+            "operator": "gte",
+            "rightValue": 2
+          }
+        ],
+        "combinator": "and"
+      },
+      "notes": "Step 3 Tool 4 / prompt rule: If user repeats confusion 2x, escalate_to_human.",
+      "notesInFlow": true
+    },
+    {
+      "id": "a758c766-c69f-5036-81e6-467d21502025",
+      "name": "Escalate to Human (Slack)",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 1,
+      "position": [
+        960,
+        0
+      ],
+      "parameters": {
+        "channel": "#front-desk-escalations",
+        "text": "=Caller needs a person. Call {{ $json.call_id }}: {{ $json.utterance }}"
+      },
+      "notes": "Step 3 Tool 4 Escalate: Slack message + Twilio Transfer Call to human.",
+      "notesInFlow": true
+    },
+    {
+      "id": "d2c7031d-103f-54dd-92fe-51ef99fcadec",
+      "name": "Transfer Call (Twilio)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        1200,
+        160
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.twilio.com/2010-04-01/Accounts/ACCOUNT_SID_SET_BY_HUMAN/Calls/{{ $json.call_id }}.json",
+        "authentication": "predefinedCredentialType (human-created)",
+        "sendBody": true,
+        "jsonBody": {
+          "call_id": "={{ $json.call_id }}",
+          "reason": "caller confused twice"
+        },
+        "responseField": "transfer"
+      },
+      "notes": "Step 3 Tool 4: Twilio Transfer Call to human. Needs a purchased number (spend gate).",
+      "notesInFlow": true
+    },
+    {
+      "id": "ac0ecbc3-32e6-5051-8fd9-8c0a559233ee",
+      "name": "Is Booking?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1440,
+        0
+      ],
+      "parameters": {
+        "conditions": [
+          {
+            "leftValue": "={{ $json.intent }}",
+            "operator": "equals",
+            "rightValue": "booking"
+          },
+          {
+            "leftValue": "={{ $json.pricing_intent }}",
+            "operator": "isFalse"
+          }
+        ],
+        "combinator": "and"
+      },
+      "notes": "Prompt rule: If booking, ALWAYS call check_availability first.",
+      "notesInFlow": true
+    },
+    {
+      "id": "6ef3351d-4dee-5058-be9d-2f08e5c1907e",
+      "name": "Pricing Intent?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1680,
+        160
+      ],
+      "parameters": {
+        "conditions": [
+          {
+            "leftValue": "={{ $json.pricing_intent }}",
+            "operator": "isTrue"
+          }
+        ],
+        "combinator": "and"
+      },
+      "notes": "Meeting-first: a pricing question is answered only with the booking link.",
+      "notesInFlow": true
+    },
+    {
+      "id": "6be61263-f584-57a6-a896-8643fa9136aa",
+      "name": "Handle Questions (FAQ search)",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1,
+      "position": [
+        1920,
+        0
+      ],
+      "parameters": {
+        "resource": "assistant",
+        "operation": "fileSearch",
+        "query": "={{ $json.utterance }}",
+        "knowledgeBase": "faqs.sample.md",
+        "topK": 2,
+        "outputField": "faq_chunks",
+        "textField": "faq_context",
+        "confidenceField": "faq_confidence"
+      },
+      "notes": "Step 3 Tool 3 Handle Questions: OpenAI Assistant with business knowledge base (upload PDF FAQs).",
+      "notesInFlow": true
+    },
+    {
+      "id": "f4b0b951-7287-52bf-8e75-9caa51479b48",
+      "name": "Answer Question",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1,
+      "position": [
+        2160,
+        160
+      ],
+      "parameters": {
+        "resource": "text",
+        "operation": "message",
+        "promptId": "06_faq_rag",
+        "promptFile": "prompts/06_faq_rag.txt",
+        "promptVariables": {
+          "retrieved_faq": "={{ $json.faq_context }}",
+          "user_msg": "={{ $json.utterance }}",
+          "booking_url": "={{ $vars.BOOKING_URL }}"
+        },
+        "model": "gpt-4o (unverified)",
+        "outputField": "agent_reply"
+      },
+      "notes": "Step 3 Tool 3: answer only from the knowledge base.",
+      "notesInFlow": true
+    },
+    {
+      "id": "1ff90bff-dc76-51f9-b652-60a696a5fc3e",
+      "name": "Check Availability",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1,
+      "position": [
+        2400,
+        0
+      ],
+      "parameters": {
+        "operation": "availability",
+        "date": "={{ $json.requested_date }}",
+        "outputField": "free_slots",
+        "calendar": "human-selected calendar"
+      },
+      "notes": "Step 3 Tool 1 Check Availability: Google Calendar Get Availability (free/busy).",
+      "notesInFlow": true
+    },
+    {
+      "id": "3b41bac4-15aa-5cba-aac2-4a43d7c9b02c",
+      "name": "Slot Available?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        2640,
+        160
+      ],
+      "parameters": {
+        "conditions": [
+          {
+            "leftValue": "={{ $json.free_slots }}",
+            "operator": "isNotEmpty"
+          }
+        ],
+        "combinator": "and"
+      },
+      "notes": "Prompt rule: Never invent times. Only an offered slot can be booked.",
+      "notesInFlow": true
+    },
+    {
+      "id": "fc014714-ca33-5e16-8529-ccbf5790d26c",
+      "name": "Email Confirmed?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        2880,
+        0
+      ],
+      "parameters": {
+        "conditions": [
+          {
+            "leftValue": "={{ $json.email_confirmed }}",
+            "operator": "isTrue"
+          }
+        ],
+        "combinator": "and"
+      },
+      "notes": "Prompt rule: Confirm email before sending.",
+      "notesInFlow": true
+    },
+    {
+      "id": "3653fd3c-e700-57a5-adfe-a05981439293",
+      "name": "Book Appointment",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1,
+      "position": [
+        3120,
+        160
+      ],
+      "parameters": {
+        "operation": "create",
+        "date": "={{ $json.requested_date }}",
+        "time": "={{ $json.free_slots[0] }}",
+        "attendee": "={{ $json.caller_email }}",
+        "summary": "=Appointment: {{ $json.caller_name }}",
+        "outputField": "event"
+      },
+      "notes": "Step 3 Tool 2 Book Appointment: Google Calendar Create Event.",
+      "notesInFlow": true
+    },
+    {
+      "id": "3b027533-e0fd-5146-93b2-76b6e9d889d5",
+      "name": "Compose Confirmation",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [
+        3360,
+        0
+      ],
+      "parameters": {
+        "keepOtherFields": true,
+        "assignments": {
+          "confirmation_subject": "=Confirmed: {{ $json.event.day }} at {{ $json.event.time }}",
+          "confirmation_body": "=Hi {{ $json.caller_name }}, you are confirmed for {{ $json.event.day }} at {{ $json.event.time }}. To reschedule or cancel, reply to this email."
+        }
+      },
+      "notes": "Line 27 Email Template: Hi {{name}}, confirmed {{date}} at {{time}}. Address: ... Cancel link. (Address is NEEDS_EVIDENCE per client; cancel = reply.)",
+      "notesInFlow": true
+    },
+    {
+      "id": "e3f67f89-f548-54f9-9480-ada8124632fb",
+      "name": "Pricing Guard (confirmation)",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1,
+      "position": [
+        3600,
+        160
+      ],
+      "parameters": {
+        "workflowId": "caj_guardrails",
+        "mode": "each",
+        "guard": "pricing",
+        "fields": [
+          "confirmation_subject",
+          "confirmation_body"
+        ]
+      },
+      "notes": "pricing_guard.assert_clean on every outbound-sending node.",
+      "notesInFlow": true
+    },
+    {
+      "id": "5c8fb9fa-f4d2-5d73-a449-5bf9fdce5d1a",
+      "name": "Send Confirmation Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2,
+      "position": [
+        3840,
+        0
+      ],
+      "parameters": {
+        "operation": "send",
+        "sendTo": "={{ $json.caller_email }}",
+        "subject": "={{ $json.confirmation_subject }}",
+        "message": "={{ $json.confirmation_body }}",
+        "fromInbox": "={{ $vars.OWNER_EMAIL }}"
+      },
+      "notes": "Step 5 Post-call flow: Gmail Send (confirmation template). Dry run writes a .eml draft.",
+      "notesInFlow": true
+    },
+    {
+      "id": "f93c0611-c050-54e5-8893-38873d4d8d0e",
+      "name": "Create CRM Contact",
+      "type": "n8n-nodes-base.hubspot",
+      "typeVersion": 1,
+      "position": [
+        4080,
+        160
+      ],
+      "parameters": {
+        "resource": "contact",
+        "operation": "upsert",
+        "email": "={{ $json.caller_email }}",
+        "properties": {
+          "firstname": "={{ $json.caller_name }}",
+          "phone": "={{ $json.caller_phone }}",
+          "last_call_id": "={{ $json.call_id }}",
+          "last_agent_reply": "={{ $json.agent_reply }}",
+          "call_notes": "={{ $json.utterance }}"
+        }
+      },
+      "notes": "Step 5: HubSpot Create Contact (with transcript summary via OpenAI Summarize). Dry run stores the caller's words; no summary prompt is in the spec's prompt set.",
+      "notesInFlow": true
+    }
+  ],
+  "connections": {
+    "Call Webhook": {
+      "main": [
+        [
+          {
+            "node": "Call Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call Agent": {
+      "main": [
+        [
+          {
+            "node": "Meeting-First Guard",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Meeting-First Guard": {
+      "main": [
+        [
+          {
+            "node": "Needs Human?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Needs Human?": {
+      "main": [
+        [
+          {
+            "node": "Escalate to Human (Slack)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Is Booking?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Escalate to Human (Slack)": {
+      "main": [
+        [
+          {
+            "node": "Transfer Call (Twilio)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transfer Call (Twilio)": {
+      "main": [
+        [
+          {
+            "node": "Create CRM Contact",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Booking?": {
+      "main": [
+        [
+          {
+            "node": "Check Availability",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Pricing Intent?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pricing Intent?": {
+      "main": [
+        [
+          {
+            "node": "Create CRM Contact",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Handle Questions (FAQ search)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Handle Questions (FAQ search)": {
+      "main": [
+        [
+          {
+            "node": "Answer Question",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Answer Question": {
+      "main": [
+        [
+          {
+            "node": "Create CRM Contact",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Availability": {
+      "main": [
+        [
+          {
+            "node": "Slot Available?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slot Available?": {
+      "main": [
+        [
+          {
+            "node": "Email Confirmed?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create CRM Contact",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email Confirmed?": {
+      "main": [
+        [
+          {
+            "node": "Book Appointment",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create CRM Contact",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Book Appointment": {
+      "main": [
+        [
+          {
+            "node": "Compose Confirmation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compose Confirmation": {
+      "main": [
+        [
+          {
+            "node": "Pricing Guard (confirmation)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pricing Guard (confirmation)": {
+      "main": [
+        [
+          {
+            "node": "Send Confirmation Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Confirmation Email": {
+      "main": [
+        [
+          {
+            "node": "Create CRM Contact",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataErrorExecution": "all",
+    "errorWorkflow": "_common_error_handler"
+  },
+  "pinData": {
+    "Call Webhook": [
+      {
+        "json": {
+          "call_id": "dryrun-call-001",
+          "business_name": "Fixture Home Services (synthetic)",
+          "caller_name": "Pat Fixture",
+          "caller_phone": "202-555-0111",
+          "caller_email": "pat@example.com",
+          "email_confirmed": true,
+          "intent": "booking",
+          "requested_date": "2026-10-06",
+          "utterance": "I would like to book an appointment for Tuesday.",
+          "confusion_count": 0
+        }
+      },
+      {
+        "json": {
+          "call_id": "dryrun-call-002",
+          "business_name": "Fixture Home Services (synthetic)",
+          "caller_name": "Sam Fixture",
+          "caller_phone": "202-555-0112",
+          "caller_email": "sam@example.com",
+          "email_confirmed": false,
+          "intent": "question",
+          "requested_date": null,
+          "utterance": "How much does this cost per month?",
+          "confusion_count": 0
+        }
+      },
+      {
+        "json": {
+          "call_id": "dryrun-call-003",
+          "business_name": "Fixture Home Services (synthetic)",
+          "caller_name": "Lee Fixture",
+          "caller_phone": "202-555-0113",
+          "caller_email": "lee@example.com",
+          "email_confirmed": false,
+          "intent": "unclear",
+          "requested_date": null,
+          "utterance": "Sorry, I still do not understand.",
+          "confusion_count": 2
+        }
+      },
+      {
+        "json": {
+          "call_id": "dryrun-call-004",
+          "business_name": "Fixture Home Services (synthetic)",
+          "caller_name": "Kim Fixture",
+          "caller_phone": "202-555-0114",
+          "caller_email": "kim@example.com",
+          "email_confirmed": false,
+          "intent": "question",
+          "requested_date": null,
+          "utterance": "What areas do you serve?",
+          "confusion_count": 0
+        }
+      }
+    ]
+  },
+  "meta": {
+    "source_line": 17,
+    "verified": false,
+    "spec": "SPEC-01",
+    "source": "01-8-best-ai-automations.md:17",
+    "node_types_verified": false,
+    "unverified_node_types": [
+      "@n8n/n8n-nodes-langchain.openAi",
+      "n8n-nodes-base.executeWorkflow",
+      "n8n-nodes-base.gmail",
+      "n8n-nodes-base.googleCalendar",
+      "n8n-nodes-base.httpRequest",
+      "n8n-nodes-base.hubspot",
+      "n8n-nodes-base.if",
+      "n8n-nodes-base.set",
+      "n8n-nodes-base.slack",
+      "n8n-nodes-base.webhook"
+    ],
+    "unverified_note": "Node types, parameters, and vendor endpoints come from the source's screenshot descriptions and have not been validated against a current n8n node inventory or vendor API docs.",
+    "pin_data": "synthetic test items only (example.com / 555-01xx)",
+    "voice_concurrency_requested": "10 (source claim, unverified; not provisioned)"
+  }
+}

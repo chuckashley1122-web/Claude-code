@@ -1,0 +1,827 @@
+{
+  "name": "02 Lead Generation AI",
+  "nodes": [
+    {
+      "id": "f8c67793-51f9-57f4-bee9-68e06be6ab7d",
+      "name": "Start Lead Run",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {},
+      "notes": "Run Automation button. Input: Niche like Plumbers in Texas.",
+      "notesInFlow": true
+    },
+    {
+      "id": "6685909e-f582-5d0a-8d58-9cc4a2f6b0e6",
+      "name": "Scrape Leads (Apify)",
+      "type": "@apify/n8n-nodes-apify.apify",
+      "typeVersion": 1,
+      "position": [
+        240,
+        160
+      ],
+      "parameters": {
+        "operation": "runActor",
+        "actorId": "google-maps-scraper",
+        "actorInput": {
+          "niche": "={{ $json.niche }}",
+          "region": "={{ $json.region }}"
+        }
+      },
+      "notes": "Step 1 Scrape Leads: n8n Apify node > Actor google-maps-scraper. Output: Name, Website, Email. (apollo-io-scraper is NOT approved: ToS/legality question.)",
+      "notesInFlow": true
+    },
+    {
+      "id": "736e91ac-2697-5bd5-b0df-dc5074976a53",
+      "name": "Save Leads (Airtable)",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 1,
+      "position": [
+        480,
+        0
+      ],
+      "parameters": {
+        "operation": "upsert",
+        "table": "leads",
+        "key": "={{ $json.website }}"
+      },
+      "notes": "Step 1: Save to Airtable.",
+      "notesInFlow": true
+    },
+    {
+      "id": "1265e216-5d1e-5bd0-ad24-2f1ef7e32121",
+      "name": "Research & Enrich",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1,
+      "position": [
+        720,
+        160
+      ],
+      "parameters": {
+        "resource": "text",
+        "operation": "message",
+        "promptId": "02_lead_enrich",
+        "promptFile": "prompts/02_lead_enrich.txt",
+        "promptVariables": {
+          "website": "={{ $json.website }}",
+          "company": "={{ $json.company }}",
+          "niche": "={{ $json.niche }}",
+          "website_text": "={{ $json.website_text }}",
+          "booking_url": "={{ $vars.BOOKING_URL }}"
+        },
+        "model": "gpt-4o (unverified)",
+        "jsonOutput": true,
+        "mergeOutput": true
+      },
+      "notes": "Step 2 Research & Enrich: OpenAI analyzes website: Summarize business, employee count, pain points.",
+      "notesInFlow": true
+    },
+    {
+      "id": "f2a3efd5-5efe-550b-bf29-8c4ae7c05b41",
+      "name": "Has Email?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        960,
+        0
+      ],
+      "parameters": {
+        "conditions": [
+          {
+            "leftValue": "={{ $json.email }}",
+            "operator": "isNotEmpty"
+          }
+        ],
+        "combinator": "and"
+      },
+      "notes": "Step 2: Use Hunter.io API to find email if missing.",
+      "notesInFlow": true
+    },
+    {
+      "id": "33519caa-6c52-5685-906b-eb34c6b12c12",
+      "name": "Find Email (Hunter)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        1200,
+        160
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://api.hunter.io/v2/domain-search",
+        "authentication": "predefinedCredentialType (human-created)",
+        "sendQuery": true,
+        "queryParameters": {
+          "domain": "={{ $json.website }}"
+        },
+        "responseField": "hunter"
+      },
+      "notes": "Step 2: Hunter.io lookup (paid; approval required).",
+      "notesInFlow": true
+    },
+    {
+      "id": "47bb6ce0-d8c9-5605-9224-f27c1d609025",
+      "name": "Apply Found Email",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [
+        1440,
+        0
+      ],
+      "parameters": {
+        "keepOtherFields": true,
+        "assignments": {
+          "email": "={{ $json.hunter.email }}"
+        }
+      },
+      "notes": "Step 2: use the Hunter result only if it returned an address; never guess one.",
+      "notesInFlow": true
+    },
+    {
+      "id": "516b9007-302b-5f9a-b411-af62f64b622d",
+      "name": "Qualify Leads",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1680,
+        160
+      ],
+      "parameters": {
+        "conditions": [
+          {
+            "leftValue": "={{ $json.email }}",
+            "operator": "isNotEmpty"
+          },
+          {
+            "leftValue": "={{ $json.contacted_before }}",
+            "operator": "isFalse"
+          },
+          {
+            "leftValue": "={{ $json.opted_out }}",
+            "operator": "isFalse"
+          },
+          {
+            "leftValue": "={{ $json.suppressed }}",
+            "operator": "isFalse"
+          },
+          {
+            "leftValue": "={{ $json.fit_score }}",
+            "operator": "gt",
+            "rightValue": 7
+          }
+        ],
+        "combinator": "and"
+      },
+      "notes": "Step 3 Qualify Leads: Only if has email AND not contacted before AND fit_score >7. Plus suppression and opt-out checks (spec 6).",
+      "notesInFlow": true
+    },
+    {
+      "id": "32ad3bf3-bdca-5006-965a-5dfcb39875d3",
+      "name": "Daily Inbox Cap",
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        1920,
+        0
+      ],
+      "parameters": {
+        "maxItems": "={{ $vars.DAILY_EMAIL_CAP_PER_INBOX }}"
+      },
+      "notes": "Step 4: Limit 30 emails/day per inbox (source training target, unverified).",
+      "notesInFlow": true
+    },
+    {
+      "id": "7fd14d64-3bac-5ba6-960d-96ae567dda91",
+      "name": "Write Cold Email",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1,
+      "position": [
+        2160,
+        160
+      ],
+      "parameters": {
+        "resource": "text",
+        "operation": "message",
+        "promptId": "02_cold_email",
+        "promptFile": "prompts/02_cold_email.txt",
+        "promptVariables": {
+          "company": "={{ $json.company }}",
+          "icebreaker": "={{ $json.icebreaker }}",
+          "niche": "={{ $json.niche }}",
+          "service_focus": "answering and booking inbound calls",
+          "sender_first_name": "={{ $vars.SENDER_FIRST_NAME }}",
+          "booking_url": "={{ $vars.BOOKING_URL }}"
+        },
+        "model": "gpt-4o (unverified)",
+        "jsonOutput": true,
+        "outputField": "email_draft"
+      },
+      "notes": "Step 4 Send Outreach: Personalize with AI icebreaker. Line 39 template, edited: no outcome claim, booking link, opt-out.",
+      "notesInFlow": true
+    },
+    {
+      "id": "22c8718f-9eda-5173-8142-3a3cfae127a8",
+      "name": "Pricing Guard (outreach)",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1,
+      "position": [
+        2400,
+        0
+      ],
+      "parameters": {
+        "workflowId": "caj_guardrails",
+        "mode": "each",
+        "guard": "pricing",
+        "fields": [
+          "email_draft"
+        ]
+      },
+      "notes": "pricing_guard.assert_clean on every outbound-sending node.",
+      "notesInFlow": true
+    },
+    {
+      "id": "57369371-de14-5652-a6f9-940feb7197a4",
+      "name": "Claim Guard (outreach)",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1,
+      "position": [
+        2640,
+        160
+      ],
+      "parameters": {
+        "workflowId": "caj_guardrails",
+        "mode": "each",
+        "guard": "claims",
+        "fields": [
+          "email_draft"
+        ]
+      },
+      "notes": "claim_guard: no source-author result restated as CA-J fact; no consumer brands.",
+      "notesInFlow": true
+    },
+    {
+      "id": "eb17189c-af68-562f-b15f-0231a605771e",
+      "name": "Send Outreach Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2,
+      "position": [
+        2880,
+        0
+      ],
+      "parameters": {
+        "operation": "send",
+        "sendTo": "={{ $json.email }}",
+        "subject": "={{ $json.email_draft.subject }}",
+        "message": "={{ $json.email_draft.body }}",
+        "fromInbox": "={{ $vars.OWNER_EMAIL }}"
+      },
+      "notes": "Step 4: Gmail node or Instantly API. Setup SPF/DKIM (DNS, human). Dry run writes .eml drafts only.",
+      "notesInFlow": true
+    },
+    {
+      "id": "5490f1e7-07d7-5837-b4bc-fdd07d405459",
+      "name": "Mark Contacted",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 1,
+      "position": [
+        3120,
+        160
+      ],
+      "parameters": {
+        "operation": "upsert",
+        "table": "leads",
+        "key": "={{ $json.website }}",
+        "fields": {
+          "contacted": true,
+          "replied": false,
+          "followup_count": 0,
+          "email": "={{ $json.email }}",
+          "next_followup": "={{ $today.plusDays(3) }}"
+        }
+      },
+      "notes": "Step 5: set next_followup for the scheduler.",
+      "notesInFlow": true
+    },
+    {
+      "id": "7376e9f4-4735-5517-bd21-9f5b47b2ecd9",
+      "name": "Log Disqualified",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 1,
+      "position": [
+        3360,
+        0
+      ],
+      "parameters": {
+        "operation": "upsert",
+        "table": "leads",
+        "key": "={{ $json.website }}",
+        "fields": {
+          "status": "not_contacted"
+        }
+      },
+      "notes": "Step 3: leads failing the filter are recorded, not emailed.",
+      "notesInFlow": true
+    },
+    {
+      "id": "ae383ad9-0c1b-5ab9-9419-553cc44341b0",
+      "name": "Follow-up Cron 9am",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [
+        3600,
+        160
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 9 * * *"
+            }
+          ]
+        }
+      },
+      "notes": "Step 5 Follow-ups Scheduler: n8n Cron daily 9am.",
+      "notesInFlow": true
+    },
+    {
+      "id": "b2466699-ba79-5465-8608-19a39dd9c96d",
+      "name": "Fetch Due Follow-ups",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 1,
+      "position": [
+        3840,
+        0
+      ],
+      "parameters": {
+        "operation": "search",
+        "table": "leads",
+        "filter": [
+          [
+            "contacted",
+            "isTrue",
+            null
+          ],
+          [
+            "replied",
+            "isFalse",
+            null
+          ],
+          [
+            "next_followup",
+            "lte",
+            "={{ $today }}"
+          ],
+          [
+            "followup_count",
+            "lt",
+            "={{ $vars.FOLLOWUP_SEQUENCE_MAX }}"
+          ]
+        ]
+      },
+      "notes": "Step 5: Fetch Airtable where next_followup = today AND no reply. Sequence max 2 follow-ups.",
+      "notesInFlow": true
+    },
+    {
+      "id": "92157401-a8ea-5b1f-af70-9a7568e1b87e",
+      "name": "Check Replies (Gmail)",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2,
+      "position": [
+        4080,
+        160
+      ],
+      "parameters": {
+        "operation": "getReplies",
+        "from": "={{ $json.email }}",
+        "outputField": "replied"
+      },
+      "notes": "Step 5: Gmail Trigger watches for replies to stop sequence.",
+      "notesInFlow": true
+    },
+    {
+      "id": "5ab4d543-e6a7-53d1-99c7-fee5c431cd28",
+      "name": "No Reply Yet?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        4320,
+        0
+      ],
+      "parameters": {
+        "conditions": [
+          {
+            "leftValue": "={{ $json.replied }}",
+            "operator": "isFalse"
+          }
+        ],
+        "combinator": "and"
+      },
+      "notes": "Step 5: stop the sequence on reply.",
+      "notesInFlow": true
+    },
+    {
+      "id": "35772232-cee0-5574-a84f-c3044b6da246",
+      "name": "Write Follow-up",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1,
+      "position": [
+        4560,
+        160
+      ],
+      "parameters": {
+        "resource": "text",
+        "operation": "message",
+        "promptId": "02_followup",
+        "promptFile": "prompts/02_followup.txt",
+        "promptVariables": {
+          "company": "={{ $json.company }}",
+          "followup_number": "={{ $json.followup_count + 1 }}",
+          "sender_first_name": "={{ $vars.SENDER_FIRST_NAME }}",
+          "booking_url": "={{ $vars.BOOKING_URL }}"
+        },
+        "model": "gpt-4o (unverified)",
+        "jsonOutput": true,
+        "outputField": "followup_draft"
+      },
+      "notes": "Step 5: Send follow-up 2/3.",
+      "notesInFlow": true
+    },
+    {
+      "id": "b88087df-dd12-5063-b6a6-f801cf9a553f",
+      "name": "Pricing Guard (follow-up)",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1,
+      "position": [
+        4800,
+        0
+      ],
+      "parameters": {
+        "workflowId": "caj_guardrails",
+        "mode": "each",
+        "guard": "pricing",
+        "fields": [
+          "followup_draft"
+        ]
+      },
+      "notes": "pricing_guard.assert_clean on every outbound-sending node.",
+      "notesInFlow": true
+    },
+    {
+      "id": "9fceded7-9d72-506f-99c0-b56c5a2ee8ea",
+      "name": "Send Follow-up",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2,
+      "position": [
+        5040,
+        160
+      ],
+      "parameters": {
+        "operation": "send",
+        "sendTo": "={{ $json.email }}",
+        "subject": "={{ $json.followup_draft.subject }}",
+        "message": "={{ $json.followup_draft.body }}",
+        "fromInbox": "={{ $vars.OWNER_EMAIL }}"
+      },
+      "notes": "Step 5: Send follow-up. Dry run writes .eml drafts only.",
+      "notesInFlow": true
+    },
+    {
+      "id": "5afbccdb-7064-51e9-a6df-8c411692e2b7",
+      "name": "Update Follow-up State",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 1,
+      "position": [
+        5280,
+        0
+      ],
+      "parameters": {
+        "operation": "upsert",
+        "table": "leads",
+        "key": "={{ $json.website }}",
+        "fields": {
+          "next_followup": "={{ $today.plusDays(3) }}"
+        },
+        "increment": [
+          "followup_count"
+        ]
+      },
+      "notes": "Step 5: advance the sequence counter.",
+      "notesInFlow": true
+    },
+    {
+      "id": "c757efc2-e1b1-5501-ad98-7fcc7cb13ab8",
+      "name": "Stop Sequence (replied)",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 1,
+      "position": [
+        5520,
+        160
+      ],
+      "parameters": {
+        "operation": "upsert",
+        "table": "leads",
+        "key": "={{ $json.website }}",
+        "fields": {
+          "replied": true
+        }
+      },
+      "notes": "Step 5: reply received, stop sequence.",
+      "notesInFlow": true
+    }
+  ],
+  "connections": {
+    "Start Lead Run": {
+      "main": [
+        [
+          {
+            "node": "Scrape Leads (Apify)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Scrape Leads (Apify)": {
+      "main": [
+        [
+          {
+            "node": "Save Leads (Airtable)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Leads (Airtable)": {
+      "main": [
+        [
+          {
+            "node": "Research & Enrich",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Research & Enrich": {
+      "main": [
+        [
+          {
+            "node": "Has Email?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Email?": {
+      "main": [
+        [
+          {
+            "node": "Qualify Leads",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Find Email (Hunter)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find Email (Hunter)": {
+      "main": [
+        [
+          {
+            "node": "Apply Found Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Apply Found Email": {
+      "main": [
+        [
+          {
+            "node": "Qualify Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Qualify Leads": {
+      "main": [
+        [
+          {
+            "node": "Daily Inbox Cap",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log Disqualified",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Daily Inbox Cap": {
+      "main": [
+        [
+          {
+            "node": "Write Cold Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write Cold Email": {
+      "main": [
+        [
+          {
+            "node": "Pricing Guard (outreach)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pricing Guard (outreach)": {
+      "main": [
+        [
+          {
+            "node": "Claim Guard (outreach)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Claim Guard (outreach)": {
+      "main": [
+        [
+          {
+            "node": "Send Outreach Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Outreach Email": {
+      "main": [
+        [
+          {
+            "node": "Mark Contacted",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Follow-up Cron 9am": {
+      "main": [
+        [
+          {
+            "node": "Fetch Due Follow-ups",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Due Follow-ups": {
+      "main": [
+        [
+          {
+            "node": "Check Replies (Gmail)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Replies (Gmail)": {
+      "main": [
+        [
+          {
+            "node": "No Reply Yet?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "No Reply Yet?": {
+      "main": [
+        [
+          {
+            "node": "Write Follow-up",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Stop Sequence (replied)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write Follow-up": {
+      "main": [
+        [
+          {
+            "node": "Pricing Guard (follow-up)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pricing Guard (follow-up)": {
+      "main": [
+        [
+          {
+            "node": "Send Follow-up",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Follow-up": {
+      "main": [
+        [
+          {
+            "node": "Update Follow-up State",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataErrorExecution": "all",
+    "errorWorkflow": "_common_error_handler"
+  },
+  "pinData": {
+    "Start Lead Run": [
+      {
+        "json": {
+          "niche": "HVAC contractors",
+          "region": "TX"
+        }
+      }
+    ],
+    "Follow-up Cron 9am": [
+      {
+        "json": {
+          "_simulated_today_offset_days": 3,
+          "note": "dry run simulates the 9am cron firing three days after outreach"
+        }
+      }
+    ]
+  },
+  "meta": {
+    "source_line": 30,
+    "verified": false,
+    "spec": "SPEC-01",
+    "source": "01-8-best-ai-automations.md:30",
+    "node_types_verified": false,
+    "unverified_node_types": [
+      "@apify/n8n-nodes-apify.apify",
+      "@n8n/n8n-nodes-langchain.openAi",
+      "n8n-nodes-base.airtable",
+      "n8n-nodes-base.executeWorkflow",
+      "n8n-nodes-base.gmail",
+      "n8n-nodes-base.httpRequest",
+      "n8n-nodes-base.if",
+      "n8n-nodes-base.limit",
+      "n8n-nodes-base.manualTrigger",
+      "n8n-nodes-base.scheduleTrigger",
+      "n8n-nodes-base.set"
+    ],
+    "unverified_note": "Node types, parameters, and vendor endpoints come from the source's screenshot descriptions and have not been validated against a current n8n node inventory or vendor API docs.",
+    "pin_data": "synthetic test items only (example.com / 555-01xx)",
+    "daily_email_cap_per_inbox": "30 (source line 35 training target, unverified)",
+    "followup_sequence_max": 2,
+    "apollo_scraping": "not approved"
+  }
+}

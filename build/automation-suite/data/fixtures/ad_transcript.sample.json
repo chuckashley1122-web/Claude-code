@@ -1,0 +1,21 @@
+{
+  "_note": "Synthetic viral-ad transcript and frame notes written for tests. Not a real ad, creator, or brand.",
+  "synthetic": true,
+  "ads": [
+    {
+      "ad_url": "https://example.com/ads/synthetic-001",
+      "media_id": "synthetic-ad-001",
+      "platform": "fixture",
+      "duration_seconds": 24,
+      "transcript": "Is your AC making that rattling noise again? Here is the first thing I check. Turn the system off, open the panel, and look for a loose screw on the fan guard. If it is still noisy, book a technician.",
+      "frames": [
+        "0s: selfie close-up, person points at an outdoor AC unit, caption text 'that noise again?'",
+        "4s: hand opens the access panel, natural daylight",
+        "9s: close-up of a screwdriver tightening the fan guard",
+        "15s: person faces camera, talking-head, kitchen background",
+        "21s: on-screen text 'book a technician', phone held to camera"
+      ],
+      "music": "light acoustic loop (synthetic note)"
+    }
+  ]
+}

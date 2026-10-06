@@ -1,0 +1,87 @@
+# Human-maintained vendor price table for scripts/cost_estimate.py.
+# Every row is UNVERIFIED. unit_cost stays null until a human records a rate
+# from the vendor's current pricing page (evidence required). The source
+# playbook's figures are recorded only in docs/SOURCE-CLAIMS.md and are NOT
+# copied here as rates. No spend is authorized by this file.
+#
+# Fields: id, purpose, unit, unit_cost (null = NEEDS_EVIDENCE),
+# worst_case_monthly_units (null = NEEDS_EVIDENCE), verified, source
+spend_cap_note: "SPEND_CAP_USD lives in config/constants.py"
+vendors:
+  - id: vapi
+    purpose: "voice agent platform (automation 01)"
+    unit: minute
+    unit_cost: null
+    worst_case_monthly_units: null
+    verified: false
+    source: "01-8-best-ai-automations.md:117 (unverified)"
+  - id: openai_realtime
+    purpose: "realtime voice model (automation 01)"
+    unit: minute
+    unit_cost: null
+    worst_case_monthly_units: null
+    verified: false
+    source: "01-8-best-ai-automations.md:117 (unverified)"
+  - id: apify
+    purpose: "scraping actors (automations 02, 03, 04)"
+    unit: month
+    unit_cost: null
+    worst_case_monthly_units: null
+    verified: false
+    source: "01-8-best-ai-automations.md:117 (unverified)"
+  - id: apollo
+    purpose: "lead data (automation 02); scraping not approved"
+    unit: month
+    unit_cost: null
+    worst_case_monthly_units: null
+    verified: false
+    source: "01-8-best-ai-automations.md:117 (unverified)"
+  - id: heygen
+    purpose: "avatar video (automations 03, 08)"
+    unit: month
+    unit_cost: null
+    worst_case_monthly_units: null
+    verified: false
+    source: "01-8-best-ai-automations.md:117 (unverified)"
+  - id: elevenlabs
+    purpose: "voiceover (automations 04, 05, 08)"
+    unit: month
+    unit_cost: null
+    worst_case_monthly_units: null
+    verified: false
+    source: "01-8-best-ai-automations.md:117 (unverified)"
+  - id: createmate
+    purpose: "video assembly, Creatomate (automations 03, 04, 05, 08)"
+    unit: month
+    unit_cost: null
+    worst_case_monthly_units: null
+    verified: false
+    source: "01-8-best-ai-automations.md:117 (unverified)"
+  - id: ayrshare
+    purpose: "multi-platform publishing (automations 04, 05, 08)"
+    unit: month
+    unit_cost: null
+    worst_case_monthly_units: null
+    verified: false
+    source: "01-8-best-ai-automations.md:117 (unverified)"
+  - id: openai_api
+    purpose: "text, vision, transcription (all automations)"
+    unit: month
+    unit_cost: null
+    worst_case_monthly_units: null
+    verified: false
+    source: "01-8-best-ai-automations.md:117 (unverified)"
+  - id: sora_runway
+    purpose: "generative video (automation 03)"
+    unit: month
+    unit_cost: null
+    worst_case_monthly_units: null
+    verified: false
+    source: "01-8-best-ai-automations.md:117 (unverified)"
+  - id: twilio
+    purpose: "phone number and call transfer (automation 01)"
+    unit: month
+    unit_cost: null
+    worst_case_monthly_units: null
+    verified: false
+    source: "01-8-best-ai-automations.md:117 (unverified)"

@@ -1,0 +1,12 @@
+{
+  "_note": "Synthetic top-video metrics for tests. Video ids, titles, and counts are invented fixture values, not real YouTube data.",
+  "synthetic": true,
+  "items": [
+    {"video_id": "synthetic-yt-001", "title": "How to stop your AC from freezing up", "views": 12000, "likes": 480, "description": "Step by step fixes for a frozen AC coil.", "tags": ["ac repair", "frozen coil", "hvac tips"], "published_at": "2026-09-20"},
+    {"video_id": "synthetic-yt-002", "title": "5 furnace sounds you should never ignore", "views": 9500, "likes": 610, "description": "What each furnace noise usually means.", "tags": ["furnace", "noises", "hvac tips"], "published_at": "2026-09-18"},
+    {"video_id": "synthetic-yt-003", "title": "Why is my thermostat blank?", "views": 7200, "likes": 150, "description": "Common reasons a thermostat screen goes dark.", "tags": ["thermostat", "troubleshooting"], "published_at": "2026-09-25"},
+    {"video_id": "synthetic-yt-004", "title": "Changing an air filter the right way", "views": 4100, "likes": 300, "description": "Filter sizes, direction arrows, and timing.", "tags": ["air filter", "maintenance"], "published_at": "2026-09-12"},
+    {"video_id": "synthetic-yt-005", "title": "Heat pump vs furnace explained", "views": 15000, "likes": 450, "description": "How the two systems differ.", "tags": ["heat pump", "furnace", "comparison"], "published_at": "2026-09-28"},
+    {"video_id": "synthetic-yt-006", "title": "What a maintenance visit actually checks", "views": 2600, "likes": 90, "description": "A walkthrough of a seasonal tune-up checklist.", "tags": ["maintenance", "checklist"], "published_at": "2026-09-08"}
+  ]
+}

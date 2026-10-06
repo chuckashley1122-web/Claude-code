@@ -1,0 +1,430 @@
+{
+  "name": "05 Content Creation Agent",
+  "nodes": [
+    {
+      "id": "b08d2c74-bf65-573e-9de7-ce84e8c2120a",
+      "name": "Run Content Agent",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {},
+      "notes": "Run Automation button.",
+      "notesInFlow": true
+    },
+    {
+      "id": "7b85e2b1-4436-5245-8774-8583e99b0052",
+      "name": "Topic Research",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1,
+      "position": [
+        240,
+        160
+      ],
+      "parameters": {
+        "resource": "text",
+        "operation": "message",
+        "promptId": "04_trending_topics",
+        "promptFile": "prompts/04_trending_topics.txt",
+        "promptVariables": {
+          "niche": "={{ $json.niche }}",
+          "booking_url": "={{ $vars.BOOKING_URL }}"
+        },
+        "model": "gpt-4o (unverified)",
+        "jsonOutput": true,
+        "mergeOutput": true
+      },
+      "notes": "Step 1 Topic Research: Google Trends + Reddit + YouTube search; OpenAI ranks by virality 1-10.",
+      "notesInFlow": true
+    },
+    {
+      "id": "4f7cc8d3-c341-555b-85f9-49f213ebe3f1",
+      "name": "Pick Top Topic",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [
+        480,
+        0
+      ],
+      "parameters": {
+        "keepOtherFields": true,
+        "assignments": {
+          "topic": "={{ $json.topics[0] }}"
+        }
+      },
+      "notes": "Step 1: take the top-ranked topic.",
+      "notesInFlow": true
+    },
+    {
+      "id": "39449fe8-11b9-583d-9a00-0464d3bf5ceb",
+      "name": "Generate Script",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1,
+      "position": [
+        720,
+        160
+      ],
+      "parameters": {
+        "resource": "text",
+        "operation": "message",
+        "promptId": "05_content_script",
+        "promptFile": "prompts/05_content_script.txt",
+        "promptVariables": {
+          "platform": "={{ $json.platform }}",
+          "brand_tone": "={{ $json.brand_tone }}",
+          "topic": "={{ $json.topic }}",
+          "booking_url": "={{ $vars.BOOKING_URL }}"
+        },
+        "model": "gpt-4o (unverified)",
+        "outputField": "script"
+      },
+      "notes": "Step 2 Generate Script: 45-sec script. Include hook, story, lesson, CTA. Tone: your brand tone.",
+      "notesInFlow": true
+    },
+    {
+      "id": "db8026f6-9545-5faf-912e-295f5e579425",
+      "name": "Claim Guard (script)",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1,
+      "position": [
+        960,
+        0
+      ],
+      "parameters": {
+        "workflowId": "caj_guardrails",
+        "mode": "each",
+        "guard": "claims",
+        "fields": [
+          "script"
+        ]
+      },
+      "notes": "claim_guard on public copy.",
+      "notesInFlow": true
+    },
+    {
+      "id": "7d438000-1df6-5116-97e0-001698671b82",
+      "name": "Pricing Guard (script)",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1,
+      "position": [
+        1200,
+        160
+      ],
+      "parameters": {
+        "workflowId": "caj_guardrails",
+        "mode": "each",
+        "guard": "pricing",
+        "fields": [
+          "script"
+        ]
+      },
+      "notes": "pricing_guard on public copy.",
+      "notesInFlow": true
+    },
+    {
+      "id": "9cf642c8-30a7-533e-8ddf-1ded5f610ad6",
+      "name": "Create Images",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        1440,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/images/generations",
+        "authentication": "predefinedCredentialType (human-created)",
+        "sendBody": true,
+        "jsonBody": {
+          "prompt": "=Simple illustration for: {{ $json.topic }}",
+          "size": "1024x1792"
+        },
+        "responseField": "image_job"
+      },
+      "notes": "Step 3: Leonardo.ai/DALL-E for images.",
+      "notesInFlow": true
+    },
+    {
+      "id": "67541d71-d06e-5f96-80ed-7737b2d89bcd",
+      "name": "Voiceover (ElevenLabs)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        1680,
+        160
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.elevenlabs.io/v1/text-to-speech/VOICE_ID_SET_BY_HUMAN",
+        "authentication": "predefinedCredentialType (human-created)",
+        "sendBody": true,
+        "jsonBody": {
+          "text": "={{ $json.script }}"
+        },
+        "responseField": "voice_job"
+      },
+      "notes": "Step 3: ElevenLabs voice.",
+      "notesInFlow": true
+    },
+    {
+      "id": "50b676bf-fcbd-50d1-ab9d-033c794e2ab0",
+      "name": "Auto-Edit (Creatomate)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        1920,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.creatomate.com/v1/renders",
+        "authentication": "predefinedCredentialType (human-created)",
+        "sendBody": true,
+        "jsonBody": {
+          "images": "={{ $json.image_job.job_id }}",
+          "voice": "={{ $json.voice_job.job_id }}",
+          "formats": [
+            "9:16",
+            "1:1"
+          ]
+        },
+        "responseField": "edit_job"
+      },
+      "notes": "Step 3: Creatomate auto-edit timeline. 9:16 TikTok/IG/YT, 1:1 LinkedIn/X.",
+      "notesInFlow": true
+    },
+    {
+      "id": "59311675-2a32-540c-837f-775287ba7bd7",
+      "name": "Add Captions (Whisper)",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1,
+      "position": [
+        2160,
+        160
+      ],
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "mediaRef": "={{ $json.voice_job.job_id }}",
+        "outputField": "captions"
+      },
+      "notes": "Step 4 Add Captions: Whisper transcription + styled captions.",
+      "notesInFlow": true
+    },
+    {
+      "id": "ef0a5da0-e01e-57f6-8cee-c587bc82a41e",
+      "name": "Publish All Platforms",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        2400,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.ayrshare.com/api/post",
+        "authentication": "predefinedCredentialType (human-created)",
+        "sendBody": true,
+        "jsonBody": {
+          "platforms": [
+            "tiktok",
+            "instagram",
+            "youtube",
+            "linkedin",
+            "x"
+          ],
+          "post": "={{ $json.script }}",
+          "mediaRef": "={{ $json.edit_job.job_id }}"
+        },
+        "responseField": "post"
+      },
+      "notes": "Step 5 Publish: Ayrshare for all platforms. Dry run records intent only.",
+      "notesInFlow": true
+    },
+    {
+      "id": "8f144b0c-e290-5b59-8a02-afb9e9649aaf",
+      "name": "Wait 12h",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1,
+      "position": [
+        2640,
+        160
+      ],
+      "parameters": {
+        "amount": 12,
+        "unit": "hours"
+      },
+      "notes": "Step 5: n8n Wait 12h + Loop (Repeat Automatically). Dry run cuts the loop after --loop-iterations.",
+      "notesInFlow": true
+    }
+  ],
+  "connections": {
+    "Run Content Agent": {
+      "main": [
+        [
+          {
+            "node": "Topic Research",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Topic Research": {
+      "main": [
+        [
+          {
+            "node": "Pick Top Topic",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pick Top Topic": {
+      "main": [
+        [
+          {
+            "node": "Generate Script",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Script": {
+      "main": [
+        [
+          {
+            "node": "Claim Guard (script)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Claim Guard (script)": {
+      "main": [
+        [
+          {
+            "node": "Pricing Guard (script)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pricing Guard (script)": {
+      "main": [
+        [
+          {
+            "node": "Create Images",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Images": {
+      "main": [
+        [
+          {
+            "node": "Voiceover (ElevenLabs)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Voiceover (ElevenLabs)": {
+      "main": [
+        [
+          {
+            "node": "Auto-Edit (Creatomate)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Auto-Edit (Creatomate)": {
+      "main": [
+        [
+          {
+            "node": "Add Captions (Whisper)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Captions (Whisper)": {
+      "main": [
+        [
+          {
+            "node": "Publish All Platforms",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Publish All Platforms": {
+      "main": [
+        [
+          {
+            "node": "Wait 12h",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 12h": {
+      "main": [
+        [
+          {
+            "node": "Topic Research",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataErrorExecution": "all",
+    "errorWorkflow": "_common_error_handler"
+  },
+  "pinData": {
+    "Run Content Agent": [
+      {
+        "json": {
+          "niche": "home services",
+          "brand_tone": "plain and practical",
+          "platform": "tiktok"
+        }
+      }
+    ]
+  },
+  "meta": {
+    "source_line": 66,
+    "verified": false,
+    "spec": "SPEC-01",
+    "source": "01-8-best-ai-automations.md:66",
+    "node_types_verified": false,
+    "unverified_node_types": [
+      "@n8n/n8n-nodes-langchain.openAi",
+      "n8n-nodes-base.executeWorkflow",
+      "n8n-nodes-base.httpRequest",
+      "n8n-nodes-base.manualTrigger",
+      "n8n-nodes-base.set",
+      "n8n-nodes-base.wait"
+    ],
+    "unverified_note": "Node types, parameters, and vendor endpoints come from the source's screenshot descriptions and have not been validated against a current n8n node inventory or vendor API docs.",
+    "pin_data": "synthetic test items only (example.com / 555-01xx)"
+  }
+}

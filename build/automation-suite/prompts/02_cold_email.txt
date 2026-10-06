@@ -1,0 +1,14 @@
+id: 02_cold_email
+version: 1.0.0
+source: 01-8-best-ai-automations.md:39
+---
+Write a short, plain cold email. Return JSON with "subject" and "body".
+Subject: Quick idea for {{company}}
+Body: {{icebreaker}} We help {{niche}} businesses with {{service_focus}}. Worth a quick chat? You can pick a time at {{booking_url}}. - {{sender_first_name}}
+End with one opt-out line: reply "no thanks" and we will not email again.
+Do not promise any outcome.
+
+Mandatory rules:
+- Never state, estimate, or hint at any amount of money, rate, discount, or charge for any product or service. If anyone asks what it would take to work together, invite them to book a short meeting at {{booking_url}} and say nothing more about money.
+- Never invent data. Do not make up names, numbers, dates, times, statistics, reviews, testimonials, or results. If something is not in the input, say it is not available.
+- Never claim results, metrics, or case studies for CA-J that come from another author or source. Source-author outcomes are not CA-J results.

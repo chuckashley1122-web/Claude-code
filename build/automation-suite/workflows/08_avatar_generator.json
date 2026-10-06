@@ -1,0 +1,446 @@
+{
+  "name": "08 AI Avatar Generator",
+  "nodes": [
+    {
+      "id": "68d3284a-daa1-56da-b59c-666982da3706",
+      "name": "Daily Cron",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 8 * * *"
+            }
+          ]
+        }
+      },
+      "notes": "Step 5 Full Template: n8n Cron > OpenAI Script > HeyGen Generate > Wait > Check Status > Download > Publish > Slack notify.",
+      "notesInFlow": true
+    },
+    {
+      "id": "e228289c-2db2-5453-b798-91c944ce0aab",
+      "name": "Create Script",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1,
+      "position": [
+        240,
+        160
+      ],
+      "parameters": {
+        "resource": "text",
+        "operation": "message",
+        "promptId": "08_heygen_script",
+        "promptFile": "prompts/08_heygen_script.txt",
+        "promptVariables": {
+          "niche": "={{ $json.niche }}",
+          "booking_url": "={{ $vars.BOOKING_URL }}"
+        },
+        "model": "gpt-4o (unverified)",
+        "outputField": "script"
+      },
+      "notes": "Step 1 Create Script: 60-sec talking-head script: Hook, Problem, Solution, CTA. Add directions [smile] [pause].",
+      "notesInFlow": true
+    },
+    {
+      "id": "001f64a6-4984-557c-a7e7-c89e591e80bc",
+      "name": "Claim Guard (script)",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1,
+      "position": [
+        480,
+        0
+      ],
+      "parameters": {
+        "workflowId": "caj_guardrails",
+        "mode": "each",
+        "guard": "claims",
+        "fields": [
+          "script"
+        ]
+      },
+      "notes": "claim_guard on public copy.",
+      "notesInFlow": true
+    },
+    {
+      "id": "0696a027-d7fb-56cc-8cdd-dcd2c3536d78",
+      "name": "Pricing Guard (script)",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1,
+      "position": [
+        720,
+        160
+      ],
+      "parameters": {
+        "workflowId": "caj_guardrails",
+        "mode": "each",
+        "guard": "pricing",
+        "fields": [
+          "script"
+        ]
+      },
+      "notes": "pricing_guard on public copy.",
+      "notesInFlow": true
+    },
+    {
+      "id": "ac688b8d-ad0d-56d5-9002-fd11a6bad564",
+      "name": "Generate Avatar (HeyGen)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        960,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.heygen.com/v2/video/generate",
+        "authentication": "predefinedCredentialType (human-created)",
+        "sendBody": true,
+        "jsonBody": {
+          "video_inputs": [
+            {
+              "character": {
+                "type": "avatar",
+                "avatar_id": "AVATAR_ID_SET_BY_HUMAN"
+              },
+              "voice": {
+                "type": "text",
+                "input_text": "={{ $json.script }}",
+                "voice_id": "VOICE_ID_SET_BY_HUMAN"
+              },
+              "background": {
+                "type": "color",
+                "value": "#ffffff"
+              }
+            }
+          ],
+          "dimension": {
+            "width": 1080,
+            "height": 1920
+          }
+        },
+        "responseField": "avatar_job"
+      },
+      "notes": "Step 2 Generate Avatar: HeyGen API POST /v2/video/generate avatar_id, voice_id, background. Line 109 payload.",
+      "notesInFlow": true
+    },
+    {
+      "id": "a224f839-4e16-5e79-8ba8-480a1a7ee742",
+      "name": "Wait 2 min",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1,
+      "position": [
+        1200,
+        160
+      ],
+      "parameters": {
+        "amount": 2,
+        "unit": "minutes"
+      },
+      "notes": "Step 5: Wait 2 min (render time claim, unverified).",
+      "notesInFlow": true
+    },
+    {
+      "id": "51fbbdae-5fca-516e-b998-39e4f9345c0d",
+      "name": "Check Status",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        1440,
+        0
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://api.heygen.com/v1/video_status.get",
+        "authentication": "predefinedCredentialType (human-created)",
+        "sendQuery": true,
+        "queryParameters": {
+          "video_id": "={{ $json.avatar_job.job_id }}"
+        },
+        "responseField": "avatar_status"
+      },
+      "notes": "Step 2: Poll status until done.",
+      "notesInFlow": true
+    },
+    {
+      "id": "efcacae3-4b24-5efe-8232-ad22f16f99c6",
+      "name": "Done?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1680,
+        160
+      ],
+      "parameters": {
+        "conditions": [
+          {
+            "leftValue": "={{ $json.avatar_status.status }}",
+            "operator": "oneOf",
+            "rightValue": [
+              "completed",
+              "dry_run_complete"
+            ]
+          }
+        ],
+        "combinator": "and"
+      },
+      "notes": "Step 2: Poll status until done (loops back to Wait when not done).",
+      "notesInFlow": true
+    },
+    {
+      "id": "c28c9c50-8a1f-5ee1-9c10-962993e2d695",
+      "name": "Add Intro/Outro & Captions",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        1920,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.creatomate.com/v1/renders",
+        "authentication": "predefinedCredentialType (human-created)",
+        "sendBody": true,
+        "jsonBody": {
+          "source_job": "={{ $json.avatar_job.job_id }}",
+          "intro": true,
+          "outro": true,
+          "captions": true,
+          "logo": "human-supplied brand asset"
+        },
+        "responseField": "edit_job"
+      },
+      "notes": "Step 3 Add Voice & Edit: Creatomate add intro/outro, captions, logo.",
+      "notesInFlow": true
+    },
+    {
+      "id": "75e62943-2502-5d94-a4f3-de3cf28bf5ad",
+      "name": "Export Video",
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        2160,
+        160
+      ],
+      "parameters": {
+        "operation": "write",
+        "baseDir": "exports",
+        "fileName": "={{ $json.edit_job.job_id }}.json"
+      },
+      "notes": "Step 4 Export Video: download to Google Drive/S3. Dry run writes an export manifest to data/out/exports.",
+      "notesInFlow": true
+    },
+    {
+      "id": "73064363-071d-5b15-8f6c-a651e072b182",
+      "name": "Publish (Ayrshare)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        2400,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.ayrshare.com/api/post",
+        "authentication": "predefinedCredentialType (human-created)",
+        "sendBody": true,
+        "jsonBody": {
+          "platforms": [
+            "linkedin",
+            "youtube",
+            "instagram"
+          ],
+          "post": "={{ $json.script }}",
+          "mediaRef": "={{ $json.edit_job.job_id }}"
+        },
+        "responseField": "post"
+      },
+      "notes": "Step 4: Auto-post via Ayrshare to LinkedIn, YouTube, IG. Dry run records intent only.",
+      "notesInFlow": true
+    },
+    {
+      "id": "02c7c426-d9fc-51de-9801-11e1ea6cc9f2",
+      "name": "Slack Notify",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 1,
+      "position": [
+        2640,
+        160
+      ],
+      "parameters": {
+        "channel": "#content",
+        "text": "=Avatar video dry run recorded: {{ $json.post.post_id }}"
+      },
+      "notes": "Step 5: Slack notify.",
+      "notesInFlow": true
+    }
+  ],
+  "connections": {
+    "Daily Cron": {
+      "main": [
+        [
+          {
+            "node": "Create Script",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Script": {
+      "main": [
+        [
+          {
+            "node": "Claim Guard (script)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Claim Guard (script)": {
+      "main": [
+        [
+          {
+            "node": "Pricing Guard (script)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pricing Guard (script)": {
+      "main": [
+        [
+          {
+            "node": "Generate Avatar (HeyGen)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Avatar (HeyGen)": {
+      "main": [
+        [
+          {
+            "node": "Wait 2 min",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 2 min": {
+      "main": [
+        [
+          {
+            "node": "Check Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Status": {
+      "main": [
+        [
+          {
+            "node": "Done?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Done?": {
+      "main": [
+        [
+          {
+            "node": "Add Intro/Outro & Captions",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait 2 min",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Intro/Outro & Captions": {
+      "main": [
+        [
+          {
+            "node": "Export Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Export Video": {
+      "main": [
+        [
+          {
+            "node": "Publish (Ayrshare)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Publish (Ayrshare)": {
+      "main": [
+        [
+          {
+            "node": "Slack Notify",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataErrorExecution": "all",
+    "errorWorkflow": "_common_error_handler"
+  },
+  "pinData": {
+    "Daily Cron": [
+      {
+        "json": {
+          "niche": "home services"
+        }
+      }
+    ]
+  },
+  "meta": {
+    "source_line": 101,
+    "verified": false,
+    "spec": "SPEC-01",
+    "source": "01-8-best-ai-automations.md:101",
+    "node_types_verified": false,
+    "unverified_node_types": [
+      "@n8n/n8n-nodes-langchain.openAi",
+      "n8n-nodes-base.executeWorkflow",
+      "n8n-nodes-base.httpRequest",
+      "n8n-nodes-base.if",
+      "n8n-nodes-base.readWriteFile",
+      "n8n-nodes-base.scheduleTrigger",
+      "n8n-nodes-base.slack",
+      "n8n-nodes-base.wait"
+    ],
+    "unverified_note": "Node types, parameters, and vendor endpoints come from the source's screenshot descriptions and have not been validated against a current n8n node inventory or vendor API docs.",
+    "pin_data": "synthetic test items only (example.com / 555-01xx)"
+  }
+}
