@@ -1,0 +1,358 @@
+{
+  "_note": "Unknown = NEEDS_EVIDENCE. Internal-only rows never appear in public copy.",
+  "facts": [
+    {
+      "key": "owner_name",
+      "value": "Chuck Ashley",
+      "evidence_source": "House fact supplied by Chuck Ashley (SPEC-05 section 6; config/constants.py OWNER_NAME)",
+      "verified": true,
+      "owner": "Chuck Ashley",
+      "next_action": "none",
+      "public_copy_eligible": true,
+      "internal_only": false
+    },
+    {
+      "key": "owner_phone",
+      "value": "512-229-9199",
+      "evidence_source": "House fact supplied by Chuck Ashley (SPEC-05 section 6; config/constants.py OWNER_PHONE)",
+      "verified": true,
+      "owner": "Chuck Ashley",
+      "next_action": "none",
+      "public_copy_eligible": true,
+      "internal_only": false
+    },
+    {
+      "key": "owner_email",
+      "value": "chuck@ca-jconsulting.com",
+      "evidence_source": "House fact supplied by Chuck Ashley (SPEC-05 section 6; config/constants.py OWNER_EMAIL)",
+      "verified": true,
+      "owner": "Chuck Ashley",
+      "next_action": "none",
+      "public_copy_eligible": true,
+      "internal_only": false
+    },
+    {
+      "key": "legal_entity",
+      "value": "CA&J Enterprises LLC",
+      "evidence_source": "House fact supplied by Chuck Ashley (SPEC-05 section 6; config/constants.py LEGAL_ENTITY)",
+      "verified": true,
+      "owner": "Chuck Ashley",
+      "next_action": "none",
+      "public_copy_eligible": true,
+      "internal_only": false
+    },
+    {
+      "key": "brand_name",
+      "value": "CA-J Enterprises",
+      "evidence_source": "House fact supplied by Chuck Ashley (SPEC-05 section 6; config/constants.py BRAND_NAME)",
+      "verified": true,
+      "owner": "Chuck Ashley",
+      "next_action": "none",
+      "public_copy_eligible": true,
+      "internal_only": false
+    },
+    {
+      "key": "booking_url",
+      "value": "https://ca-jenterprises.com/ai",
+      "evidence_source": "House fact supplied by Chuck Ashley (SPEC-05 section 6; config/constants.py BOOKING_URL)",
+      "verified": true,
+      "owner": "Chuck Ashley",
+      "next_action": "none",
+      "public_copy_eligible": true,
+      "internal_only": false
+    },
+    {
+      "key": "tech_fee_monthly_usd",
+      "value": 650,
+      "evidence_source": "House fact supplied by Chuck Ashley (SPEC-05 section 6; config/constants.py TECH_FEE_MONTHLY_USD)",
+      "verified": true,
+      "owner": "Chuck Ashley",
+      "next_action": "none",
+      "public_copy_eligible": false,
+      "internal_only": true
+    },
+    {
+      "key": "setup_fee_usd",
+      "value": 0,
+      "evidence_source": "House fact supplied by Chuck Ashley (SPEC-05 section 6; config/constants.py SETUP_FEE_USD)",
+      "verified": true,
+      "owner": "Chuck Ashley",
+      "next_action": "none",
+      "public_copy_eligible": false,
+      "internal_only": true
+    },
+    {
+      "key": "per_booked_appointment_min_usd",
+      "value": 250,
+      "evidence_source": "House fact supplied by Chuck Ashley (SPEC-05 section 6; config/constants.py PER_BOOKED_APPOINTMENT_MIN_USD)",
+      "verified": true,
+      "owner": "Chuck Ashley",
+      "next_action": "none",
+      "public_copy_eligible": false,
+      "internal_only": true
+    },
+    {
+      "key": "per_booked_appointment_max_usd",
+      "value": 300,
+      "evidence_source": "House fact supplied by Chuck Ashley (SPEC-05 section 6; config/constants.py PER_BOOKED_APPOINTMENT_MAX_USD)",
+      "verified": true,
+      "owner": "Chuck Ashley",
+      "next_action": "none",
+      "public_copy_eligible": false,
+      "internal_only": true
+    },
+    {
+      "key": "business_name",
+      "value": "NEEDS_EVIDENCE",
+      "description": "Approved public business name for page copy and JSON-LD",
+      "evidence_source": "",
+      "verified": false,
+      "owner": "Chuck Ashley",
+      "next_action": "Supply approved material and an evidence link, then set verified=true",
+      "public_copy_eligible": false,
+      "internal_only": false
+    },
+    {
+      "key": "site_origin",
+      "value": "NEEDS_EVIDENCE",
+      "description": "Owned/confirmed domain (scheme + host) for canonicals and sitemap",
+      "evidence_source": "",
+      "verified": false,
+      "owner": "Chuck Ashley",
+      "next_action": "Confirm domain in work order 005-001; no purchase without approval (005-007)",
+      "public_copy_eligible": false,
+      "internal_only": false
+    },
+    {
+      "key": "services_verified",
+      "value": "NEEDS_EVIDENCE",
+      "description": "Approved list of services actually offered",
+      "evidence_source": "",
+      "verified": false,
+      "owner": "Chuck Ashley",
+      "next_action": "Supply approved material and an evidence link, then set verified=true",
+      "public_copy_eligible": false,
+      "internal_only": false
+    },
+    {
+      "key": "service_areas",
+      "value": "NEEDS_EVIDENCE",
+      "description": "Real service areas actually covered",
+      "evidence_source": "",
+      "verified": false,
+      "owner": "Chuck Ashley",
+      "next_action": "Supply approved material and an evidence link, then set verified=true",
+      "public_copy_eligible": false,
+      "internal_only": false
+    },
+    {
+      "key": "primary_location",
+      "value": "NEEDS_EVIDENCE",
+      "description": "Primary business location",
+      "evidence_source": "",
+      "verified": false,
+      "owner": "Chuck Ashley",
+      "next_action": "Supply approved material and an evidence link, then set verified=true",
+      "public_copy_eligible": false,
+      "internal_only": false
+    },
+    {
+      "key": "local_coverage_austin",
+      "value": "NEEDS_EVIDENCE",
+      "description": "Actual local coverage and city-specific information for Austin",
+      "evidence_source": "",
+      "verified": false,
+      "owner": "Chuck Ashley",
+      "next_action": "Supply approved material and an evidence link, then set verified=true",
+      "public_copy_eligible": false,
+      "internal_only": false
+    },
+    {
+      "key": "local_coverage_round_rock",
+      "value": "NEEDS_EVIDENCE",
+      "description": "Actual local coverage and city-specific information for Round Rock",
+      "evidence_source": "",
+      "verified": false,
+      "owner": "Chuck Ashley",
+      "next_action": "Supply approved material and an evidence link, then set verified=true",
+      "public_copy_eligible": false,
+      "internal_only": false
+    },
+    {
+      "key": "offer_details_at_ai",
+      "value": "NEEDS_EVIDENCE",
+      "description": "What the offer at the booking URL currently contains (do not rewrite it)",
+      "evidence_source": "",
+      "verified": false,
+      "owner": "Chuck Ashley",
+      "next_action": "Human records the current /ai offer as-is in work order 005-001",
+      "public_copy_eligible": false,
+      "internal_only": false
+    },
+    {
+      "key": "logo_file",
+      "value": "NEEDS_EVIDENCE",
+      "description": "Approved logo file (footer use only)",
+      "evidence_source": "",
+      "verified": false,
+      "owner": "Chuck Ashley",
+      "next_action": "Supply approved material and an evidence link, then set verified=true",
+      "public_copy_eligible": false,
+      "internal_only": false
+    },
+    {
+      "key": "photos",
+      "value": "NEEDS_EVIDENCE",
+      "description": "Approved photos with descriptive alt text",
+      "evidence_source": "",
+      "verified": false,
+      "owner": "Chuck Ashley",
+      "next_action": "Supply approved material and an evidence link, then set verified=true",
+      "public_copy_eligible": false,
+      "internal_only": false
+    },
+    {
+      "key": "license_info",
+      "value": "NEEDS_EVIDENCE",
+      "description": "Licences held",
+      "evidence_source": "",
+      "verified": false,
+      "owner": "Chuck Ashley",
+      "next_action": "Supply approved material and an evidence link, then set verified=true",
+      "public_copy_eligible": false,
+      "internal_only": false
+    },
+    {
+      "key": "insurance",
+      "value": "NEEDS_EVIDENCE",
+      "description": "Insurance held",
+      "evidence_source": "",
+      "verified": false,
+      "owner": "Chuck Ashley",
+      "next_action": "Supply approved material and an evidence link, then set verified=true",
+      "public_copy_eligible": false,
+      "internal_only": false
+    },
+    {
+      "key": "guarantee",
+      "value": "NEEDS_EVIDENCE",
+      "description": "Any guarantee offered",
+      "evidence_source": "",
+      "verified": false,
+      "owner": "Chuck Ashley",
+      "next_action": "Supply approved material and an evidence link, then set verified=true",
+      "public_copy_eligible": false,
+      "internal_only": false
+    },
+    {
+      "key": "response_time",
+      "value": "NEEDS_EVIDENCE",
+      "description": "Any response-time promise",
+      "evidence_source": "",
+      "verified": false,
+      "owner": "Chuck Ashley",
+      "next_action": "Supply approved material and an evidence link, then set verified=true",
+      "public_copy_eligible": false,
+      "internal_only": false
+    },
+    {
+      "key": "testimonials",
+      "value": "NEEDS_EVIDENCE",
+      "description": "Client testimonials with written permission",
+      "evidence_source": "",
+      "verified": false,
+      "owner": "Chuck Ashley",
+      "next_action": "Supply approved material and an evidence link, then set verified=true",
+      "public_copy_eligible": false,
+      "internal_only": false
+    },
+    {
+      "key": "review_rating",
+      "value": "NEEDS_EVIDENCE",
+      "description": "Review rating with source",
+      "evidence_source": "",
+      "verified": false,
+      "owner": "Chuck Ashley",
+      "next_action": "Supply approved material and an evidence link, then set verified=true",
+      "public_copy_eligible": false,
+      "internal_only": false
+    },
+    {
+      "key": "review_count",
+      "value": "NEEDS_EVIDENCE",
+      "description": "Review count with source",
+      "evidence_source": "",
+      "verified": false,
+      "owner": "Chuck Ashley",
+      "next_action": "Supply approved material and an evidence link, then set verified=true",
+      "public_copy_eligible": false,
+      "internal_only": false
+    },
+    {
+      "key": "years_in_business",
+      "value": "NEEDS_EVIDENCE",
+      "description": "Years in business",
+      "evidence_source": "",
+      "verified": false,
+      "owner": "Chuck Ashley",
+      "next_action": "Supply approved material and an evidence link, then set verified=true",
+      "public_copy_eligible": false,
+      "internal_only": false
+    },
+    {
+      "key": "customers_served",
+      "value": "NEEDS_EVIDENCE",
+      "description": "Count of clients served",
+      "evidence_source": "",
+      "verified": false,
+      "owner": "Chuck Ashley",
+      "next_action": "Supply approved material and an evidence link, then set verified=true",
+      "public_copy_eligible": false,
+      "internal_only": false
+    },
+    {
+      "key": "results",
+      "value": "NEEDS_EVIDENCE",
+      "description": "Client results or statistics",
+      "evidence_source": "",
+      "verified": false,
+      "owner": "Chuck Ashley",
+      "next_action": "Supply approved material and an evidence link, then set verified=true",
+      "public_copy_eligible": false,
+      "internal_only": false
+    },
+    {
+      "key": "office_address",
+      "value": "NEEDS_EVIDENCE",
+      "description": "Public office/postal address",
+      "evidence_source": "",
+      "verified": false,
+      "owner": "Chuck Ashley",
+      "next_action": "Supply approved material and an evidence link, then set verified=true",
+      "public_copy_eligible": false,
+      "internal_only": false
+    },
+    {
+      "key": "opening_hours",
+      "value": "NEEDS_EVIDENCE",
+      "description": "Published opening hours",
+      "evidence_source": "",
+      "verified": false,
+      "owner": "Chuck Ashley",
+      "next_action": "Supply approved material and an evidence link, then set verified=true",
+      "public_copy_eligible": false,
+      "internal_only": false
+    },
+    {
+      "key": "privacy_policy_url",
+      "value": "NEEDS_EVIDENCE",
+      "description": "Privacy policy URL",
+      "evidence_source": "",
+      "verified": false,
+      "owner": "Chuck Ashley",
+      "next_action": "Supply approved material and an evidence link, then set verified=true",
+      "public_copy_eligible": false,
+      "internal_only": false
+    }
+  ]
+}

@@ -1,0 +1,404 @@
+{
+  "ai_studio_prompt_pack": {
+    "id": "ai_studio_prompt_pack",
+    "path": "out/ai_studio_prompt_pack.md",
+    "status": "Ready for human action",
+    "owner": "build"
+  },
+  "asset_register_md": {
+    "id": "asset_register_md",
+    "path": "out/asset_register.md",
+    "status": "Draft",
+    "owner": "build"
+  },
+  "business_facts_json": {
+    "id": "business_facts_json",
+    "path": "config/business_facts.json",
+    "status": "Draft",
+    "owner": "build"
+  },
+  "business_facts_md": {
+    "id": "business_facts_md",
+    "path": "out/business_facts.md",
+    "status": "Draft",
+    "owner": "build"
+  },
+  "content_model": {
+    "id": "content_model",
+    "path": "out/pages/_content_model.json",
+    "status": "Draft",
+    "owner": "build"
+  },
+  "estimator_blocked": {
+    "id": "estimator_blocked",
+    "path": "out/estimator/BLOCKED.md",
+    "status": "Blocked",
+    "owner": "build"
+  },
+  "indexability": {
+    "id": "indexability",
+    "path": "out/seo/indexability.md",
+    "status": "Draft",
+    "owner": "build"
+  },
+  "inquiry_contract_json": {
+    "id": "inquiry_contract_json",
+    "path": "out/inquiry_contract.json",
+    "status": "Draft",
+    "owner": "build"
+  },
+  "inquiry_contract_md": {
+    "id": "inquiry_contract_md",
+    "path": "out/inquiry_contract.md",
+    "status": "Draft",
+    "owner": "build"
+  },
+  "jsonld:about": {
+    "id": "jsonld:about",
+    "path": "out/structured_data/about.json",
+    "status": "Draft",
+    "owner": "build"
+  },
+  "jsonld:contact": {
+    "id": "jsonld:contact",
+    "path": "out/structured_data/contact.json",
+    "status": "Draft",
+    "owner": "build"
+  },
+  "jsonld:index": {
+    "id": "jsonld:index",
+    "path": "out/structured_data/index.json",
+    "status": "Draft",
+    "owner": "build"
+  },
+  "jsonld:services-lead-generation": {
+    "id": "jsonld:services-lead-generation",
+    "path": "out/structured_data/services-lead-generation.json",
+    "status": "Draft",
+    "owner": "build"
+  },
+  "jsonld:services-paid-advertising": {
+    "id": "jsonld:services-paid-advertising",
+    "path": "out/structured_data/services-paid-advertising.json",
+    "status": "Draft",
+    "owner": "build"
+  },
+  "jsonld:services-reputation-management": {
+    "id": "jsonld:services-reputation-management",
+    "path": "out/structured_data/services-reputation-management.json",
+    "status": "Draft",
+    "owner": "build"
+  },
+  "metadata_json": {
+    "id": "metadata_json",
+    "path": "out/metadata.json",
+    "status": "Draft",
+    "owner": "build"
+  },
+  "metadata_md": {
+    "id": "metadata_md",
+    "path": "out/metadata.md",
+    "status": "Draft",
+    "owner": "build"
+  },
+  "mock:404": {
+    "id": "mock:404",
+    "path": "out/site/404.html",
+    "status": "Draft",
+    "owner": "build"
+  },
+  "mock:about": {
+    "id": "mock:about",
+    "path": "out/site/about.html",
+    "status": "Draft",
+    "owner": "build"
+  },
+  "mock:contact": {
+    "id": "mock:contact",
+    "path": "out/site/contact.html",
+    "status": "Draft",
+    "owner": "build"
+  },
+  "mock:index": {
+    "id": "mock:index",
+    "path": "out/site/index.html",
+    "status": "Draft",
+    "owner": "build"
+  },
+  "mock:locations-austin": {
+    "id": "mock:locations-austin",
+    "path": "out/site/locations-austin.html",
+    "status": "Draft",
+    "owner": "build"
+  },
+  "mock:locations-round-rock": {
+    "id": "mock:locations-round-rock",
+    "path": "out/site/locations-round-rock.html",
+    "status": "Draft",
+    "owner": "build"
+  },
+  "mock:services-lead-generation": {
+    "id": "mock:services-lead-generation",
+    "path": "out/site/services-lead-generation.html",
+    "status": "Draft",
+    "owner": "build"
+  },
+  "mock:services-paid-advertising": {
+    "id": "mock:services-paid-advertising",
+    "path": "out/site/services-paid-advertising.html",
+    "status": "Draft",
+    "owner": "build"
+  },
+  "mock:services-reputation-management": {
+    "id": "mock:services-reputation-management",
+    "path": "out/site/services-reputation-management.html",
+    "status": "Draft",
+    "owner": "build"
+  },
+  "mock:thank-you": {
+    "id": "mock:thank-you",
+    "path": "out/site/thank-you.html",
+    "status": "Draft",
+    "owner": "build"
+  },
+  "page:about": {
+    "id": "page:about",
+    "path": "out/pages/about.md",
+    "status": "Draft",
+    "owner": "build"
+  },
+  "page:contact": {
+    "id": "page:contact",
+    "path": "out/pages/contact.md",
+    "status": "Draft",
+    "owner": "build"
+  },
+  "page:index": {
+    "id": "page:index",
+    "path": "out/pages/index.md",
+    "status": "Draft",
+    "owner": "build"
+  },
+  "page:service-area-merge": {
+    "id": "page:service-area-merge",
+    "path": "out/pages/service-area-merge.json",
+    "status": "Blocked",
+    "owner": "build"
+  },
+  "page:services-lead-generation": {
+    "id": "page:services-lead-generation",
+    "path": "out/pages/services-lead-generation.md",
+    "status": "Draft",
+    "owner": "build"
+  },
+  "page:services-paid-advertising": {
+    "id": "page:services-paid-advertising",
+    "path": "out/pages/services-paid-advertising.md",
+    "status": "Draft",
+    "owner": "build"
+  },
+  "page:services-reputation-management": {
+    "id": "page:services-reputation-management",
+    "path": "out/pages/services-reputation-management.md",
+    "status": "Draft",
+    "owner": "build"
+  },
+  "redirect_map_json": {
+    "id": "redirect_map_json",
+    "path": "out/seo/redirect_map.json",
+    "status": "Draft",
+    "owner": "build"
+  },
+  "redirect_map_md": {
+    "id": "redirect_map_md",
+    "path": "out/seo/redirect_map.md",
+    "status": "Draft",
+    "owner": "build"
+  },
+  "release_package": {
+    "id": "release_package",
+    "path": "out/release_package.md",
+    "status": "Ready for human action",
+    "owner": "build"
+  },
+  "robots": {
+    "id": "robots",
+    "path": "out/seo/robots.txt",
+    "status": "Draft",
+    "owner": "build"
+  },
+  "route_inventory_json": {
+    "id": "route_inventory_json",
+    "path": "config/route_inventory.json",
+    "status": "Draft",
+    "owner": "build"
+  },
+  "route_inventory_md": {
+    "id": "route_inventory_md",
+    "path": "out/route_inventory.md",
+    "status": "Draft",
+    "owner": "build"
+  },
+  "server_function_inquiry_ts": {
+    "id": "server_function_inquiry_ts",
+    "path": "out/server_functions/inquiry.ts",
+    "status": "Draft",
+    "owner": "build"
+  },
+  "sitemap": {
+    "id": "sitemap",
+    "path": "out/seo/sitemap.xml",
+    "status": "Draft",
+    "owner": "build"
+  },
+  "spend_items": {
+    "id": "spend_items",
+    "path": "out/spend_items.json",
+    "status": "Ready for human action",
+    "owner": "build"
+  },
+  "test:T01": {
+    "id": "test:T01",
+    "path": "out/tests/T01.json",
+    "status": "Blocked",
+    "owner": "build"
+  },
+  "test:T02": {
+    "id": "test:T02",
+    "path": "out/tests/T02.json",
+    "status": "Tested",
+    "owner": "build"
+  },
+  "test:T03": {
+    "id": "test:T03",
+    "path": "out/tests/T03.json",
+    "status": "Blocked",
+    "owner": "build"
+  },
+  "test:T04": {
+    "id": "test:T04",
+    "path": "out/tests/T04.json",
+    "status": "Tested",
+    "owner": "build"
+  },
+  "test:T05": {
+    "id": "test:T05",
+    "path": "out/tests/T05.json",
+    "status": "Tested",
+    "owner": "build"
+  },
+  "test:T06": {
+    "id": "test:T06",
+    "path": "out/tests/T06.json",
+    "status": "Blocked",
+    "owner": "build"
+  },
+  "test:T07": {
+    "id": "test:T07",
+    "path": "out/tests/T07.json",
+    "status": "Tested",
+    "owner": "build"
+  },
+  "test:T08": {
+    "id": "test:T08",
+    "path": "out/tests/T08.json",
+    "status": "Tested",
+    "owner": "build"
+  },
+  "test:T09": {
+    "id": "test:T09",
+    "path": "out/tests/T09.json",
+    "status": "Tested",
+    "owner": "build"
+  },
+  "test:T10": {
+    "id": "test:T10",
+    "path": "out/tests/T10.json",
+    "status": "Tested",
+    "owner": "build"
+  },
+  "test:T11": {
+    "id": "test:T11",
+    "path": "out/tests/T11.json",
+    "status": "Blocked",
+    "owner": "build"
+  },
+  "test:T12": {
+    "id": "test:T12",
+    "path": "out/tests/T12.json",
+    "status": "Blocked",
+    "owner": "build"
+  },
+  "test:T13": {
+    "id": "test:T13",
+    "path": "out/tests/T13.json",
+    "status": "Blocked",
+    "owner": "build"
+  },
+  "test:T14": {
+    "id": "test:T14",
+    "path": "out/tests/T14.json",
+    "status": "Blocked",
+    "owner": "build"
+  },
+  "test_log": {
+    "id": "test_log",
+    "path": "out/tests/test_log.md",
+    "status": "Tested",
+    "owner": "build"
+  },
+  "work_order:001-ghl-project-inventory-and-backup": {
+    "id": "work_order:001-ghl-project-inventory-and-backup",
+    "path": "ui-work-orders/005-001-ghl-project-inventory-and-backup.md",
+    "status": "Ready for human action",
+    "owner": "build"
+  },
+  "work_order:002-ai-studio-capability-check": {
+    "id": "work_order:002-ai-studio-capability-check",
+    "path": "ui-work-orders/005-002-ai-studio-capability-check.md",
+    "status": "Ready for human action",
+    "owner": "build"
+  },
+  "work_order:003-ai-studio-pages-metadata-and-structured-data": {
+    "id": "work_order:003-ai-studio-pages-metadata-and-structured-data",
+    "path": "ui-work-orders/005-003-ai-studio-pages-metadata-and-structured-data.md",
+    "status": "Ready for human action",
+    "owner": "build"
+  },
+  "work_order:004-server-function-secrets-deploy": {
+    "id": "work_order:004-server-function-secrets-deploy",
+    "path": "ui-work-orders/005-004-server-function-secrets-deploy.md",
+    "status": "Ready for human action",
+    "owner": "build"
+  },
+  "work_order:005-ghl-crm-integration-and-field-mapping": {
+    "id": "work_order:005-ghl-crm-integration-and-field-mapping",
+    "path": "ui-work-orders/005-005-ghl-crm-integration-and-field-mapping.md",
+    "status": "Ready for human action",
+    "owner": "build"
+  },
+  "work_order:006-synthetic-inquiry-end-to-end-test": {
+    "id": "work_order:006-synthetic-inquiry-end-to-end-test",
+    "path": "ui-work-orders/005-006-synthetic-inquiry-end-to-end-test.md",
+    "status": "Ready for human action",
+    "owner": "build"
+  },
+  "work_order:007-domain-dns-and-publish": {
+    "id": "work_order:007-domain-dns-and-publish",
+    "path": "ui-work-orders/005-007-domain-dns-and-publish.md",
+    "status": "Ready for human action",
+    "owner": "build"
+  },
+  "work_order:008-search-console-and-analytics": {
+    "id": "work_order:008-search-console-and-analytics",
+    "path": "ui-work-orders/005-008-search-console-and-analytics.md",
+    "status": "Ready for human action",
+    "owner": "build"
+  },
+  "work_order:HUMAN-DECISIONS": {
+    "id": "work_order:HUMAN-DECISIONS",
+    "path": "ui-work-orders/005-HUMAN-DECISIONS.md",
+    "status": "Ready for human action",
+    "owner": "build"
+  }
+}

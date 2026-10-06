@@ -1,0 +1,202 @@
+{
+  "routes": [
+    {
+      "route": "/",
+      "slug": "index",
+      "page_type": "home",
+      "audience": "Owners and managers of local service businesses (PROPOSED_NOT_APPROVED audience)",
+      "search_intent": "navigational / commercial investigation",
+      "primary_topic": "Marketing systems for local service businesses",
+      "title": "Local Service Business Marketing Systems | CA-J Enterprises",
+      "h1": "Marketing systems that turn local searches into booked appointments",
+      "canonical": "NEEDS_EVIDENCE/",
+      "canonical_origin_status": "NEEDS_EVIDENCE",
+      "cta_destination": "https://ca-jenterprises.com/ai",
+      "supporting_proof": [
+        "services_verified",
+        "results",
+        "testimonials"
+      ],
+      "internal_links": [
+        "/services/lead-generation",
+        "/services/reputation-management",
+        "/services/paid-advertising",
+        "/about",
+        "/contact"
+      ],
+      "indexable": true,
+      "status": "PROPOSED_NOT_APPROVED"
+    },
+    {
+      "route": "/services/lead-generation",
+      "slug": "services-lead-generation",
+      "page_type": "service",
+      "audience": "Owners and managers of local service businesses (PROPOSED_NOT_APPROVED audience)",
+      "search_intent": "commercial: find a lead generation partner",
+      "primary_topic": "Lead generation for local service businesses",
+      "title": "Lead Generation for Local Service Businesses | CA-J Enterprises",
+      "h1": "Lead generation built around how your customers actually search",
+      "canonical": "NEEDS_EVIDENCE/services/lead-generation",
+      "canonical_origin_status": "NEEDS_EVIDENCE",
+      "cta_destination": "https://ca-jenterprises.com/ai",
+      "supporting_proof": [
+        "services_verified",
+        "results"
+      ],
+      "internal_links": [
+        "/",
+        "/services/paid-advertising",
+        "/contact"
+      ],
+      "indexable": true,
+      "status": "PROPOSED_NOT_APPROVED"
+    },
+    {
+      "route": "/services/reputation-management",
+      "slug": "services-reputation-management",
+      "page_type": "service",
+      "audience": "Owners and managers of local service businesses (PROPOSED_NOT_APPROVED audience)",
+      "search_intent": "commercial: improve online reputation and review flow",
+      "primary_topic": "Reputation management for local businesses",
+      "title": "Reputation Management for Local Businesses | CA-J Enterprises",
+      "h1": "Reputation management that keeps your public profile current and honest",
+      "canonical": "NEEDS_EVIDENCE/services/reputation-management",
+      "canonical_origin_status": "NEEDS_EVIDENCE",
+      "cta_destination": "https://ca-jenterprises.com/ai",
+      "supporting_proof": [
+        "services_verified",
+        "review_rating",
+        "review_count"
+      ],
+      "internal_links": [
+        "/",
+        "/services/lead-generation",
+        "/contact"
+      ],
+      "indexable": true,
+      "status": "PROPOSED_NOT_APPROVED"
+    },
+    {
+      "route": "/services/paid-advertising",
+      "slug": "services-paid-advertising",
+      "page_type": "service",
+      "audience": "Owners and managers of local service businesses (PROPOSED_NOT_APPROVED audience)",
+      "search_intent": "commercial: hire paid ad management",
+      "primary_topic": "Paid advertising management for local businesses",
+      "title": "Paid Advertising Management for Local Businesses | CA-J Enterprises",
+      "h1": "Paid advertising managed against the outcome you care about",
+      "canonical": "NEEDS_EVIDENCE/services/paid-advertising",
+      "canonical_origin_status": "NEEDS_EVIDENCE",
+      "cta_destination": "https://ca-jenterprises.com/ai",
+      "supporting_proof": [
+        "services_verified",
+        "results"
+      ],
+      "internal_links": [
+        "/",
+        "/services/lead-generation",
+        "/contact"
+      ],
+      "indexable": true,
+      "status": "PROPOSED_NOT_APPROVED"
+    },
+    {
+      "route": "/locations/austin",
+      "slug": "locations-austin",
+      "page_type": "location",
+      "audience": "Owners and managers of local service businesses (PROPOSED_NOT_APPROVED audience)",
+      "search_intent": "local: marketing help in Austin",
+      "primary_topic": "Marketing support for Austin service businesses",
+      "title": "Marketing for Austin Service Businesses | CA-J Enterprises",
+      "h1": "Marketing support for service businesses in Austin",
+      "canonical": "NEEDS_EVIDENCE/locations/austin",
+      "canonical_origin_status": "NEEDS_EVIDENCE",
+      "cta_destination": "https://ca-jenterprises.com/ai",
+      "supporting_proof": [
+        "local_coverage_austin",
+        "service_areas"
+      ],
+      "internal_links": [
+        "/",
+        "/services/lead-generation",
+        "/contact"
+      ],
+      "indexable": false,
+      "status": "MERGED_PENDING_EVIDENCE",
+      "city": "Austin",
+      "coverage_fact": "local_coverage_austin"
+    },
+    {
+      "route": "/locations/round-rock",
+      "slug": "locations-round-rock",
+      "page_type": "location",
+      "audience": "Owners and managers of local service businesses (PROPOSED_NOT_APPROVED audience)",
+      "search_intent": "local: marketing help in Round Rock",
+      "primary_topic": "Marketing support for Round Rock service businesses",
+      "title": "Marketing for Round Rock Service Businesses | CA-J Enterprises",
+      "h1": "Marketing support for service businesses in Round Rock",
+      "canonical": "NEEDS_EVIDENCE/locations/round-rock",
+      "canonical_origin_status": "NEEDS_EVIDENCE",
+      "cta_destination": "https://ca-jenterprises.com/ai",
+      "supporting_proof": [
+        "local_coverage_round_rock",
+        "service_areas"
+      ],
+      "internal_links": [
+        "/",
+        "/services/lead-generation",
+        "/contact"
+      ],
+      "indexable": false,
+      "status": "MERGED_PENDING_EVIDENCE",
+      "city": "Round Rock",
+      "coverage_fact": "local_coverage_round_rock"
+    },
+    {
+      "route": "/about",
+      "slug": "about",
+      "page_type": "about",
+      "audience": "Owners and managers of local service businesses (PROPOSED_NOT_APPROVED audience)",
+      "search_intent": "navigational: who runs CA-J Enterprises",
+      "primary_topic": "About CA-J Enterprises and its founder",
+      "title": "About CA-J Enterprises and Founder Chuck Ashley",
+      "h1": "About CA-J Enterprises",
+      "canonical": "NEEDS_EVIDENCE/about",
+      "canonical_origin_status": "NEEDS_EVIDENCE",
+      "cta_destination": "https://ca-jenterprises.com/ai",
+      "supporting_proof": [
+        "owner_name",
+        "legal_entity"
+      ],
+      "internal_links": [
+        "/",
+        "/contact"
+      ],
+      "indexable": true,
+      "status": "PROPOSED_NOT_APPROVED"
+    },
+    {
+      "route": "/contact",
+      "slug": "contact",
+      "page_type": "contact",
+      "audience": "Owners and managers of local service businesses (PROPOSED_NOT_APPROVED audience)",
+      "search_intent": "navigational: contact or book a meeting",
+      "primary_topic": "Contact CA-J Enterprises",
+      "title": "Contact CA-J Enterprises | Send an Inquiry or Book a Meeting",
+      "h1": "Contact CA-J Enterprises",
+      "canonical": "NEEDS_EVIDENCE/contact",
+      "canonical_origin_status": "NEEDS_EVIDENCE",
+      "cta_destination": "https://ca-jenterprises.com/ai",
+      "supporting_proof": [
+        "owner_phone",
+        "owner_email"
+      ],
+      "internal_links": [
+        "/",
+        "/about"
+      ],
+      "indexable": true,
+      "status": "PROPOSED_NOT_APPROVED"
+    }
+  ]
+}
